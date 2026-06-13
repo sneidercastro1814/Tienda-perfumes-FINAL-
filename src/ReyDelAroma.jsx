@@ -1651,22 +1651,7 @@ export default function ReyDelAroma() {
         ))}
       </section>
 
-      {/* Filtros por categoría + menú de ordenamiento */}
-      <div className="filters">
-        <div className="ftabs">
-          {FILTER_TABS.map((c) => (
-            <button key={c} className={`ftab${!q && catFilter === c ? " act" : ""}`} onClick={() => { setSearch(""); setCatFilter(c); }}>{c}</button>
-          ))}
-        </div>
-        {browsing && (
-          <div className="sort-ctrl">
-            <span className="sort-lbl">Ordenar</span>
-            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
-              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-            </select>
-          </div>
-        )}
-      </div>
+      {/* Barra de categorías retirada por solicitud */}
 
       {/* Productos — solo al buscar, filtrar por aroma o elegir categoría */}
       {browsing && (
