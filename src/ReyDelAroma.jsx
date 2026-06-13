@@ -338,6 +338,22 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-orig::before { content: '✓'; color: var(--gold); font-weight: 700; }
 .quick-buy { background: transparent; color: var(--gold-d); border: 1px solid rgba(201,168,76,0.3); font-size: 11px; font-weight: 600; letter-spacing: 2px; padding: 9px 18px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; font-family: var(--sans); }
 .quick-buy:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+/* ── Carruseles de productos en el inicio ── */
+.prow { max-width: 1280px; margin: 0 auto; padding: 44px 52px 8px; }
+.prow-hdr { text-align: center; margin-bottom: 24px; }
+.prow-title { font-family: var(--serif); font-size: 30px; font-weight: 600; letter-spacing: 0.3px; }
+.prow-all { margin-top: 8px; display: inline-block; background: none; border: none; color: var(--gold-d); font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: color 0.2s; }
+.prow-all:hover { color: var(--gold); }
+.prow-wrap { position: relative; }
+.prow-track { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 14px 4px 24px; -ms-overflow-style: none; scrollbar-width: none; }
+.prow-track::-webkit-scrollbar { display: none; }
+.prow-card { flex: 0 0 auto; width: 272px; scroll-snap-align: start; border: 1px solid var(--border); }
+.prow-arrow { position: absolute; top: 38%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; background: #fff; border: 1px solid var(--border); color: var(--text); font-size: 24px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; box-shadow: 0 8px 24px rgba(0,0,0,0.14); transition: all 0.25s; }
+.prow-arrow:hover { background: var(--gold); color: #1a1208; border-color: var(--gold); }
+.prow-prev { left: -10px; } .prow-next { right: -10px; }
+@media (max-width: 768px) { .prow { padding: 30px 16px 4px; } .prow-title { font-size: 23px; } .prow-card { width: 200px; } .prow-arrow { display: none; } }
+@media (max-width: 480px) { .prow-card { width: 168px; } }
 .empty-state { grid-column: 1/-1; text-align: center; padding: 100px; color: var(--text-muted); }
 .empty-state-icon { font-size: 56px; margin-bottom: 18px; opacity: 0.25; }
 
@@ -1207,9 +1223,9 @@ export default function ReyDelAroma() {
   const [newAroma, setNewAroma] = useState("");
 
   const banners = [
-    { src: banner1, alt: "Más de 50 referencias disponibles", filter: "Todos" },
-    { src: banner2, alt: "2 perfumes por $300.000", filter: "2 × $300.000" },
-    { src: banner3, alt: "Los mejores perfumes árabes", filter: "Árabes" },
+    { src: banner2, alt: "2 perfumes por $300.000", filter: "2 × $300.000", dur: 15000 },
+    { src: banner1, alt: "Más de 50 referencias disponibles", filter: "Todos", dur: 9000 },
+    { src: banner3, alt: "Los mejores perfumes árabes", filter: "Árabes", dur: 9000 },
   ];
 
   /* cargar catálogo guardado (localStorage)
@@ -1265,12 +1281,13 @@ export default function ReyDelAroma() {
       .catch(() => setPayResult({ loading: false, status: "ERROR", txId: id }));
   }, []);
 
-  /* auto-avance del carrusel */
+  /* auto-avance del carrusel (cada banner con su propia duración) */
   useEffect(() => {
     if (pauseSlide || view !== "store") return;
-    const t = setInterval(() => setSlide((s) => (s + 1) % banners.length), 4500);
-    return () => clearInterval(t);
-  }, [pauseSlide, view, banners.length]);
+    const dur = banners[slide]?.dur || 9000;
+    const t = setTimeout(() => setSlide((s) => (s + 1) % banners.length), dur);
+    return () => clearTimeout(t);
+  }, [pauseSlide, view, slide, banners.length]);
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2800); };
 
@@ -1307,6 +1324,12 @@ export default function ReyDelAroma() {
   };
   /* Decide a dónde ir: "Todos"/"Catálogo" → tienda; el resto → su propia página */
   const goFilter = (f) => { if (f === "Todos") quickFilter("Todos"); else goCategory(f); };
+
+  /* Desplaza un carrusel de productos del inicio (flechas ‹ ›) */
+  const scrollRow = (id, dir) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.85), behavior: "smooth" });
+  };
 
   const openProduct = (p) => {
     setSelectedProduct(p);
@@ -1535,11 +1558,12 @@ export default function ReyDelAroma() {
     { img: feat2, cap: "Mujer", filter: "Para Ella" },
     { img: feat5, cap: "Unisex", filter: "Unisex" },
   ];
-  const collections = [
-    { cat: "Colección", name: "Diseñador", tag: "Las casas más reconocidas del mundo.", img: banner1, filter: "Diseñador" },
-    { cat: "Promoción", name: "2 × $300.000", tag: "Lleva 2 perfumes árabes por $300.000.", img: banner2, filter: "2 × $300.000" },
-    { cat: "Colección", name: "Árabes", tag: "Lattafa, Armaf, Maison Alhambra y más.", img: banner3, filter: "Árabes" },
-  ];
+  /* Carruseles de productos en el inicio (2×300, Unisex, Diseñador) */
+  const homeRows = [
+    { id: "row-promo", title: "🔥 2 × $300.000", filter: "2 × $300.000" },
+    { id: "row-unisex", title: "Unisex", filter: "Unisex" },
+    { id: "row-disenador", title: "Diseñador", filter: "Diseñador" },
+  ].map((r) => ({ ...r, list: products.filter((p) => matchFilter(p, r.filter)) }));
 
   /* ── FOOTER ── */
   const Footer = () => (
@@ -1595,7 +1619,7 @@ export default function ReyDelAroma() {
             ))}
           </div>
           <div className="hc-progress">
-            <div className={`hc-progress-bar${pauseSlide ? " paused" : " run"}`} key={slide} />
+            <div className={`hc-progress-bar${pauseSlide ? " paused" : " run"}`} key={slide} style={{ animationDuration: `${banners[slide]?.dur || 9000}ms` }} />
           </div>
         </div>
       </section>
@@ -1680,27 +1704,39 @@ export default function ReyDelAroma() {
         </div>
       </div>
 
-      {/* Colecciones */}
-      <div className="coll-sec">
-        <div className="coll-hdr">
-          <div className="coll-eyebrow">Descubre</div>
-          <div className="coll-title">Nuestras <span>Colecciones</span></div>
-          <div className="coll-sub">Encuentra tu fragancia ideal</div>
-        </div>
-        <div className="coll-grid">
-          {collections.map((c, i) => (
-            <div key={i} className="coll-card" onClick={() => goFilter(c.filter)}>
-              <img className="coll-img" src={c.img} alt={c.name} loading="lazy" />
-              <div className="coll-overlay">
-                <div className="coll-cat">{c.cat}</div>
-                <div className="coll-name">{c.name}</div>
-                <div className="coll-tag">{c.tag}</div>
-                <div className="coll-cta">Ver colección</div>
-              </div>
+      {/* Carruseles por categoría (2×300, Unisex, Diseñador) */}
+      {!q && homeRows.map((row) => row.list.length > 0 && (
+        <section key={row.id} className="prow">
+          <div className="prow-hdr">
+            <h2 className="prow-title">{row.title}</h2>
+            <button className="prow-all" onClick={() => goFilter(row.filter)}>Ver todos →</button>
+          </div>
+          <div className="prow-wrap">
+            <button className="prow-arrow prow-prev" onClick={() => scrollRow(row.id, -1)} aria-label="Anterior">‹</button>
+            <div className="prow-track" id={row.id}>
+              {row.list.map((p) => (
+                <div key={p.id} className="pcard prow-card" onClick={() => openProduct(p)}>
+                  <div className="pcard-img">
+                    {p.promo && <span className="pcard-badge">2 × $300.000</span>}
+                    {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+                  </div>
+                  <div className="pcard-body">
+                    <div className="pcard-cat">{p.brand}</div>
+                    <div className="pcard-name">{p.name}</div>
+                    <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+                    <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                  </div>
+                  <div className="pcard-foot">
+                    <span className="pcard-orig">Original</span>
+                    <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+            <button className="prow-arrow prow-next" onClick={() => scrollRow(row.id, 1)} aria-label="Siguiente">›</button>
+          </div>
+        </section>
+      ))}
 
       {/* Suscripción — al final de la página, sin ventana emergente */}
       <section className="subscribe">
