@@ -1,0 +1,18 @@
+# netlify.toml — configuración de build, funciones y rutas
+# Este archivo debe quedar EN LA MISMA CARPETA que package.json.
+# (Si en Netlify tienes "Base directory" = perfume, entonces va dentro de perfume/.)
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Las funciones con config.path (/api/wompi-signature, /api/wompi-webhook)
+# se resuelven ANTES que esta regla, así que el SPA no las pisa.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

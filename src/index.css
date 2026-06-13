@@ -1,0 +1,6 @@
+/* Reset only - all styles are in the component */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
