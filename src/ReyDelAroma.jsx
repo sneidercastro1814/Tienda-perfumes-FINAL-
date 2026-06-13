@@ -1599,7 +1599,9 @@ export default function ReyDelAroma() {
   );
 
   /* ── VISTA TIENDA ── */
-  const StoreView = () => (
+  const StoreView = () => {
+    const browsing = q || catFilter !== "Todos" || tagFilter !== "Todos";
+    return (
     <>
       {/* Carrusel de banners */}
       <section className="hero-carousel" onMouseEnter={() => setPauseSlide(true)} onMouseLeave={() => setPauseSlide(false)}>
@@ -1656,15 +1658,18 @@ export default function ReyDelAroma() {
             <button key={c} className={`ftab${!q && catFilter === c ? " act" : ""}`} onClick={() => { setSearch(""); setCatFilter(c); }}>{c}</button>
           ))}
         </div>
-        <div className="sort-ctrl">
-          <span className="sort-lbl">Ordenar</span>
-          <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
-            {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-          </select>
-        </div>
+        {browsing && (
+          <div className="sort-ctrl">
+            <span className="sort-lbl">Ordenar</span>
+            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
+              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </div>
+        )}
       </div>
 
-      {/* Productos */}
+      {/* Productos — solo al buscar, filtrar por aroma o elegir categoría */}
+      {browsing && (
       <div className="products-wrap" id="cat">
         <div className="sec-hdr">
           <h2 className="sec-title">
@@ -1703,9 +1708,10 @@ export default function ReyDelAroma() {
           )}
         </div>
       </div>
+      )}
 
-      {/* Carruseles por categoría (2×300, Unisex, Diseñador) */}
-      {!q && homeRows.map((row) => row.list.length > 0 && (
+      {/* Carruseles por categoría (2×300, Unisex, Diseñador) — protagonistas del inicio */}
+      {!browsing && homeRows.map((row) => row.list.length > 0 && (
         <section key={row.id} className="prow">
           <div className="prow-hdr">
             <h2 className="prow-title">{row.title}</h2>
@@ -1773,7 +1779,8 @@ export default function ReyDelAroma() {
 
       <Footer />
     </>
-  );
+    );
+  };
 
   /* ── VISTA CATEGORÍA (página propia con pestañas) ── */
   const CategoryView = () => {
