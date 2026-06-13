@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, COLLECTIONS } from "./data/products";
 import banner1 from "./assets/banners/banner-1.jpg";
 import banner2 from "./assets/banners/banner-2.jpg";
@@ -22,6 +22,8 @@ const LS_KEY = "rda-catalog-v3";
 const LS_COUPONS = "rda-coupons-v1";       // ← Cupones guardados (los crea el admin)
 const LS_COLLECTIONS = "rda-collections-v1"; // ← Colecciones que crea el admin
 const LS_AROMAS = "rda-aromas-v1";           // ← Tipos de aroma que crea el admin
+const LS_ORDERS = "rda-orders-v1";           // ← Respaldo local de pedidos (por si falla la red)
+const LS_ADMIN_TOKEN = "rda-admin-token";    // ← Token del panel de Ventas (se guarda en este navegador)
 
 const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
@@ -770,19 +772,24 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .co-summary { padding: 22px 18px; }
 }
 
-/* ── BARRA DE BÚSQUEDA (LUPA) ── */
-.search-bar { position: sticky; top: 72px; z-index: 99; background: rgba(12,12,11,0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 14px 52px; animation: searchDrop 0.25s ease; }
-@keyframes searchDrop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
-.search-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px 4px 16px; transition: border-color 0.2s, box-shadow 0.2s; }
-.search-inner:focus-within { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
-.search-ic { font-size: 16px; opacity: 0.8; flex-shrink: 0; }
-.search-input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: #fff; font-family: var(--sans); font-size: 15px; font-weight: 400; padding: 12px 0; letter-spacing: 0.3px; }
-.search-input::placeholder { color: rgba(255,255,255,0.45); }
-.search-clear { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 14px; cursor: pointer; width: 30px; height: 30px; border-radius: 50%; transition: all 0.2s; flex-shrink: 0; line-height: 1; }
-.search-clear:hover { color: #fff; background: rgba(255,255,255,0.12); }
-.search-close { background: var(--gold); color: #1a1208; border: none; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 10px 16px; cursor: pointer; border-radius: 3px; transition: all 0.25s; white-space: nowrap; flex-shrink: 0; }
-.search-close:hover { background: var(--gold-l); }
-@media (max-width: 768px) { .search-bar { top: 64px; padding: 12px 14px; } .search-input { font-size: 14px; padding: 11px 0; } .search-close { padding: 9px 12px; } }
+/* ── BÚSQUEDA SUPERPUESTA (overlay "Buscar nuestro sitio") ── */
+.search-overlay { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; align-items: stretch; }
+.search-backdrop { position: absolute; inset: 0; background: rgba(8,8,7,0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); animation: srFade 0.2s ease; }
+@keyframes srFade { from { opacity: 0; } to { opacity: 1; } }
+.search-panel { position: relative; z-index: 1; width: 100%; background: #fff; box-shadow: 0 22px 60px rgba(0,0,0,0.32); padding: 20px 28px 26px; animation: srSlide 0.3s cubic-bezier(.22,.61,.36,1); }
+@keyframes srSlide { from { transform: translateY(-101%); } to { transform: translateY(0); } }
+.search-panel-inner { max-width: 1040px; margin: 0 auto; }
+.search-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.search-panel-title { font-family: var(--sans); font-size: 19px; font-weight: 800; color: #161616; letter-spacing: 0.1px; }
+.search-panel-x { background: none; border: none; color: #161616; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.2s; flex-shrink: 0; }
+.search-panel-x:hover { background: rgba(0,0,0,0.07); }
+.search-field { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #161616; padding: 8px 2px 12px; }
+.search-input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: #161616; font-family: var(--sans); font-size: 17px; font-weight: 500; padding: 4px 0; letter-spacing: 0.2px; }
+.search-input::placeholder { color: #9d9d98; font-weight: 400; }
+.search-clear { background: none; border: none; color: #9d9d98; font-size: 16px; cursor: pointer; flex-shrink: 0; padding: 2px 6px; line-height: 1; transition: color 0.2s; }
+.search-clear:hover { color: #161616; }
+.search-ic { font-size: 21px; flex-shrink: 0; line-height: 1; }
+@media (max-width: 768px) { .search-panel { padding: 16px 16px 20px; } .search-panel-title { font-size: 17px; } .search-input { font-size: 16px; } }
 
 /* ── SUSCRIPCIÓN (franja al final de la página, sin popup) ── */
 .subscribe { position: relative; overflow: hidden; background: linear-gradient(165deg, #17150f 0%, #0c0b09 100%); border-top: 1px solid rgba(201,168,76,0.42); padding: 66px 52px; }
@@ -827,20 +834,20 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-chip.tag { background: rgba(201,168,76,0.14); border-color: var(--gold); color: var(--gold-d); font-weight: 700; }
 
 /* ── RESULTADOS EN VIVO DE LA BÚSQUEDA (LUPA) ── */
-.search-results { max-width: 760px; margin: 10px auto 0; background: rgba(18,18,16,0.98); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,0.5); animation: searchDrop 0.2s ease; }
-.sr-item { width: 100%; display: flex; align-items: center; gap: 14px; background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 12px 16px; cursor: pointer; text-align: left; transition: background 0.15s; }
+.search-results { margin: 16px 0 2px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; box-shadow: 0 14px 36px rgba(0,0,0,0.12); max-height: 56vh; overflow-y: auto; animation: srFade 0.2s ease; }
+.sr-item { width: 100%; display: flex; align-items: center; gap: 14px; background: none; border: none; border-bottom: 1px solid rgba(0,0,0,0.06); padding: 12px 16px; cursor: pointer; text-align: left; transition: background 0.15s; }
 .sr-item:last-of-type { border-bottom: none; }
-.sr-item:hover { background: rgba(255,255,255,0.06); }
-.sr-img { width: 46px; height: 46px; flex-shrink: 0; border-radius: 4px; overflow: hidden; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; }
+.sr-item:hover { background: rgba(201,168,76,0.09); }
+.sr-img { width: 48px; height: 48px; flex-shrink: 0; border-radius: 7px; overflow: hidden; background: #f4f4f0; border: 1px solid rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; }
 .sr-img img { width: 100%; height: 100%; object-fit: cover; }
 .sr-noimg { font-size: 20px; opacity: 0.5; }
 .sr-info { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
-.sr-name { color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sr-sub { color: rgba(255,255,255,0.5); font-size: 11.5px; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sr-price { color: var(--gold-l); font-size: 13px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-.sr-all { width: 100%; background: rgba(201,168,76,0.1); border: none; border-top: 1px solid var(--border); color: var(--gold-l); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; padding: 13px; cursor: pointer; transition: background 0.15s; }
-.sr-all:hover { background: rgba(201,168,76,0.18); }
-.sr-empty { color: rgba(255,255,255,0.6); font-size: 13px; padding: 22px 18px; text-align: center; line-height: 1.5; }
+.sr-name { color: #161616; font-size: 14.5px; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-sub { color: #8a8a86; font-size: 11.5px; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-price { color: var(--gold-d); font-size: 14px; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
+.sr-all { width: 100%; background: rgba(201,168,76,0.12); border: none; border-top: 1px solid rgba(201,168,76,0.28); color: var(--gold-d); font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: 0.5px; padding: 14px; cursor: pointer; transition: background 0.15s; }
+.sr-all:hover { background: rgba(201,168,76,0.2); }
+.sr-empty { color: #8a8a86; font-size: 13.5px; padding: 24px 18px; text-align: center; line-height: 1.5; }
 
 /* ── ENVÍO: NOTA EN CHECKOUT + HINT EN CARRITO ── */
 .co-ship-note { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
@@ -895,6 +902,54 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .tax-rm:hover { background: rgba(180,69,60,0.1); }
 .tax-empty { text-align: center; padding: 26px; color: #aaa; font-size: 13px; }
 @media (max-width: 768px) { .tax-grid { grid-template-columns: 1fr; gap: 16px; } .tax-card { padding: 18px; } }
+
+/* ── PANEL ADMIN: VENTAS EN TIEMPO REAL ── */
+.vt-token { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 22px; }
+.vt-token .fg { flex: 1; min-width: 230px; margin: 0; }
+.vt-livebar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.vt-live { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+.vt-dot { width: 9px; height: 9px; border-radius: 50%; background: #1fa855; animation: vtpulse 1.7s infinite; }
+@keyframes vtpulse { 0%{ box-shadow: 0 0 0 0 rgba(31,168,85,0.5); } 70%{ box-shadow: 0 0 0 8px rgba(31,168,85,0); } 100%{ box-shadow: 0 0 0 0 rgba(31,168,85,0); } }
+.vt-refresh { background: none; border: 1px solid var(--border); color: var(--gold-d); font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 9px 16px; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
+.vt-refresh:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
+.vt-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 26px; }
+.vt-kpi { background: linear-gradient(165deg, var(--bg2), var(--bg)); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
+.vt-kpi.hot { border-color: var(--border-h); box-shadow: 0 10px 30px -16px rgba(201,168,76,0.5); }
+.vt-kpi-l { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+.vt-kpi-v { font-family: var(--serif); font-size: 32px; font-weight: 700; color: var(--text); margin-top: 8px; line-height: 1.05; }
+.vt-kpi-v span { color: var(--gold-d); }
+.vt-kpi-s { font-size: 12.5px; color: var(--text-muted); margin-top: 6px; }
+.vt-bars { display: flex; align-items: flex-end; gap: 8px; height: 168px; padding: 18px 8px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 28px; }
+.vt-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; height: 100%; justify-content: flex-end; }
+.vt-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.vt-bar { width: 64%; max-width: 48px; background: linear-gradient(180deg, var(--gold-l), var(--gold)); border-radius: 7px 7px 0 0; min-height: 4px; transition: height 0.5s cubic-bezier(.22,.61,.36,1); }
+.vt-bar.today { background: linear-gradient(180deg, var(--gold), var(--gold-d)); box-shadow: 0 0 16px rgba(201,168,76,0.45); }
+.vt-bar-day { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.3px; text-align: center; line-height: 1.3; }
+.vt-bar-val { font-size: 10.5px; color: var(--gold-d); font-weight: 800; }
+.vt-sec-t { font-family: var(--serif); font-size: 23px; font-weight: 600; margin: 6px 0 14px; }
+.vt-sec-t span { color: var(--gold); font-style: italic; }
+.vt-day-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; margin-bottom: 8px; }
+.vt-day-d { font-size: 14px; font-weight: 600; color: var(--text); }
+.vt-day-c { font-size: 12px; color: var(--text-muted); }
+.vt-day-t { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--gold-d); }
+.vt-id { display: inline-block; font-size: 11px; font-weight: 800; color: var(--gold-d); background: rgba(201,168,76,0.13); padding: 3px 9px; border-radius: 999px; letter-spacing: 0.3px; }
+.vt-ref { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; margin-top: 4px; }
+.vt-items { font-size: 12px; color: var(--text-dim); margin-top: 3px; line-height: 1.45; }
+.vt-cust-n { font-size: 14.5px; font-weight: 600; color: var(--text); }
+.vt-cust-s { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+.vt-pay { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: capitalize; color: var(--text-dim); background: var(--surface); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
+.vt-tot { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.vt-when { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.vt-empty { text-align: center; padding: 64px 20px; color: #999; }
+.vt-empty .emoji { font-size: 46px; opacity: 0.35; margin-bottom: 12px; }
+.vt-err { background: rgba(214,69,69,0.07); border: 1px solid rgba(214,69,69,0.32); color: #b4453c; border-radius: 11px; padding: 15px 18px; font-size: 13.5px; margin-bottom: 20px; line-height: 1.55; }
+.vt-err b { color: #9a342c; }
+@media (max-width: 768px) {
+  .vt-kpis { grid-template-columns: 1fr; }
+  .vt-bars { gap: 5px; height: 150px; }
+  .vt-bar-val { display: none; }
+  .atbl.vt-tbl, .atbl.vt-tbl thead { display: none; }
+}
 
 @media (max-width: 768px) {
   .fam-filters { gap: 6px; }
@@ -1005,10 +1060,10 @@ const EMPTY_FORM = {
   tag: "", description: "", image: "",
 };
 
-const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Unisex", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
+const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
 
 /* Pestañas que abren su propia página al hacer clic (orden de aparición) */
-const CATEGORY_TABS = ["Para Él", "Para Ella", "Unisex", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
+const CATEGORY_TABS = ["Para Él", "Para Ella", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
 
 /* Contenido del encabezado (hero) de cada página de categoría.
    La imagen se usa como fondo del banner; el resto es texto editable. */
@@ -1209,6 +1264,16 @@ export default function ReyDelAroma() {
   const [placing, setPlacing] = useState(false);
   const [payResult, setPayResult] = useState(() => (readWompiReturn().fromWompi ? { loading: true } : null)); // resultado tras volver de Wompi
 
+  /* ── VENTAS (panel admin en tiempo real) ── */
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersError, setOrdersError] = useState("");
+  const [ordersUpdatedAt, setOrdersUpdatedAt] = useState(null);
+  const [adminToken, setAdminToken] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
+  const [tokenInput, setTokenInput] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
+  const sentRefs = useRef(new Set());     // evita enviar el mismo pedido dos veces
+  const addiSentRef = useRef(false);      // un solo registro de pedido por checkout con Addi
+
   /* ── ENVÍO + CUPONES ── */
   const [shipZone, setShipZone] = useState("bogota");
   const [coupons, setCoupons] = useState(loadCoupons);
@@ -1288,6 +1353,46 @@ export default function ReyDelAroma() {
     const t = setTimeout(() => setSlide((s) => (s + 1) % banners.length), dur);
     return () => clearTimeout(t);
   }, [pauseSlide, view, slide, banners.length]);
+
+  /* bloquear el scroll del fondo mientras la búsqueda superpuesta está abierta */
+  useEffect(() => {
+    document.body.style.overflow = searchOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [searchOpen]);
+
+  /* ── VENTAS: traer pedidos guardados desde el servidor (Netlify) ── */
+  const fetchOrders = async (tokenArg) => {
+    const tk = (tokenArg ?? adminToken).trim();
+    if (!tk) { setOrdersError("Escribe tu token de administrador para ver las ventas."); return; }
+    setOrdersLoading(true);
+    try {
+      const res = await fetch(`/api/list-orders?token=${encodeURIComponent(tk)}`);
+      if (res.status === 401) {
+        setOrders([]); setOrdersError("Token incorrecto. Revisa el valor de ADMIN_TOKEN configurado en Netlify.");
+      } else if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setOrders([]); setOrdersError(d.error || "No se pudieron cargar las ventas. ¿Ya publicaste la función en Netlify?");
+      } else {
+        const data = await res.json();
+        setOrders(Array.isArray(data.orders) ? data.orders : []);
+        setOrdersError(""); setOrdersUpdatedAt(new Date());
+      }
+    } catch {
+      setOrdersError("Sin conexión con el servidor de ventas. Intenta de nuevo en unos segundos.");
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  /* Refresco automático cada 10 s mientras el panel de Ventas está abierto (tiempo real) */
+  useEffect(() => {
+    if (!(view === "admin" && adminAuth && adminView === "ventas")) return;
+    if (!adminToken.trim()) return;
+    fetchOrders();
+    const id = setInterval(() => fetchOrders(), 10000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, adminAuth, adminView, adminToken]);
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2800); };
 
@@ -1381,6 +1486,7 @@ export default function ReyDelAroma() {
   const goCheckout = (items) => {
     if (!items || !items.length) return;
     setCheckoutItems(items);
+    addiSentRef.current = false;
     setCartOpen(false);
     setMenuOpen(false);
     const first = ["wompi", "addi", "sistecredito"].find((m) => PAYMENTS[m]?.enabled);
@@ -1391,23 +1497,73 @@ export default function ReyDelAroma() {
   const buyNow = (p, size, q) => goCheckout([{ ...p, size, qty: q }]);
   const setCo = (key) => (e) => setCoForm((f) => ({ ...f, [key]: e.target.value }));
 
+  /* Datos del pedido que se guardan y se envían por correo */
+  const buildOrderPayload = (reference) => {
+    const { subtotal, discount, shipping, total } = computeTotals();
+    const zoneLabel = SHIPPING.zones.find((z) => z.id === shipZone)?.label || shipZone;
+    return {
+      reference,
+      date: new Date().toISOString(),
+      method: payMethod,
+      customer: {
+        name: coForm.name.trim(),
+        cedula: coForm.cedula.trim(),   // ← ID del cliente (Cédula / NIT)
+        phone: coForm.phone.trim(),
+        email: coForm.email.trim(),
+        city: coForm.city.trim(),
+        address: coForm.address.trim(),
+      },
+      items: checkoutItems.map((it) => ({ name: it.name, brand: it.brand || "", size: it.size || "", qty: it.qty, price: it.price })),
+      coupon: appliedCoupon ? appliedCoupon.code : "",
+      zone: zoneLabel,
+      subtotal, discount, shipping, total,
+    };
+  };
+
+  /* Guarda el pedido (servidor + respaldo local) y dispara el correo al admin */
+  const sendOrder = async (order) => {
+    if (!order || sentRefs.current.has(order.reference)) return;
+    sentRefs.current.add(order.reference);
+    // respaldo local inmediato (por si la red falla)
+    try {
+      const prev = JSON.parse(localStorage.getItem(LS_ORDERS) || "[]");
+      localStorage.setItem(LS_ORDERS, JSON.stringify([order, ...prev].slice(0, 300)));
+    } catch { /* ignore */ }
+    // envío al servidor: guarda la venta en Netlify + manda el correo
+    try {
+      await Promise.race([
+        fetch("/api/save-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(order),
+        }),
+        new Promise((r) => setTimeout(r, 6000)), // no bloquear más de 6 s la redirección
+      ]);
+    } catch { /* el respaldo local ya quedó guardado */ }
+  };
+
+  const isCheckoutFormValid = () =>
+    coForm.name.trim() && coForm.cedula.trim() && coForm.phone.trim() && coForm.city.trim() && coForm.address.trim();
+
   const placeOrder = async () => {
-    if (!coForm.name.trim() || !coForm.cedula.trim() || !coForm.phone.trim() || !coForm.city.trim() || !coForm.address.trim())
-      return showToast("Completa tus datos de envío");
+    if (!isCheckoutFormValid()) return showToast("Completa tus datos de envío");
 
     const { subtotal, discount, shipping, total } = computeTotals();
     const reference = newReference();
+    const order = buildOrderPayload(reference);
     try {
       localStorage.setItem("rda-last-order", JSON.stringify({
         reference, method: payMethod, subtotal, discount, shipping, total,
         coupon: appliedCoupon ? appliedCoupon.code : "", zone: shipZone,
-        items: checkoutItems, ...coForm, date: new Date().toISOString(),
+        items: checkoutItems, ...coForm, date: order.date,
       }));
     } catch { /* ignore */ }
 
+    setPlacing(true);
+    await sendOrder(order);   // ← registra la venta y envía el correo antes de redirigir
+
     if (payMethod === "wompi") {
-      if (!WOMPI.publicKey) return showToast("Falta configurar la llave de Wompi");
-      setPlacing(true);
+      if (!WOMPI.publicKey) { setPlacing(false); return showToast("Falta configurar la llave de Wompi"); }
       try {
         const url = await buildWompiUrl({ amount: total, reference, email: coForm.email, phone: coForm.phone, fullName: coForm.name });
         window.location.href = url;
@@ -1418,12 +1574,22 @@ export default function ReyDelAroma() {
       return;
     }
     if (payMethod === "sistecredito") {
+      setPlacing(false);
       if (!SISTECREDITO.url) return showToast("Falta configurar el enlace de Sistecrédito");
       openWithParams(SISTECREDITO.url, { amount: total, reference });
       showToast("Te llevamos a Sistecrédito para terminar el pago");
       return;
     }
-    // Addi se gestiona con el widget en el resumen (no pasa por aquí).
+    setPlacing(false);
+    // Addi se gestiona con el widget en el resumen (registro de pedido al tocar el widget).
+  };
+
+  /* Registro del pedido cuando el cliente paga con Addi (al tocar el widget) */
+  const captureAddiOrder = () => {
+    if (addiSentRef.current) return;
+    if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío para registrar tu pedido"); return; }
+    addiSentRef.current = true;
+    sendOrder(buildOrderPayload(newReference()));
   };
 
   /* ── ADMIN ── */
@@ -1556,12 +1722,10 @@ export default function ReyDelAroma() {
     { img: feat3, cap: "Productos Destacados", filter: "Destacados" },
     { img: feat1, cap: "Hombre", filter: "Para Él" },
     { img: feat2, cap: "Mujer", filter: "Para Ella" },
-    { img: feat5, cap: "Unisex", filter: "Unisex" },
   ];
   /* Carruseles de productos en el inicio (2×300, Unisex, Diseñador) */
   const homeRows = [
     { id: "row-promo", title: "🔥 2 × $300.000", filter: "2 × $300.000" },
-    { id: "row-unisex", title: "Unisex", filter: "Unisex" },
     { id: "row-disenador", title: "Diseñador", filter: "Diseñador" },
   ].map((r) => ({ ...r, list: products.filter((p) => matchFilter(p, r.filter)) }));
 
@@ -2097,7 +2261,7 @@ export default function ReyDelAroma() {
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
             {payMethod === "addi" && PAYMENTS.addi.enabled ? (
-              <div className="co-addi">
+              <div className="co-addi" onClickCapture={captureAddiOrder}>
                 <p className="co-addi-lead">Solicita tu cupo en minutos, 100% en línea. Al aprobarte, Addi paga tu compra y tú la difieres a cuotas.</p>
                 <AddiWidget price={total} className="co-addi-w" />
                 <p className="co-addi-note">Toca el botón de Addi para conocer tus cuotas y continuar.</p>
@@ -2315,11 +2479,169 @@ export default function ReyDelAroma() {
       );
     }
 
+    if (adminView === "ventas") {
+      const fmtDay = (iso) => new Date(iso).toLocaleDateString("es-CO", { year: "numeric", month: "2-digit", day: "2-digit" });
+      const fmtDayLong = (iso) => new Date(iso).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
+      const fmtWhen = (iso) => new Date(iso).toLocaleString("es-CO", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+      const todayK = fmtDay(new Date().toISOString());
+
+      const byDay = {};
+      orders.forEach((o) => {
+        const k = fmtDay(o.date);
+        if (!byDay[k]) byDay[k] = { count: 0, total: 0, last: o.date };
+        byDay[k].count++;
+        byDay[k].total += Number(o.total) || 0;
+        if (o.date > byDay[k].last) byDay[k].last = o.date;
+      });
+      const todayTotal = byDay[todayK]?.total || 0;
+      const todayCount = byDay[todayK]?.count || 0;
+      const allTotal = orders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+      const allCount = orders.length;
+      const avg = allCount ? Math.round(allTotal / allCount) : 0;
+
+      const last7 = [...Array(7)].map((_, i) => {
+        const d = new Date(); d.setDate(d.getDate() - (6 - i));
+        const k = fmtDay(d.toISOString());
+        return {
+          k,
+          dow: d.toLocaleDateString("es-CO", { weekday: "short" }),
+          dm: d.toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit" }),
+          total: byDay[k]?.total || 0,
+          count: byDay[k]?.count || 0,
+          isToday: k === todayK,
+        };
+      });
+      const maxBar = Math.max(1, ...last7.map((d) => d.total));
+      const daysSorted = Object.entries(byDay).sort((a, b) => new Date(b[1].last) - new Date(a[1].last));
+      const ordersDesc = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const hasToken = !!adminToken.trim();
+      const connect = () => {
+        const v = tokenInput.trim();
+        setAdminToken(v);
+        try { localStorage.setItem(LS_ADMIN_TOKEN, v); } catch { /* ignore */ }
+        fetchOrders(v);
+      };
+
+      return (
+        <div className="admin-wrap">
+          <div className="admin-hdr">
+            <div className="admin-title">Ventas en <span>tiempo real</span></div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button className="btn-o" onClick={() => setAdminView("list")}>← Volver</button>
+            </div>
+          </div>
+
+          <div className="vt-token">
+            <div className="fg">
+              <label className="fl">Token de administrador</label>
+              <input
+                className="fi"
+                type="password"
+                placeholder="Pega aquí tu ADMIN_TOKEN"
+                value={tokenInput}
+                onChange={(e) => setTokenInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") connect(); }}
+              />
+            </div>
+            <button className="btn-g" onClick={connect}>Conectar</button>
+          </div>
+
+          {ordersError && <div className="vt-err">{ordersError}</div>}
+
+          {hasToken && !ordersError && (
+            <>
+              <div className="vt-livebar">
+                <span className="vt-live"><span className="vt-dot" /> En vivo · se actualiza solo cada 10 s{ordersUpdatedAt ? ` · última: ${ordersUpdatedAt.toLocaleTimeString("es-CO")}` : ""}</span>
+                <button className="vt-refresh" onClick={() => fetchOrders()}>{ordersLoading ? "Actualizando…" : "↻ Actualizar"}</button>
+              </div>
+
+              <div className="vt-kpis">
+                <div className="vt-kpi hot">
+                  <div className="vt-kpi-l">Ventas de hoy</div>
+                  <div className="vt-kpi-v"><span>{cop(todayTotal)}</span></div>
+                  <div className="vt-kpi-s">{todayCount} {todayCount === 1 ? "pedido" : "pedidos"} hoy</div>
+                </div>
+                <div className="vt-kpi">
+                  <div className="vt-kpi-l">Total histórico</div>
+                  <div className="vt-kpi-v">{cop(allTotal)}</div>
+                  <div className="vt-kpi-s">{allCount} {allCount === 1 ? "pedido" : "pedidos"} en total</div>
+                </div>
+                <div className="vt-kpi">
+                  <div className="vt-kpi-l">Ticket promedio</div>
+                  <div className="vt-kpi-v">{cop(avg)}</div>
+                  <div className="vt-kpi-s">por pedido</div>
+                </div>
+              </div>
+
+              <div className="vt-sec-t">Últimos <span>7 días</span></div>
+              <div className="vt-bars">
+                {last7.map((d) => (
+                  <div key={d.k} className="vt-bar-col">
+                    <div className="vt-bar-val">{d.total > 0 ? cop(d.total) : ""}</div>
+                    <div className="vt-bar-wrap">
+                      <div className={`vt-bar${d.isToday ? " today" : ""}`} style={{ height: `${Math.round((d.total / maxBar) * 100)}%` }} title={`${d.count} pedidos · ${cop(d.total)}`} />
+                    </div>
+                    <div className="vt-bar-day">{d.dow}<br />{d.dm}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="vt-sec-t">Ventas por <span>día</span></div>
+              {daysSorted.length > 0 ? daysSorted.map(([k, v]) => (
+                <div key={k} className="vt-day-row">
+                  <div>
+                    <div className="vt-day-d">{fmtDayLong(v.last)}{k === todayK ? " · hoy" : ""}</div>
+                    <div className="vt-day-c">{v.count} {v.count === 1 ? "pedido" : "pedidos"}</div>
+                  </div>
+                  <div className="vt-day-t">{cop(v.total)}</div>
+                </div>
+              )) : <div className="vt-empty"><div className="emoji">🧾</div><p>Aún no hay ventas registradas.</p></div>}
+
+              <div className="vt-sec-t" style={{ marginTop: 30 }}>Pedidos <span>recientes</span></div>
+              {ordersDesc.length > 0 ? (
+                <table className="atbl vt-tbl">
+                  <thead>
+                    <tr><th>Fecha</th><th>Pedido</th><th>Cliente</th><th>Productos</th><th>Pago</th><th>Total</th></tr>
+                  </thead>
+                  <tbody>
+                    {ordersDesc.map((o, idx) => {
+                      const c = o.customer || {};
+                      return (
+                        <tr key={o.reference || idx}>
+                          <td className="vt-when">{fmtWhen(o.date)}</td>
+                          <td>
+                            <span className="vt-id">ID: {c.cedula || "—"}</span>
+                            <div className="vt-ref">{o.reference}</div>
+                          </td>
+                          <td>
+                            <div className="vt-cust-n">{c.name || "—"}</div>
+                            <div className="vt-cust-s">{c.phone || ""}{c.city ? ` · ${c.city}` : ""}{c.email ? ` · ${c.email}` : ""}{c.address ? <><br />{c.address}</> : ""}</div>
+                          </td>
+                          <td><div className="vt-items">{(o.items || []).map((it) => `${it.qty}× ${it.name}`).join(", ") || "—"}</div></td>
+                          <td><span className="vt-pay">{o.method || "—"}</span></td>
+                          <td className="vt-tot">{cop(o.total)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : <div className="vt-empty"><div className="emoji">🛍️</div><p>Cuando un cliente complete una compra, aparecerá aquí al instante.</p></div>}
+            </>
+          )}
+
+          {!hasToken && !ordersError && (
+            <div className="admin-info">Escribe tu <b>token de administrador</b> arriba y pulsa “Conectar” para ver las ventas. Es el mismo valor que configures como <b>ADMIN_TOKEN</b> en Netlify.</div>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="admin-wrap">
         <div className="admin-hdr">
           <div className="admin-title">Panel de <span>Administración</span></div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <button className="btn-g" onClick={() => setAdminView("ventas")}>📊 Ventas</button>
             <button className="btn-o" onClick={() => setAdminView("taxonomy")}>🗂️ Colecciones y aromas</button>
             <button className="btn-o" onClick={() => setAdminView("coupons")}>🎟️ Cupones</button>
             <button className="btn-o" onClick={resetCatalog}>Restaurar catálogo</button>
@@ -2388,7 +2710,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
               <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer">Para Él</a>
               <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer">Para Ella</a>
-              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
             </div>
             <div className="nav-r">
@@ -2404,7 +2725,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
               <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Él</a>
               <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Ella</a>
-              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>2 × $300.000</a>
@@ -2419,46 +2739,54 @@ export default function ReyDelAroma() {
       </nav>
 
       {view !== "admin" && searchOpen && (
-        <div className="search-bar">
-          <div className="search-inner">
-            <span className="search-ic" aria-hidden="true">🔍</span>
-            <input
-              className="search-input"
-              autoFocus
-              type="text"
-              placeholder="Buscar perfume, marca…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") submitSearch();
-                if (e.key === "Escape") { setSearch(""); setSearchOpen(false); }
-              }}
-              aria-label="Buscar productos"
-            />
-            {search && <button className="search-clear" onClick={() => setSearch("")} aria-label="Limpiar">✕</button>}
-            <button className="search-close" onClick={() => setSearchOpen(false)} aria-label="Cerrar búsqueda">Cerrar</button>
-          </div>
-          {q && (
-            <div className="search-results">
-              {searchResults.length > 0 ? (
-                <>
-                  {searchResults.map((p) => (
-                    <button key={p.id} className="sr-item" onClick={() => { openProduct(p); setSearchOpen(false); }}>
-                      <span className="sr-img">{p.image ? <img src={p.image} alt={p.name} /> : <span className="sr-noimg">🧴</span>}</span>
-                      <span className="sr-info">
-                        <span className="sr-name">{p.name}</span>
-                        <span className="sr-sub">{p.brand}{p.tag ? ` · ${FAMILY_META[p.tag]?.emoji || ""} ${p.tag}` : ""}</span>
-                      </span>
-                      <span className="sr-price">{cop(p.price)}</span>
-                    </button>
-                  ))}
-                  <button className="sr-all" onClick={submitSearch}>Ver todos los resultados de “{search.trim()}” →</button>
-                </>
-              ) : (
-                <div className="sr-empty">No encontramos perfumes para “{search.trim()}”. Prueba con otra marca o tipo de aroma.</div>
+        <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Buscar nuestro sitio">
+          <div className="search-backdrop" onClick={() => { setSearch(""); setSearchOpen(false); }} />
+          <div className="search-panel">
+            <div className="search-panel-inner">
+              <div className="search-panel-head">
+                <span className="search-panel-title">Buscar nuestro sitio</span>
+                <button className="search-panel-x" onClick={() => { setSearch(""); setSearchOpen(false); }} aria-label="Cerrar búsqueda">✕</button>
+              </div>
+              <div className="search-field">
+                <input
+                  className="search-input"
+                  autoFocus
+                  type="text"
+                  placeholder="Buscar"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") submitSearch();
+                    if (e.key === "Escape") { setSearch(""); setSearchOpen(false); }
+                  }}
+                  aria-label="Buscar productos"
+                />
+                {search && <button className="search-clear" onClick={() => setSearch("")} aria-label="Limpiar">✕</button>}
+                <span className="search-ic" aria-hidden="true">🔍</span>
+              </div>
+              {q && (
+                <div className="search-results">
+                  {searchResults.length > 0 ? (
+                    <>
+                      {searchResults.map((p) => (
+                        <button key={p.id} className="sr-item" onClick={() => { openProduct(p); setSearchOpen(false); }}>
+                          <span className="sr-img">{p.image ? <img src={p.image} alt={p.name} /> : <span className="sr-noimg">🧴</span>}</span>
+                          <span className="sr-info">
+                            <span className="sr-name">{p.name}</span>
+                            <span className="sr-sub">{p.brand}{p.tag ? ` · ${FAMILY_META[p.tag]?.emoji || ""} ${p.tag}` : ""}</span>
+                          </span>
+                          <span className="sr-price">{cop(p.price)}</span>
+                        </button>
+                      ))}
+                      <button className="sr-all" onClick={submitSearch}>Ver todos los resultados de “{search.trim()}” →</button>
+                    </>
+                  ) : (
+                    <div className="sr-empty">No encontramos perfumes para “{search.trim()}”. Prueba con otra marca o tipo de aroma.</div>
+                  )}
+                </div>
               )}
             </div>
-          )}
+          </div>
         </div>
       )}
 
