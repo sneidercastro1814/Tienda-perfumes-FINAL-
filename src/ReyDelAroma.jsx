@@ -989,7 +989,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cat-tab-home:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 
 /* Barra de herramientas (volver + ordenar) */
-.catpage-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 16px; max-width: 1180px; margin: 0 auto; padding: 30px 52px 0; flex-wrap: wrap; }
+.catpage-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 16px; max-width: 1180px; margin: 0 auto; padding: 18px 52px 0; flex-wrap: wrap; }
+.catpage-toolbar + .products-wrap { padding-top: 22px; }
 .catpage-back { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 11px 20px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
 .catpage-back:hover { border-color: var(--gold); color: var(--gold-d); transform: translateX(-2px); }
 
@@ -997,9 +998,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .catpage-hero { min-height: 268px; }
   .catpage-title { font-size: 42px; }
   .catpage-desc { font-size: 14px; }
-  .cat-tabs { padding: 14px 16px; gap: 8px; top: 64px; }
-  .cat-tab { font-size: 11.5px; padding: 9px 14px; }
-  .catpage-toolbar { padding: 22px 16px 0; gap: 12px; }
+  .cat-tabs { display: none; }
+  .catpage { padding-top: 8px; }
+  .catpage-toolbar { padding: 14px 16px 0; gap: 10px; justify-content: flex-start; }
+  .catpage-toolbar .sort-lbl { display: inline-block; }
 }
 @media (max-width: 480px) {
   .catpage-title { font-size: 33px; }
@@ -1945,16 +1947,6 @@ export default function ReyDelAroma() {
           ))}
         </div>
 
-        {/* Barra: ordenar */}
-        <div className="catpage-toolbar">
-          <div className="sort-ctrl">
-            <span className="sort-lbl">Ordenar</span>
-            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
-              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-            </select>
-          </div>
-        </div>
-
         {/* Filtro por familia olfativa (tipo de aroma) */}
         <div className="filters fam-filters">
           <span className="fam-label">Tipo de aroma</span>
@@ -1964,6 +1956,16 @@ export default function ReyDelAroma() {
               <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
             </button>
           ))}
+        </div>
+
+        {/* Barra: ordenar (debajo de los tipos de aroma) */}
+        <div className="catpage-toolbar">
+          <div className="sort-ctrl">
+            <span className="sort-lbl">Ordenar</span>
+            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
+              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </div>
         </div>
 
         {/* Productos de la categoría */}
