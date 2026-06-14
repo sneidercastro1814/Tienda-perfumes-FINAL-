@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, TAGS_BY_SLUG, COLLECTIONS } from "./data/products";
+import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, COLLECTIONS } from "./data/products";
 import banner1 from "./assets/banners/banner-1.jpg";
 import banner2 from "./assets/banners/banner-2.jpg";
 import banner3 from "./assets/banners/banner-3.jpg";
@@ -68,27 +68,6 @@ const FAMILY_META = {
   "Acuático":  { emoji: "🌊", hint: "Marino, fresco, limpio" },
   "Aromático": { emoji: "🌿", hint: "Lavanda, hierbas, fougère" },
 };
-
-/* Aromas de un perfume: hasta 3. Soporta el formato nuevo (tags: []) y
-   el antiguo (tag: "") para no romper productos ya guardados. */
-function getAromas(p) {
-  if (Array.isArray(p?.tags) && p.tags.length) return p.tags.filter(Boolean).slice(0, 3);
-  if (p?.tag) return [p.tag];
-  return [];
-}
-
-/* Chips de aroma bonitos para las tarjetas de producto */
-function AromaChips({ p, limit = 3 }) {
-  const aromas = getAromas(p).slice(0, limit);
-  if (!aromas.length) return null;
-  return (
-    <div className="pcard-aromas">
-      {aromas.map((a) => (
-        <span key={a} className="aroma-chip"><span className="ce">{FAMILY_META[a]?.emoji || "✨"}</span>{a}</span>
-      ))}
-    </div>
-  );
-}
 
 /* ════════════════════════════════════════════════════════════════
    MÉTODOS DE PAGO
@@ -288,8 +267,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .mobile-menu .nl:hover, .mobile-menu .nl.act { background: rgba(201,168,76,0.05); color: var(--gold); }
 
 /* ── CARRUSEL HERO (ancho completo, de borde a borde, sin franjas blancas) ── */
-.hero-carousel { padding: 26px 52px 20px; background: var(--bg); position: relative; }
-.hc-viewport { position: relative; z-index: 1; width: 100%; max-width: 1300px; margin: 0 auto; overflow: hidden; background: #0a0a09; border: 1px solid rgba(201,168,76,0.42); border-radius: 18px; box-shadow: 0 30px 70px -38px rgba(0,0,0,0.6); aspect-ratio: 1350 / 714; }
+.hero-carousel { padding: 0 0 16px; background: var(--bg); position: relative; }
+.hc-viewport { position: relative; z-index: 1; width: 100%; margin: 0; overflow: hidden; background: #0a0a09; border-bottom: 1px solid rgba(201,168,76,0.42); box-shadow: 0 26px 60px -34px rgba(0,0,0,0.55); aspect-ratio: 1350 / 714; max-height: 720px; }
 .hc-track { display: flex; height: 100%; transition: transform 0.85s cubic-bezier(.45,0,.15,1); }
 .hc-slide { position: relative; min-width: 100%; height: 100%; border: none; padding: 0; margin: 0; cursor: pointer; background: #0a0a09; display: block; overflow: hidden; }
 /* banner COMPLETO: llena todo el marco sin fondo difuminado */
@@ -353,11 +332,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
 .pcard:hover .pcard-name { color: var(--gold-d); }
-.pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 10px; min-height: 11px; }
-.pcard-aromas { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 13px; }
-.aroma-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid rgba(201,168,76,0.30); padding: 4px 9px 4px 8px; border-radius: 999px; white-space: nowrap; line-height: 1; transition: background 0.25s, border-color 0.25s; }
-.aroma-chip .ce { font-size: 11.5px; }
-.pcard:hover .aroma-chip { border-color: rgba(201,168,76,0.55); background: rgba(201,168,76,0.17); }
+.pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; min-height: 11px; }
 .pcard-price { font-family: var(--serif); font-size: 25px; font-weight: 500; color: var(--gold-d); }
 .pcard-curr { font-size: 13px; opacity: 0.5; font-family: var(--sans); font-weight: 300; letter-spacing: 1px; }
 .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid rgba(0,0,0,0.07); }
@@ -379,8 +354,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .prow-arrow { position: absolute; top: 38%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; background: #fff; border: 1px solid var(--border); color: var(--text); font-size: 24px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; box-shadow: 0 8px 24px rgba(0,0,0,0.14); transition: all 0.25s; }
 .prow-arrow:hover { background: var(--gold); color: #1a1208; border-color: var(--gold); }
 .prow-prev { left: -10px; } .prow-next { right: -10px; }
-@media (max-width: 768px) { .prow { padding: 30px 20px 4px; } .prow-title { font-size: 23px; } .prow-card { width: 200px; } .prow-track { gap: 14px; padding: 14px 2px 22px; } .prow-arrow { display: flex; width: 38px; height: 38px; font-size: 21px; top: 31%; box-shadow: 0 5px 16px rgba(0,0,0,0.2); } .prow-prev { left: 2px; } .prow-next { right: 2px; } }
-@media (max-width: 480px) { .prow-card { width: 168px; } .prow { padding: 26px 16px 4px; } .prow-arrow { width: 34px; height: 34px; font-size: 19px; } }
+@media (max-width: 768px) { .prow { padding: 30px 16px 4px; } .prow-title { font-size: 23px; } .prow-card { width: 200px; } .prow-arrow { display: none; } }
+@media (max-width: 480px) { .prow-card { width: 168px; } }
 .empty-state { grid-column: 1/-1; text-align: center; padding: 100px; color: var(--text-muted); }
 .empty-state-icon { font-size: 56px; margin-bottom: 18px; opacity: 0.25; }
 
@@ -409,7 +384,6 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-promo span { font-size: 13px; color: var(--text-dim); letter-spacing: 0.4px; }
 .pd-desc { font-size: 14.5px; color: var(--text-dim); line-height: 2; padding: 2px 0 24px; border-bottom: 1px solid rgba(0,0,0,0.08); margin-bottom: 30px; font-weight: 400; }
 .pd-aroma { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: -8px 0 30px; }
-.pd-aroma-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .pd-aroma-k { font-size: 11px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
 .pd-aroma-v { display: inline-flex; align-items: center; gap: 6px; font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--text); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 7px 16px; border-radius: 999px; }
 .pd-sec-t { font-size: 11px; font-weight: 600; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
@@ -501,14 +475,6 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .fg { display: flex; flex-direction: column; gap: 8px; }
 .fg.full { grid-column: 1/-1; }
 .fl { font-size: 11px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
-.fl-hint { font-weight: 400; letter-spacing: 0.5px; text-transform: none; color: var(--text-muted); font-size: 11px; }
-.aroma-picker { display: flex; flex-wrap: wrap; gap: 8px; }
-.aroma-pick { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--text); background: var(--bg); border: 1px solid var(--border); padding: 9px 14px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
-.aroma-pick:hover { border-color: var(--gold); color: var(--gold-d); transform: translateY(-1px); }
-.aroma-pick.on { background: linear-gradient(135deg, var(--gold-l), var(--gold)); border-color: var(--gold); color: #1a1208; box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
-.aroma-pick .ce { font-size: 14px; line-height: 1; }
-.aroma-pick .ck { font-weight: 800; margin-left: 1px; }
-.aroma-pick-count { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; letter-spacing: 0.5px; }
 .fi, .fsel, .fta { background: var(--bg3); border: 1px solid rgba(0,0,0,0.1); color: var(--text); padding: 13px 16px; font-size: 15px; outline: none; transition: border-color 0.25s; width: 100%; font-family: var(--sans); font-weight: 300; }
 .fi:focus, .fsel:focus, .fta:focus { border-color: rgba(201,168,76,0.5); }
 .fta { resize: vertical; min-height: 84px; }
@@ -602,7 +568,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ════════ RESPONSIVE ════════ */
 @media (max-width: 1200px) {
   .nav { padding: 0 32px; }
-  .hero-carousel { padding: 22px 32px 16px; }
+  .hero-carousel { padding: 0 0 8px; }
   .featured { padding: 24px 32px 6px; }
   .products-wrap { padding: 48px 32px 72px; }
   .filters { padding: 0 32px; }
@@ -634,11 +600,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .ann-i { padding: 0 24px; }
   .announce::before, .announce::after { width: 50px; }
 
-  .hero-carousel { padding: 14px 14px 10px; }
-  .hc-viewport { border-radius: 14px; }
-  .hc-arrow { width: 38px; height: 38px; font-size: 21px; }
-  .hc-prev { left: 10px; } .hc-next { right: 10px; }
-  .hc-dots { bottom: 10px; padding: 6px 12px; }
+  .hero-carousel { padding: 0 0 8px; }
+  .hc-arrow { width: 40px; height: 40px; font-size: 22px; }
+  .hc-prev { left: 12px; } .hc-next { right: 12px; }
+  .hc-dots { bottom: 12px; padding: 6px 12px; }
 
   .featured { padding: 24px 16px 6px; gap: 22px 18px; }
   .feat-badge { width: 42%; min-width: 120px; }
@@ -823,7 +788,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .search-input::placeholder { color: #9d9d98; font-weight: 400; }
 .search-clear { background: none; border: none; color: #9d9d98; font-size: 16px; cursor: pointer; flex-shrink: 0; padding: 2px 6px; line-height: 1; transition: color 0.2s; }
 .search-clear:hover { color: #161616; }
-.search-ic { font-size: 21px; flex-shrink: 0; line-height: 1; }
+.search-ic { flex-shrink: 0; line-height: 1; display: inline-flex; align-items: center; color: var(--gold); }
+.search-ic svg { width: 22px; height: 22px; display: block; }
 @media (max-width: 768px) { .search-panel { padding: 16px 16px 20px; } .search-panel-title { font-size: 17px; } .search-input { font-size: 16px; } }
 
 /* ── SUSCRIPCIÓN (franja al final de la página, sin popup) ── */
@@ -1023,8 +989,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cat-tab-home:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 
 /* Barra de herramientas (volver + ordenar) */
-.catpage-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 16px; max-width: 1180px; margin: 0 auto; padding: 18px 52px 0; flex-wrap: wrap; }
-.catpage-toolbar + .products-wrap { padding-top: 22px; }
+.catpage-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 16px; max-width: 1180px; margin: 0 auto; padding: 30px 52px 0; flex-wrap: wrap; }
 .catpage-back { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 11px 20px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
 .catpage-back:hover { border-color: var(--gold); color: var(--gold-d); transform: translateX(-2px); }
 
@@ -1032,10 +997,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .catpage-hero { min-height: 268px; }
   .catpage-title { font-size: 42px; }
   .catpage-desc { font-size: 14px; }
-  .cat-tabs { display: none; }
-  .catpage { padding-top: 8px; }
-  .catpage-toolbar { padding: 14px 16px 0; gap: 10px; justify-content: flex-start; }
-  .catpage-toolbar .sort-lbl { display: inline-block; }
+  .cat-tabs { padding: 14px 16px; gap: 8px; top: 64px; }
+  .cat-tab { font-size: 11.5px; padding: 9px 14px; }
+  .catpage-toolbar { padding: 22px 16px 0; gap: 12px; }
 }
 @media (max-width: 480px) {
   .catpage-title { font-size: 33px; }
@@ -1094,13 +1058,13 @@ const PayBadges = ({ className = "" }) => (
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
   category: "Para Él", collection: "Árabes", promo: false,
-  tag: "", tags: [], description: "", image: "",
+  tag: "", description: "", image: "",
 };
 
-const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Unisex", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
+const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
 
 /* Pestañas que abren su propia página al hacer clic (orden de aparición) */
-const CATEGORY_TABS = ["Para Él", "Para Ella", "Unisex", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
+const CATEGORY_TABS = ["Para Él", "Para Ella", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
 
 /* Contenido del encabezado (hero) de cada página de categoría.
    La imagen se usa como fondo del banner; el resto es texto editable. */
@@ -1193,7 +1157,6 @@ function loadInitialProducts() {
           ...p,
           image: (p.img && imageForFile(p.img)) || p.image || "",
           tag: p.tag || TAG_BY_SLUG[p.slug] || "",
-          tags: (Array.isArray(p.tags) && p.tags.length) ? p.tags : (TAGS_BY_SLUG[p.slug] || (p.tag ? [p.tag] : [])),
         }));
       }
     }
@@ -1502,10 +1465,10 @@ export default function ReyDelAroma() {
   const q = search.trim().toLowerCase();
   const matched = q
     ? products.filter((p) =>
-        [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, ...getAromas(p)]
+        [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, p.tag]
           .filter(Boolean).join(" ").toLowerCase().includes(q)
       )
-    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || getAromas(p).includes(tagFilter)));
+    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter));
   const filtered = sortProducts(matched, sortBy);
 
   // Resultados en vivo bajo la lupa (primeros 6 mientras el cliente escribe)
@@ -1638,7 +1601,7 @@ export default function ReyDelAroma() {
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Para Él", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", tags: getAromas(p), description: p.description || "", image: p.image || "", img: p.img || "" });
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Para Él", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "" });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
@@ -1663,8 +1626,7 @@ export default function ReyDelAroma() {
       category: form.category,
       collection: form.collection,
       promo: form.promo ? PROMO_LABEL : "",
-      tags: (form.tags || []).filter(Boolean).slice(0, 3),
-      tag: (form.tags && form.tags[0]) || form.tag || "",
+      tag: form.tag || "",
       description: form.description.trim(),
       image: form.image || "",
       img: form.img || "",
@@ -1679,12 +1641,6 @@ export default function ReyDelAroma() {
     setAdminView("list");
   };
   const setF = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
-  const toggleAroma = (fam) => {
-    const cur = Array.isArray(form.tags) ? form.tags : (form.tag ? [form.tag] : []);
-    if (cur.includes(fam)) { setForm((f) => ({ ...f, tags: (f.tags || []).filter((x) => x !== fam) })); return; }
-    if (cur.length >= 3) { showToast("Máximo 3 aromas por perfume"); return; }
-    setForm((f) => { const c = Array.isArray(f.tags) ? f.tags : (f.tag ? [f.tag] : []); return { ...f, tags: [...c, fam] }; });
-  };
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1886,7 +1842,6 @@ export default function ReyDelAroma() {
                 <div className="pcard-cat">{p.brand}</div>
                 <div className="pcard-name">{p.name}</div>
                 <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                <AromaChips p={p} />
                 <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
               </div>
               <div className="pcard-foot">
@@ -1925,7 +1880,6 @@ export default function ReyDelAroma() {
                     <div className="pcard-cat">{p.brand}</div>
                     <div className="pcard-name">{p.name}</div>
                     <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                    <AromaChips p={p} />
                     <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
                   </div>
                   <div className="pcard-foot">
@@ -1991,6 +1945,16 @@ export default function ReyDelAroma() {
           ))}
         </div>
 
+        {/* Barra: ordenar */}
+        <div className="catpage-toolbar">
+          <div className="sort-ctrl">
+            <span className="sort-lbl">Ordenar</span>
+            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
+              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </div>
+        </div>
+
         {/* Filtro por familia olfativa (tipo de aroma) */}
         <div className="filters fam-filters">
           <span className="fam-label">Tipo de aroma</span>
@@ -2000,16 +1964,6 @@ export default function ReyDelAroma() {
               <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
             </button>
           ))}
-        </div>
-
-        {/* Barra: ordenar (debajo de los tipos de aroma) */}
-        <div className="catpage-toolbar">
-          <div className="sort-ctrl">
-            <span className="sort-lbl">Ordenar</span>
-            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
-              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-            </select>
-          </div>
         </div>
 
         {/* Productos de la categoría */}
@@ -2029,7 +1983,6 @@ export default function ReyDelAroma() {
                   <div className="pcard-cat">{p.brand}</div>
                   <div className="pcard-name">{p.name}</div>
                   <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                  <AromaChips p={p} />
                   <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
                 </div>
                 <div className="pcard-foot">
@@ -2121,14 +2074,10 @@ export default function ReyDelAroma() {
             <div className="pd-sec-t">Sobre la fragancia</div>
             <div className="pd-desc">{p.description || describe(p)}</div>
 
-            {getAromas(p).length > 0 && (
+            {p.tag && (
               <div className="pd-aroma">
-                <span className="pd-aroma-k">{getAromas(p).length > 1 ? "Familias olfativas" : "Tipo de aroma"}</span>
-                <div className="pd-aroma-list">
-                  {getAromas(p).map((a) => (
-                    <span key={a} className="pd-aroma-v">{FAMILY_META[a]?.emoji || "✨"} {a}</span>
-                  ))}
-                </div>
+                <span className="pd-aroma-k">Tipo de aroma</span>
+                <span className="pd-aroma-v">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</span>
               </div>
             )}
 
@@ -2381,19 +2330,14 @@ export default function ReyDelAroma() {
                 ))}
               </select>
             </div>
-            <div className="fg full">
-              <label className="fl">Tipos de aroma <span className="fl-hint">— elige hasta 3</span></label>
-              <div className="aroma-picker">
-                {aromaList.map((fam) => {
-                  const sel = (form.tags || []).includes(fam);
-                  return (
-                    <button type="button" key={fam} className={`aroma-pick${sel ? " on" : ""}`} onClick={() => toggleAroma(fam)}>
-                      <span className="ce">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}{sel && <span className="ck">✓</span>}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="aroma-pick-count">{(form.tags || []).length}/3 seleccionados</div>
+            <div className="fg">
+              <label className="fl">Tipo de aroma</label>
+              <select className="fsel" value={form.tag} onChange={setF("tag")}>
+                <option value="">— Sin etiqueta —</option>
+                {aromaList.map((fam) => (
+                  <option key={fam} value={fam}>{FAMILY_META[fam]?.emoji || "✨"} {fam}</option>
+                ))}
+              </select>
             </div>
             <div className="fg">
               <label className="fl">Promoción</label>
@@ -2767,7 +2711,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
               <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer">Para Él</a>
               <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer">Para Ella</a>
-              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
             </div>
             <div className="nav-r">
@@ -2783,7 +2726,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
               <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Él</a>
               <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Ella</a>
-              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>2 × $300.000</a>
@@ -2821,7 +2763,12 @@ export default function ReyDelAroma() {
                   aria-label="Buscar productos"
                 />
                 {search && <button className="search-clear" onClick={() => setSearch("")} aria-label="Limpiar">✕</button>}
-                <span className="search-ic" aria-hidden="true">🔍</span>
+                <span className="search-ic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                    <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </span>
               </div>
               {q && (
                 <div className="search-results">
@@ -2832,7 +2779,7 @@ export default function ReyDelAroma() {
                           <span className="sr-img">{p.image ? <img src={p.image} alt={p.name} /> : <span className="sr-noimg">🧴</span>}</span>
                           <span className="sr-info">
                             <span className="sr-name">{p.name}</span>
-                            <span className="sr-sub">{p.brand}{getAromas(p).length ? ` · ${getAromas(p).map((a) => `${FAMILY_META[a]?.emoji || "✨"} ${a}`).join("  ")}` : ""}</span>
+                            <span className="sr-sub">{p.brand}{p.tag ? ` · ${FAMILY_META[p.tag]?.emoji || ""} ${p.tag}` : ""}</span>
                           </span>
                           <span className="sr-price">{cop(p.price)}</span>
                         </button>
