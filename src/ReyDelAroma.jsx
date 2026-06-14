@@ -69,6 +69,27 @@ const FAMILY_META = {
   "Aromático": { emoji: "🌿", hint: "Lavanda, hierbas, fougère" },
 };
 
+/* Aromas de un perfume: hasta 3. Soporta el formato nuevo (tags: []) y
+   el antiguo (tag: "") para no romper productos ya guardados. */
+function getAromas(p) {
+  if (Array.isArray(p?.tags) && p.tags.length) return p.tags.filter(Boolean).slice(0, 3);
+  if (p?.tag) return [p.tag];
+  return [];
+}
+
+/* Chips de aroma bonitos para las tarjetas de producto */
+function AromaChips({ p, limit = 3 }) {
+  const aromas = getAromas(p).slice(0, limit);
+  if (!aromas.length) return null;
+  return (
+    <div className="pcard-aromas">
+      {aromas.map((a) => (
+        <span key={a} className="aroma-chip"><span className="ce">{FAMILY_META[a]?.emoji || "✨"}</span>{a}</span>
+      ))}
+    </div>
+  );
+}
+
 /* ════════════════════════════════════════════════════════════════
    MÉTODOS DE PAGO
    Los valores PÚBLICOS vienen de variables de entorno (VITE_...).
@@ -332,7 +353,11 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
 .pcard:hover .pcard-name { color: var(--gold-d); }
-.pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; min-height: 11px; }
+.pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 10px; min-height: 11px; }
+.pcard-aromas { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 13px; }
+.aroma-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid rgba(201,168,76,0.30); padding: 4px 9px 4px 8px; border-radius: 999px; white-space: nowrap; line-height: 1; transition: background 0.25s, border-color 0.25s; }
+.aroma-chip .ce { font-size: 11.5px; }
+.pcard:hover .aroma-chip { border-color: rgba(201,168,76,0.55); background: rgba(201,168,76,0.17); }
 .pcard-price { font-family: var(--serif); font-size: 25px; font-weight: 500; color: var(--gold-d); }
 .pcard-curr { font-size: 13px; opacity: 0.5; font-family: var(--sans); font-weight: 300; letter-spacing: 1px; }
 .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid rgba(0,0,0,0.07); }
@@ -384,6 +409,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-promo span { font-size: 13px; color: var(--text-dim); letter-spacing: 0.4px; }
 .pd-desc { font-size: 14.5px; color: var(--text-dim); line-height: 2; padding: 2px 0 24px; border-bottom: 1px solid rgba(0,0,0,0.08); margin-bottom: 30px; font-weight: 400; }
 .pd-aroma { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: -8px 0 30px; }
+.pd-aroma-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .pd-aroma-k { font-size: 11px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
 .pd-aroma-v { display: inline-flex; align-items: center; gap: 6px; font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--text); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 7px 16px; border-radius: 999px; }
 .pd-sec-t { font-size: 11px; font-weight: 600; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
@@ -475,6 +501,14 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .fg { display: flex; flex-direction: column; gap: 8px; }
 .fg.full { grid-column: 1/-1; }
 .fl { font-size: 11px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+.fl-hint { font-weight: 400; letter-spacing: 0.5px; text-transform: none; color: var(--text-muted); font-size: 11px; }
+.aroma-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.aroma-pick { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--text); background: var(--bg); border: 1px solid var(--border); padding: 9px 14px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+.aroma-pick:hover { border-color: var(--gold); color: var(--gold-d); transform: translateY(-1px); }
+.aroma-pick.on { background: linear-gradient(135deg, var(--gold-l), var(--gold)); border-color: var(--gold); color: #1a1208; box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
+.aroma-pick .ce { font-size: 14px; line-height: 1; }
+.aroma-pick .ck { font-weight: 800; margin-left: 1px; }
+.aroma-pick-count { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; letter-spacing: 0.5px; }
 .fi, .fsel, .fta { background: var(--bg3); border: 1px solid rgba(0,0,0,0.1); color: var(--text); padding: 13px 16px; font-size: 15px; outline: none; transition: border-color 0.25s; width: 100%; font-family: var(--sans); font-weight: 300; }
 .fi:focus, .fsel:focus, .fta:focus { border-color: rgba(201,168,76,0.5); }
 .fta { resize: vertical; min-height: 84px; }
@@ -1060,7 +1094,7 @@ const PayBadges = ({ className = "" }) => (
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
   category: "Para Él", collection: "Árabes", promo: false,
-  tag: "", description: "", image: "",
+  tag: "", tags: [], description: "", image: "",
 };
 
 const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Unisex", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
@@ -1467,10 +1501,10 @@ export default function ReyDelAroma() {
   const q = search.trim().toLowerCase();
   const matched = q
     ? products.filter((p) =>
-        [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, p.tag]
+        [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, ...getAromas(p)]
           .filter(Boolean).join(" ").toLowerCase().includes(q)
       )
-    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter));
+    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || getAromas(p).includes(tagFilter)));
   const filtered = sortProducts(matched, sortBy);
 
   // Resultados en vivo bajo la lupa (primeros 6 mientras el cliente escribe)
@@ -1603,7 +1637,7 @@ export default function ReyDelAroma() {
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Para Él", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "" });
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Para Él", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", tags: getAromas(p), description: p.description || "", image: p.image || "", img: p.img || "" });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
@@ -1628,7 +1662,8 @@ export default function ReyDelAroma() {
       category: form.category,
       collection: form.collection,
       promo: form.promo ? PROMO_LABEL : "",
-      tag: form.tag || "",
+      tags: (form.tags || []).filter(Boolean).slice(0, 3),
+      tag: (form.tags && form.tags[0]) || form.tag || "",
       description: form.description.trim(),
       image: form.image || "",
       img: form.img || "",
@@ -1643,6 +1678,12 @@ export default function ReyDelAroma() {
     setAdminView("list");
   };
   const setF = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const toggleAroma = (fam) => {
+    const cur = Array.isArray(form.tags) ? form.tags : (form.tag ? [form.tag] : []);
+    if (cur.includes(fam)) { setForm((f) => ({ ...f, tags: (f.tags || []).filter((x) => x !== fam) })); return; }
+    if (cur.length >= 3) { showToast("Máximo 3 aromas por perfume"); return; }
+    setForm((f) => { const c = Array.isArray(f.tags) ? f.tags : (f.tag ? [f.tag] : []); return { ...f, tags: [...c, fam] }; });
+  };
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1844,6 +1885,7 @@ export default function ReyDelAroma() {
                 <div className="pcard-cat">{p.brand}</div>
                 <div className="pcard-name">{p.name}</div>
                 <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+                <AromaChips p={p} />
                 <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
               </div>
               <div className="pcard-foot">
@@ -1882,6 +1924,7 @@ export default function ReyDelAroma() {
                     <div className="pcard-cat">{p.brand}</div>
                     <div className="pcard-name">{p.name}</div>
                     <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+                    <AromaChips p={p} />
                     <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
                   </div>
                   <div className="pcard-foot">
@@ -1985,6 +2028,7 @@ export default function ReyDelAroma() {
                   <div className="pcard-cat">{p.brand}</div>
                   <div className="pcard-name">{p.name}</div>
                   <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+                  <AromaChips p={p} />
                   <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
                 </div>
                 <div className="pcard-foot">
@@ -2076,10 +2120,14 @@ export default function ReyDelAroma() {
             <div className="pd-sec-t">Sobre la fragancia</div>
             <div className="pd-desc">{p.description || describe(p)}</div>
 
-            {p.tag && (
+            {getAromas(p).length > 0 && (
               <div className="pd-aroma">
-                <span className="pd-aroma-k">Tipo de aroma</span>
-                <span className="pd-aroma-v">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</span>
+                <span className="pd-aroma-k">{getAromas(p).length > 1 ? "Familias olfativas" : "Tipo de aroma"}</span>
+                <div className="pd-aroma-list">
+                  {getAromas(p).map((a) => (
+                    <span key={a} className="pd-aroma-v">{FAMILY_META[a]?.emoji || "✨"} {a}</span>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -2332,14 +2380,19 @@ export default function ReyDelAroma() {
                 ))}
               </select>
             </div>
-            <div className="fg">
-              <label className="fl">Tipo de aroma</label>
-              <select className="fsel" value={form.tag} onChange={setF("tag")}>
-                <option value="">— Sin etiqueta —</option>
-                {aromaList.map((fam) => (
-                  <option key={fam} value={fam}>{FAMILY_META[fam]?.emoji || "✨"} {fam}</option>
-                ))}
-              </select>
+            <div className="fg full">
+              <label className="fl">Tipos de aroma <span className="fl-hint">— elige hasta 3</span></label>
+              <div className="aroma-picker">
+                {aromaList.map((fam) => {
+                  const sel = (form.tags || []).includes(fam);
+                  return (
+                    <button type="button" key={fam} className={`aroma-pick${sel ? " on" : ""}`} onClick={() => toggleAroma(fam)}>
+                      <span className="ce">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}{sel && <span className="ck">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="aroma-pick-count">{(form.tags || []).length}/3 seleccionados</div>
             </div>
             <div className="fg">
               <label className="fl">Promoción</label>
@@ -2778,7 +2831,7 @@ export default function ReyDelAroma() {
                           <span className="sr-img">{p.image ? <img src={p.image} alt={p.name} /> : <span className="sr-noimg">🧴</span>}</span>
                           <span className="sr-info">
                             <span className="sr-name">{p.name}</span>
-                            <span className="sr-sub">{p.brand}{p.tag ? ` · ${FAMILY_META[p.tag]?.emoji || ""} ${p.tag}` : ""}</span>
+                            <span className="sr-sub">{p.brand}{getAromas(p).length ? ` · ${getAromas(p).map((a) => `${FAMILY_META[a]?.emoji || "✨"} ${a}`).join("  ")}` : ""}</span>
                           </span>
                           <span className="sr-price">{cop(p.price)}</span>
                         </button>
