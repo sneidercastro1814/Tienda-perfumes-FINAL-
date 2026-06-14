@@ -14,6 +14,7 @@ const RAW = [
   {
     "slug": "dior-sauvage-649999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Cítrico", "Oriental"],
     "img": "dior-sauvage-649999.jpg",
     "name": "SAUVAGE",
     "fullName": "Sauvage Dior EDP",
@@ -29,6 +30,7 @@ const RAW = [
   {
     "slug": "valentino-uomo-born-in-roma-649999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Dulce", "Cítrico"],
     "img": "valentino-uomo-born-in-roma-649999.jpg",
     "name": "UOMO BORN IN ROMA",
     "fullName": "Valentino Uomo Born In Roma EDT",
@@ -44,6 +46,7 @@ const RAW = [
   {
     "slug": "dior-sauvage-579999",
     "tag": "Aromático",
+    "tags": ["Aromático", "Cítrico", "Amaderado"],
     "img": "dior-sauvage-579999.jpg",
     "name": "SAUVAGE",
     "fullName": "Sauvage Dior EDT",
@@ -59,6 +62,7 @@ const RAW = [
   {
     "slug": "jean-paul-gaultier-le-male-elixir-479999",
     "tag": "Oriental",
+    "tags": ["Oriental", "Dulce", "Aromático"],
     "img": "jean-paul-gaultier-le-male-elixir-479999.jpg",
     "name": "LE MALE ELIXIR",
     "fullName": "Jean Paul Gaultier Le Male Elixir",
@@ -74,6 +78,7 @@ const RAW = [
   {
     "slug": "jean-paul-gaultier-le-male-479999",
     "tag": "Aromático",
+    "tags": ["Aromático", "Dulce", "Oriental"],
     "img": "jean-paul-gaultier-le-male-479999.jpg",
     "name": "LE MALE",
     "fullName": "Jean Paul Gaultier Le Male",
@@ -89,6 +94,7 @@ const RAW = [
   {
     "slug": "jean-paul-gaultier-paradise-garden-479999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Aromático", "Acuático"],
     "img": "jean-paul-gaultier-paradise-garden-479999.jpg",
     "name": "PARADISE GARDEN",
     "fullName": "Jean Paul Gaultier Paradise Garden",
@@ -104,6 +110,7 @@ const RAW = [
   {
     "slug": "ariana-grande-set-thank-u-next-399900",
     "tag": "Floral",
+    "tags": ["Floral", "Frutal", "Dulce"],
     "img": "ariana-grande-set-thank-u-next-399900.jpg",
     "name": "SET THANK U NEXT",
     "fullName": "Set Ariana Grande Thank U Next EDP 100ml",
@@ -119,6 +126,7 @@ const RAW = [
   {
     "slug": "lacoste-blanc-319999",
     "tag": "Aromático",
+    "tags": ["Aromático", "Amaderado", "Oriental"],
     "img": "lacoste-blanc-319999.jpg",
     "name": "BLANC",
     "fullName": "Lacoste Blanc EDT 100 ml",
@@ -134,6 +142,7 @@ const RAW = [
   {
     "slug": "ariana-grande-cloud-299999",
     "tag": "Dulce",
+    "tags": ["Dulce", "Frutal", "Floral"],
     "img": "ariana-grande-cloud-299999.jpg",
     "name": "CLOUD",
     "fullName": "Ariana Grande Cloud",
@@ -149,6 +158,7 @@ const RAW = [
   {
     "slug": "ariana-grande-thank-u-next-299999",
     "tag": "Floral",
+    "tags": ["Floral", "Frutal", "Dulce"],
     "img": "ariana-grande-thank-u-next-299999.jpg",
     "name": "THANK U NEXT",
     "fullName": "Ariana Grande Thank U Next",
@@ -164,6 +174,7 @@ const RAW = [
   {
     "slug": "azzaro-chrome-azure-229900",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Aromático"],
     "img": "azzaro-chrome-azure-229900.jpg",
     "name": "CHROME AZURE",
     "fullName": "Azzaro Chrome Azure EDT 100 ml",
@@ -179,6 +190,7 @@ const RAW = [
   {
     "slug": "calvin-klein-ck-in2u-229900",
     "tag": "Cítrico",
+    "tags": ["Cítrico", "Aromático", "Acuático"],
     "img": "calvin-klein-ck-in2u-229900.jpg",
     "name": "CK IN2U",
     "fullName": "Calvin Klein CK IN2U EDT 150 ml",
@@ -194,6 +206,7 @@ const RAW = [
   {
     "slug": "katy-perry-meow-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Frutal", "Dulce"],
     "img": "katy-perry-meow-190000.jpg",
     "name": "MEOW",
     "fullName": "Katy Perry Meow EDP 100 ml",
@@ -209,6 +222,7 @@ const RAW = [
   {
     "slug": "paris-hilton-gold-rush-100-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Frutal", "Dulce"],
     "img": "paris-hilton-gold-rush-100-190000.jpg",
     "name": "GOLD RUSH 100",
     "fullName": "Paris Hilton Gold Rush EDP 100",
@@ -224,6 +238,7 @@ const RAW = [
   {
     "slug": "nautica-blue-110000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Amaderado"],
     "img": "nautica-blue-110000.jpg",
     "name": "BLUE",
     "fullName": "Nautica Blue EDT 100ml",
@@ -239,6 +254,7 @@ const RAW = [
   {
     "slug": "nautica-classic-110000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Amaderado"],
     "img": "nautica-classic-110000.jpg",
     "name": "CLASSIC",
     "fullName": "Nautica Classic EDT 100ml",
@@ -254,6 +270,7 @@ const RAW = [
   {
     "slug": "nautica-voyage-110000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Amaderado"],
     "img": "nautica-voyage-110000.jpg",
     "name": "VOYAGE",
     "fullName": "Nautica Voyage EDT 100ml",
@@ -269,6 +286,7 @@ const RAW = [
   {
     "slug": "lattafa-afeef-249900",
     "tag": "Floral",
+    "tags": ["Floral", "Dulce", "Frutal"],
     "img": "lattafa-afeef-249900.jpg",
     "name": "AFEEF",
     "fullName": "Lattafa Afeef",
@@ -284,6 +302,7 @@ const RAW = [
   {
     "slug": "lattafa-asad-bourbon-249900",
     "tag": "Oriental",
+    "tags": ["Oriental", "Dulce", "Amaderado"],
     "img": "lattafa-asad-bourbon-249900.jpg",
     "name": "ASAD BOURBON",
     "fullName": "Lattafa Asad Bourbon",
@@ -299,6 +318,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-aoud-edition-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "armaf-odyssey-aoud-edition-190000.jpg",
     "name": "ODYSSEY AOUD EDITION",
     "fullName": "Armaf Odyssey Aoud Edition",
@@ -314,6 +334,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-homme-black-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "armaf-odyssey-homme-black-190000.jpg",
     "name": "ODYSSEY HOMME BLACK",
     "fullName": "Armaf Odyssey Homme Black",
@@ -329,6 +350,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-tyrant-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "armaf-odyssey-tyrant-190000.jpg",
     "name": "ODYSSEY TYRANT",
     "fullName": "Armaf Odyssey Tyrant",
@@ -344,6 +366,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-wild-one-gold-edition-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "armaf-odyssey-wild-one-gold-edition-190000.jpg",
     "name": "ODYSSEY WILD ONE GOLD EDITION",
     "fullName": "Armaf Odyssey Wild One Gold Edition",
@@ -359,6 +382,7 @@ const RAW = [
   {
     "slug": "armaf-club-de-nuit-intense-man-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Frutal", "Oriental"],
     "img": "armaf-club-de-nuit-intense-man-190000.jpg",
     "name": "CLUB DE NUIT INTENSE MAN",
     "fullName": "Club de Nuit Intense Man Armaf",
@@ -374,6 +398,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-femme-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Dulce", "Frutal"],
     "img": "armaf-odyssey-femme-190000.jpg",
     "name": "ODYSSEY FEMME",
     "fullName": "Odyssey Femme Armaf 80ml",
@@ -389,6 +414,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-mandarin-sky-190000",
     "tag": "Cítrico",
+    "tags": ["Cítrico", "Aromático", "Acuático"],
     "img": "armaf-odyssey-mandarin-sky-190000.jpg",
     "name": "ODYSSEY MANDARIN SKY",
     "fullName": "Armaf Odyssey Mandarin Sky",
@@ -404,6 +430,7 @@ const RAW = [
   {
     "slug": "emper-stallion-53-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "emper-stallion-53-190000.jpg",
     "name": "STALLION 53",
     "fullName": "Emper Stallion 53",
@@ -419,6 +446,7 @@ const RAW = [
   {
     "slug": "lattafa-ajayeb-dubai-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Frutal", "Amaderado"],
     "img": "lattafa-ajayeb-dubai-190000.jpg",
     "name": "AJAYEB DUBAI",
     "fullName": "Lattafa Ajayeb Dubai",
@@ -434,6 +462,7 @@ const RAW = [
   {
     "slug": "lattafa-asad-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Dulce", "Amaderado"],
     "img": "lattafa-asad-190000.jpg",
     "name": "ASAD",
     "fullName": "Lattafa Asad",
@@ -449,6 +478,7 @@ const RAW = [
   {
     "slug": "lattafa-asad-zanzibar-190000",
     "tag": "Aromático",
+    "tags": ["Aromático", "Dulce", "Amaderado"],
     "img": "lattafa-asad-zanzibar-190000.jpg",
     "name": "ASAD ZANZIBAR",
     "fullName": "Lattafa Asad Zanzibar",
@@ -464,6 +494,7 @@ const RAW = [
   {
     "slug": "lattafa-yara-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Floral", "Amaderado"],
     "img": "lattafa-yara-190000.jpg",
     "name": "YARA",
     "fullName": "Lattafa Yara",
@@ -479,6 +510,7 @@ const RAW = [
   {
     "slug": "lattafa-yara-candy-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Floral", "Amaderado"],
     "img": "lattafa-yara-candy-190000.jpg",
     "name": "YARA CANDY",
     "fullName": "Lattafa Yara Candy",
@@ -494,6 +526,7 @@ const RAW = [
   {
     "slug": "lattafa-yara-moi-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Floral", "Amaderado"],
     "img": "lattafa-yara-moi-190000.jpg",
     "name": "YARA MOI",
     "fullName": "Lattafa Yara Moi",
@@ -509,6 +542,7 @@ const RAW = [
   {
     "slug": "lattafa-yara-tous-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Floral", "Amaderado"],
     "img": "lattafa-yara-tous-190000.jpg",
     "name": "YARA TOUS",
     "fullName": "Lattafa Yara Tous",
@@ -524,6 +558,7 @@ const RAW = [
   {
     "slug": "lattafa-ana-abiyedh-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Frutal"],
     "img": "lattafa-ana-abiyedh-190000.jpg",
     "name": "ANA ABIYEDH",
     "fullName": "Ana Abiyedh Lattafa 60ml",
@@ -539,6 +574,7 @@ const RAW = [
   {
     "slug": "lattafa-ana-abiyedh-leather-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "lattafa-ana-abiyedh-leather-190000.jpg",
     "name": "ANA ABIYEDH LEATHER",
     "fullName": "Ana Abiyedh Leather Lattafa 60ml",
@@ -554,6 +590,7 @@ const RAW = [
   {
     "slug": "lattafa-sublime-190000",
     "tag": "Frutal",
+    "tags": ["Frutal", "Dulce", "Floral"],
     "img": "lattafa-sublime-190000.jpg",
     "name": "SUBLIME",
     "fullName": "LATTAFA SUBLIME",
@@ -569,6 +606,7 @@ const RAW = [
   {
     "slug": "lattafa-ajayeb-dubai-portrait-190000",
     "tag": "Frutal",
+    "tags": ["Frutal", "Amaderado", "Dulce"],
     "img": "lattafa-ajayeb-dubai-portrait-190000.jpg",
     "name": "AJAYEB DUBAI PORTRAIT",
     "fullName": "Lattafa Ajayeb Dubai Portrait",
@@ -584,6 +622,7 @@ const RAW = [
   {
     "slug": "lattafa-amethyst-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "lattafa-amethyst-190000.jpg",
     "name": "AMETHYST",
     "fullName": "Lattafa Amethyst",
@@ -599,6 +638,7 @@ const RAW = [
   {
     "slug": "lattafa-honor-glory-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "lattafa-honor-glory-190000.jpg",
     "name": "HONOR & GLORY",
     "fullName": "Lattafa Honor & Glory",
@@ -614,6 +654,7 @@ const RAW = [
   {
     "slug": "lattafa-khamrah-dukhan-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "lattafa-khamrah-dukhan-190000.jpg",
     "name": "KHAMRAH DUKHAN",
     "fullName": "Lattafa Khamrah Dukhan",
@@ -629,6 +670,7 @@ const RAW = [
   {
     "slug": "lattafa-khamrah-qahwa-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Amaderado"],
     "img": "lattafa-khamrah-qahwa-190000.jpg",
     "name": "KHAMRAH QAHWA",
     "fullName": "Lattafa Khamrah Qahwa",
@@ -644,6 +686,7 @@ const RAW = [
   {
     "slug": "lattafa-khamrah-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Amaderado"],
     "img": "lattafa-khamrah-190000.jpg",
     "name": "KHAMRAH",
     "fullName": "Lattafa Khamrah",
@@ -659,6 +702,7 @@ const RAW = [
   {
     "slug": "lattafa-oud-for-glory-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Dulce"],
     "img": "lattafa-oud-for-glory-190000.jpg",
     "name": "OUD FOR GLORY",
     "fullName": "Lattafa Oud for Glory",
@@ -674,6 +718,7 @@ const RAW = [
   {
     "slug": "maison-alhambra-delilah-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Dulce", "Frutal"],
     "img": "maison-alhambra-delilah-190000.jpg",
     "name": "DELILAH",
     "fullName": "Maison Alhambra Delilah",
@@ -689,6 +734,7 @@ const RAW = [
   {
     "slug": "le-labo-santal-33-edp-100ml-1849999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "le-labo-santal-33-edp-100ml-1849999.jpg",
     "name": "SANTAL 33",
     "fullName": "Le Labo Santal 33 EDP 100ml",
@@ -704,6 +750,7 @@ const RAW = [
   {
     "slug": "bleu-de-chanel-edp-100ml-849999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Cítrico", "Oriental"],
     "img": "bleu-de-chanel-edp-100ml-849999.jpg",
     "name": "BLEU DE CHANEL",
     "fullName": "Bleu De Chanel EDP 100ml",
@@ -719,6 +766,7 @@ const RAW = [
   {
     "slug": "bleu-de-chanel-edt-100ml-749999",
     "tag": "Aromático",
+    "tags": ["Aromático", "Cítrico", "Amaderado"],
     "img": "bleu-de-chanel-edt-100ml-749999.jpg",
     "name": "BLEU DE CHANEL",
     "fullName": "Bleu De Chanel EDT 100ml",
@@ -734,6 +782,7 @@ const RAW = [
   {
     "slug": "dior-homme-parfum-100-ml-729999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Floral", "Oriental"],
     "img": "dior-homme-parfum-100-ml-729999.jpg",
     "name": "DIOR HOMME",
     "fullName": "Dior Homme Parfum 100 ml",
@@ -749,6 +798,7 @@ const RAW = [
   {
     "slug": "acqua-di-gio-giorgio-armani-edp-100-ml-550000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Amaderado"],
     "img": "acqua-di-gio-giorgio-armani-edp-100-ml-550000.jpg",
     "name": "ACQUA DI GIÒ",
     "fullName": "Acqua di Giò Giorgio Armani EDP 100 ml",
@@ -764,6 +814,7 @@ const RAW = [
   {
     "slug": "acqua-di-gio-profondo-giorgio-armani-edp-100-ml-500000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Amaderado"],
     "img": "acqua-di-gio-profondo-giorgio-armani-edp-100-ml-500000.jpg",
     "name": "ACQUA DI GIÒ PROFONDO",
     "fullName": "Acqua di Gio Profondo Giorgio Armani EDP 100 ml",
@@ -779,6 +830,7 @@ const RAW = [
   {
     "slug": "one-million-de-paco-rabanne-edt-100ml-499999",
     "tag": "Oriental",
+    "tags": ["Oriental", "Dulce", "Amaderado"],
     "img": "one-million-de-paco-rabanne-edt-100ml-499999.jpg",
     "name": "ONE MILLION",
     "fullName": "One Million De Paco Rabanne EDT 100ml",
@@ -794,6 +846,7 @@ const RAW = [
   {
     "slug": "acqua-di-gio-giorgio-armani-edt-100ml-450000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Amaderado"],
     "img": "acqua-di-gio-giorgio-armani-edt-100ml-450000.jpg",
     "name": "ACQUA DI GIÒ",
     "fullName": "Acqua di Gio Giorgio Armani EDT 100ml",
@@ -809,6 +862,7 @@ const RAW = [
   {
     "slug": "yum-yum-armaf-249999",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Frutal"],
     "img": "yum-yum-armaf-249999.jpg",
     "name": "YUM YUM",
     "fullName": "Yum Yum Armaf",
@@ -824,6 +878,7 @@ const RAW = [
   {
     "slug": "eclaire-lattafa-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Frutal"],
     "img": "eclaire-lattafa-190000.jpg",
     "name": "ECLAIRE",
     "fullName": "Eclaire Lattafa",
@@ -839,6 +894,7 @@ const RAW = [
   {
     "slug": "fakhar-rose-lattafa-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Amaderado", "Oriental"],
     "img": "fakhar-rose-lattafa-190000.jpg",
     "name": "FAKHAR ROSE",
     "fullName": "Fakhar Rose Lattafa",
@@ -854,6 +910,7 @@ const RAW = [
   {
     "slug": "hawas-eclat-rasasi-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Frutal", "Acuático"],
     "img": "hawas-eclat-rasasi-190000.jpg",
     "name": "HAWAS ÉCLAT",
     "fullName": "Hawas Éclat Rasasi",
@@ -869,6 +926,7 @@ const RAW = [
   {
     "slug": "hawas-for-her-rasasi-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Frutal", "Acuático"],
     "img": "hawas-for-her-rasasi-190000.jpg",
     "name": "HAWAS FOR HER",
     "fullName": "Hawas for Her Rasasi",
@@ -884,6 +942,7 @@ const RAW = [
   {
     "slug": "lattafa-qimmah-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Frutal"],
     "img": "lattafa-qimmah-190000.jpg",
     "name": "QIMMAH",
     "fullName": "Lattafa Qimmah",
@@ -899,6 +958,7 @@ const RAW = [
   {
     "slug": "odyssey-candee-armaf-80ml-190000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Oriental", "Frutal"],
     "img": "odyssey-candee-armaf-80ml-190000.jpg",
     "name": "ODYSSEY CANDEE",
     "fullName": "Odyssey Candee Armaf 80ml",
@@ -914,6 +974,7 @@ const RAW = [
   {
     "slug": "philos-centro-maison-alhambra-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "philos-centro-maison-alhambra-190000.jpg",
     "name": "PHILOS CENTRO",
     "fullName": "Philos Centro Maison Alhambra",
@@ -929,6 +990,7 @@ const RAW = [
   {
     "slug": "reyna-maison-alhambra-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Dulce", "Frutal"],
     "img": "reyna-maison-alhambra-190000.jpg",
     "name": "REYNA",
     "fullName": "Reyna Maison Alhambra",
@@ -944,6 +1006,7 @@ const RAW = [
   {
     "slug": "bharara-king-290000",
     "tag": "Dulce",
+    "tags": ["Dulce", "Frutal", "Oriental"],
     "img": "bharara-king-290000.jpg",
     "name": "KING",
     "fullName": "Bharara King",
@@ -959,6 +1022,7 @@ const RAW = [
   {
     "slug": "dumont-nitro-set-mini-x-8-10ml-249999",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "dumont-nitro-set-mini-x-8-10ml-249999.jpg",
     "name": "NITRO SET MINI X 8",
     "fullName": "Dumont Nitro Set Mini X 8 10ml",
@@ -974,6 +1038,7 @@ const RAW = [
   {
     "slug": "hawas-tropical-rasasi-249999",
     "tag": "Frutal",
+    "tags": ["Frutal", "Acuático", "Dulce"],
     "img": "hawas-tropical-rasasi-249999.jpg",
     "name": "HAWAS TROPICAL",
     "fullName": "Hawas Tropical Rasasi",
@@ -989,6 +1054,7 @@ const RAW = [
   {
     "slug": "liquid-brun-french-avenue-249999",
     "tag": "Frutal",
+    "tags": ["Frutal", "Dulce", "Oriental"],
     "img": "liquid-brun-french-avenue-249999.jpg",
     "name": "LIQUID BRUN",
     "fullName": "Liquid Brun French Avenue",
@@ -1004,6 +1070,7 @@ const RAW = [
   {
     "slug": "odyssey-aqua-armaf-249999",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Aromático"],
     "img": "odyssey-aqua-armaf-249999.jpg",
     "name": "ODYSSEY AQUA",
     "fullName": "Odyssey Aqua Armaf",
@@ -1019,6 +1086,7 @@ const RAW = [
   {
     "slug": "bharara-rome-ivory-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "bharara-rome-ivory-190000.jpg",
     "name": "ROME IVORY",
     "fullName": "Bharara Rome Ivory",
@@ -1034,6 +1102,7 @@ const RAW = [
   {
     "slug": "hawas-black-rasasi-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Frutal", "Acuático"],
     "img": "hawas-black-rasasi-190000.jpg",
     "name": "HAWAS BLACK",
     "fullName": "Hawas Black Rasasi",
@@ -1049,6 +1118,7 @@ const RAW = [
   {
     "slug": "hawas-for-him-rasasi-190000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Frutal", "Cítrico"],
     "img": "hawas-for-him-rasasi-190000.jpg",
     "name": "HAWAS FOR HIM",
     "fullName": "Hawas for Him Rasasi",
@@ -1064,6 +1134,7 @@ const RAW = [
   {
     "slug": "lattafa-atlas-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "lattafa-atlas-190000.jpg",
     "name": "ATLAS",
     "fullName": "Lattafa Atlas",
@@ -1079,6 +1150,7 @@ const RAW = [
   {
     "slug": "lattafa-fakhar-gold-extrait-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "lattafa-fakhar-gold-extrait-190000.jpg",
     "name": "FAKHAR GOLD EXTRAIT",
     "fullName": "Lattafa Fakhar Gold Extrait",
@@ -1094,6 +1166,7 @@ const RAW = [
   {
     "slug": "lattafa-fakhar-black-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "lattafa-fakhar-black-190000.jpg",
     "name": "FAKHAR BLACK",
     "fullName": "Lattafa Fakhar Black",
@@ -1109,6 +1182,7 @@ const RAW = [
   {
     "slug": "nitro-blue-dumont-190000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Aromático"],
     "img": "nitro-blue-dumont-190000.jpg",
     "name": "NITRO BLUE",
     "fullName": "Nitro Blue Dumont",
@@ -1124,6 +1198,7 @@ const RAW = [
   {
     "slug": "nitro-intense-dumont-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "nitro-intense-dumont-190000.jpg",
     "name": "NITRO INTENSE",
     "fullName": "Nitro Intense Dumont",
@@ -1139,6 +1214,7 @@ const RAW = [
   {
     "slug": "nitro-platinum-dumont-190000",
     "tag": "Aromático",
+    "tags": ["Aromático", "Amaderado", "Cítrico"],
     "img": "nitro-platinum-dumont-190000.jpg",
     "name": "NITRO PLATINUM",
     "fullName": "Nitro Platinum Dumont",
@@ -1154,6 +1230,7 @@ const RAW = [
   {
     "slug": "odyssey-mega-armaf-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "odyssey-mega-armaf-190000.jpg",
     "name": "ODYSSEY MEGA",
     "fullName": "Odyssey Mega Armaf",
@@ -1169,6 +1246,7 @@ const RAW = [
   {
     "slug": "rayhaan-elixir-rayhaan-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "rayhaan-elixir-rayhaan-190000.jpg",
     "name": "ELIXIR",
     "fullName": "Rayhaan Elixir Rayhaan",
@@ -1184,6 +1262,7 @@ const RAW = [
   {
     "slug": "salvo-intense-maison-alhambra-190000",
     "tag": "Aromático",
+    "tags": ["Aromático", "Amaderado", "Cítrico"],
     "img": "salvo-intense-maison-alhambra-190000.jpg",
     "name": "SALVO INTENSE",
     "fullName": "Salvo Intense Maison Alhambra",
@@ -1199,6 +1278,7 @@ const RAW = [
   {
     "slug": "sceptre-oceana-maison-alhambra-190000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Aromático"],
     "img": "sceptre-oceana-maison-alhambra-190000.jpg",
     "name": "SCEPTRE OCEANA",
     "fullName": "Sceptre Oceana Maison Alhambra",
@@ -1214,6 +1294,7 @@ const RAW = [
   {
     "slug": "supremacy-silver-afnan-190000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Aromático"],
     "img": "supremacy-silver-afnan-190000.jpg",
     "name": "SUPREMACY SILVER",
     "fullName": "Supremacy Silver Afnan",
@@ -1229,6 +1310,7 @@ const RAW = [
   {
     "slug": "armaf-mandarin-sky-elixir-249999",
     "tag": "Cítrico",
+    "tags": ["Cítrico", "Oriental", "Aromático"],
     "img": "armaf-mandarin-sky-elixir-249999.jpg",
     "name": "MANDARIN SKY ELIXIR",
     "fullName": "Armaf Mandarin Sky Elixir",
@@ -1244,6 +1326,7 @@ const RAW = [
   {
     "slug": "armaf-artisto-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "armaf-artisto-190000.jpg",
     "name": "ARTISTO",
     "fullName": "Armaf Artisto",
@@ -1259,6 +1342,7 @@ const RAW = [
   {
     "slug": "armaf-odyssey-eau-de-montagne-190000",
     "tag": "Acuático",
+    "tags": ["Acuático", "Cítrico", "Aromático"],
     "img": "armaf-odyssey-eau-de-montagne-190000.jpg",
     "name": "ODYSSEY EAU DE MONTAGNE",
     "fullName": "Armaf Odyssey Eau de Montagne",
@@ -1274,6 +1358,7 @@ const RAW = [
   {
     "slug": "captcha-36-emper-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "captcha-36-emper-190000.jpg",
     "name": "CAPTCHA 36",
     "fullName": "Captcha 36 Emper",
@@ -1289,6 +1374,7 @@ const RAW = [
   {
     "slug": "elixir-88-emper-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "elixir-88-emper-190000.jpg",
     "name": "ELIXIR 88",
     "fullName": "Elixir 88 Emper",
@@ -1304,6 +1390,7 @@ const RAW = [
   {
     "slug": "jean-lowe-vibe-maison-alhambra-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Aromático", "Oriental"],
     "img": "jean-lowe-vibe-maison-alhambra-190000.jpg",
     "name": "JEAN LOWE VIBE",
     "fullName": "Jean Lowe Vibe Maison Alhambra",
@@ -1319,6 +1406,7 @@ const RAW = [
   {
     "slug": "lattafa-ajwad-pink-to-pink-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Dulce", "Frutal"],
     "img": "lattafa-ajwad-pink-to-pink-190000.jpg",
     "name": "AJWAD PINK TO PINK",
     "fullName": "Lattafa Ajwad Pink to Pink",
@@ -1334,6 +1422,7 @@ const RAW = [
   {
     "slug": "lattafa-ameer-al-oud-intense-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "lattafa-ameer-al-oud-intense-190000.jpg",
     "name": "AMEER AL OUD INTENSE",
     "fullName": "Lattafa Ameer Al Oud Intense",
@@ -1349,6 +1438,7 @@ const RAW = [
   {
     "slug": "lattafa-badee-al-oud-collection-5-x-5ml-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Floral"],
     "img": "lattafa-badee-al-oud-collection-5-x-5ml-190000.jpg",
     "name": "BADEE AL OUD COLLECTION 5 X 5ML",
     "fullName": "Lattafa Badee Al Oud Collection 5 x 5ml",
@@ -1364,6 +1454,7 @@ const RAW = [
   {
     "slug": "lattafa-hayaati-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "lattafa-hayaati-190000.jpg",
     "name": "HAYAATI",
     "fullName": "Lattafa Hayaati",
@@ -1379,6 +1470,7 @@ const RAW = [
   {
     "slug": "lattafa-maharjan-gold-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "lattafa-maharjan-gold-190000.jpg",
     "name": "MAHARJAN GOLD",
     "fullName": "Lattafa Maharjan Gold",
@@ -1394,6 +1486,7 @@ const RAW = [
   {
     "slug": "lattafa-velvet-rose-190000",
     "tag": "Floral",
+    "tags": ["Floral", "Amaderado", "Dulce"],
     "img": "lattafa-velvet-rose-190000.jpg",
     "name": "VELVET ROSE",
     "fullName": "Lattafa Velvet Rose",
@@ -1409,6 +1502,7 @@ const RAW = [
   {
     "slug": "lava-maison-alhambra-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "lava-maison-alhambra-190000.jpg",
     "name": "LAVA",
     "fullName": "Lava Maison Alhambra",
@@ -1424,6 +1518,7 @@ const RAW = [
   {
     "slug": "mini-set-emper-stallion-4x15ml-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "mini-set-emper-stallion-4x15ml-190000.jpg",
     "name": "MINI SET STALLION 4X15ML",
     "fullName": "MINI SET EMPER STALLION 4x15ML",
@@ -1439,6 +1534,7 @@ const RAW = [
   {
     "slug": "mini-set-orientica-5x7-5ml-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "mini-set-orientica-5x7-5ml-190000.jpg",
     "name": "MINI SET 5X7.5ML",
     "fullName": "Mini Set Orientica 5x7.5ML",
@@ -1454,6 +1550,7 @@ const RAW = [
   {
     "slug": "philos-opus-noir-maison-alhambra-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "philos-opus-noir-maison-alhambra-190000.jpg",
     "name": "PHILOS OPUS NOIR",
     "fullName": "Philos Opus Noir Maison Alhambra",
@@ -1469,6 +1566,7 @@ const RAW = [
   {
     "slug": "philos-rosso-maison-alhambra-190000",
     "tag": "Frutal",
+    "tags": ["Frutal", "Dulce", "Floral"],
     "img": "philos-rosso-maison-alhambra-190000.jpg",
     "name": "PHILOS ROSSO",
     "fullName": "Philos Rosso Maison Alhambra",
@@ -1484,6 +1582,7 @@ const RAW = [
   {
     "slug": "supremacy-gold-afnan-190000",
     "tag": "Oriental",
+    "tags": ["Oriental", "Amaderado", "Dulce"],
     "img": "supremacy-gold-afnan-190000.jpg",
     "name": "SUPREMACY GOLD",
     "fullName": "Supremacy Gold Afnan",
@@ -1499,6 +1598,7 @@ const RAW = [
   {
     "slug": "supremacy-noir-afnan-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "supremacy-noir-afnan-190000.jpg",
     "name": "SUPREMACY NOIR",
     "fullName": "Supremacy Noir Afnan",
@@ -1514,6 +1614,7 @@ const RAW = [
   {
     "slug": "the-artist-no-1-maison-alhambra-190000",
     "tag": "Amaderado",
+    "tags": ["Amaderado", "Oriental", "Aromático"],
     "img": "the-artist-no-1-maison-alhambra-190000.jpg",
     "name": "THE ARTIST NO.1",
     "fullName": "The Artist No.1 Maison Alhambra",
@@ -1536,3 +1637,4 @@ export const COLLECTIONS = ['Diseñador', 'Árabes'];
 export const FAMILIES = ['Amaderado', 'Oriental', 'Floral', 'Frutal', 'Dulce', 'Cítrico', 'Acuático', 'Aromático'];
 // Mapa slug -> familia, para re-aplicar etiquetas a catálogos guardados que aún no las tengan
 export const TAG_BY_SLUG = Object.fromEntries(RAW.map((p) => [p.slug, p.tag]).filter(([, t]) => !!t));
+export const TAGS_BY_SLUG = Object.fromEntries(RAW.map((p) => [p.slug, (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : [])]).filter(([, t]) => t.length));
