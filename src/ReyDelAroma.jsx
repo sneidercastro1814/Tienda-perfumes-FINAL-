@@ -1063,10 +1063,10 @@ const EMPTY_FORM = {
   tag: "", description: "", image: "",
 };
 
-const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
+const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Unisex", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
 
 /* Pestañas que abren su propia página al hacer clic (orden de aparición) */
-const CATEGORY_TABS = ["Para Él", "Para Ella", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
+const CATEGORY_TABS = ["Para Él", "Para Ella", "Unisex", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
 
 /* Contenido del encabezado (hero) de cada página de categoría.
    La imagen se usa como fondo del banner; el resto es texto editable. */
@@ -2713,6 +2713,7 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
               <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer">Para Él</a>
               <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer">Para Ella</a>
+              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
             </div>
             <div className="nav-r">
@@ -2728,6 +2729,7 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
               <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Él</a>
               <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Ella</a>
+              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>2 × $300.000</a>
