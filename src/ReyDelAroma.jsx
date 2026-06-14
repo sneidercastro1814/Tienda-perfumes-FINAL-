@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, COLLECTIONS } from "./data/products";
+import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, TAGS_BY_SLUG, COLLECTIONS } from "./data/products";
 import banner1 from "./assets/banners/banner-1.jpg";
 import banner2 from "./assets/banners/banner-2.jpg";
 import banner3 from "./assets/banners/banner-3.jpg";
@@ -1193,6 +1193,7 @@ function loadInitialProducts() {
           ...p,
           image: (p.img && imageForFile(p.img)) || p.image || "",
           tag: p.tag || TAG_BY_SLUG[p.slug] || "",
+          tags: (Array.isArray(p.tags) && p.tags.length) ? p.tags : (TAGS_BY_SLUG[p.slug] || (p.tag ? [p.tag] : [])),
         }));
       }
     }
