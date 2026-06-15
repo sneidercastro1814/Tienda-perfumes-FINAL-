@@ -247,7 +247,7 @@ body::after {
 .l-rey { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--gold); letter-spacing: 7px; display: block; line-height: 1; }
 .l-da { font-size: 10px; font-weight: 500; letter-spacing: 7px; color: var(--gold); opacity: 0.45; display: block; margin-top: 4px; }
 .nav-sep { display: none; }
-.nav-links { display: flex; gap: 2px; align-items: center; }
+.nav-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; align-items: center; z-index: 1; white-space: nowrap; }
 .nl { font-size: 12px; font-weight: 500; letter-spacing: 2.5px; color: rgba(255,255,255,0.72); cursor: pointer; text-transform: uppercase; background: none; border: none; transition: color 0.25s; padding: 8px 13px; position: relative; }
 .nl::after { content: ''; position: absolute; bottom: 2px; left: 50%; right: 50%; height: 1px; background: var(--gold); transition: left 0.35s, right 0.35s; }
 .nl:hover::after, .nl.act::after { left: 13px; right: 13px; }
@@ -2761,30 +2761,28 @@ export default function ReyDelAroma() {
       )}
 
       <nav className="nav">
-        <div className={`nav-logo${view !== "admin" ? " nav-logo-c" : ""}`} onClick={() => { setView("store"); setCatFilter("Todos"); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+        <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
           <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
           <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
         </div>
 
         {view !== "admin" ? (
           <>
-            <div className="nav-left">
-              <button className={`hamburger${menuOpen ? " open" : ""}`} onClick={() => { setMenuOpen((o) => !o); setSearchOpen(false); }} aria-label="Menú">
-                <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
-              </button>
-              <div className="nav-links">
-                <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
-                <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
-                <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
-                <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
-                <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
-                <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
-              </div>
+            <div className="nav-links">
+              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
+              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
+              <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
+              <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
+              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
+              <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
             </div>
             <div className="nav-r">
               <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
               <button className="icon-btn" onClick={() => setCartOpen(true)} aria-label="Carrito">🛒 {cartCount > 0 && <span className="cbadge">{cartCount}</span>}</button>
               <button className="icon-btn" onClick={() => setView("admin")} title="Panel Admin" aria-label="Admin">⚙️</button>
+              <button className={`hamburger${menuOpen ? " open" : ""}`} onClick={() => { setMenuOpen((o) => !o); setSearchOpen(false); }} aria-label="Menú">
+                <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
+              </button>
             </div>
             <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Inicio</a>
