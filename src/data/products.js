@@ -22,7 +22,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "",
     "price": 649999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 1
@@ -38,7 +38,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "",
     "price": 649999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 2
@@ -54,7 +54,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "",
     "price": 579999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 3
@@ -70,7 +70,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 479999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 4
@@ -86,7 +86,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 479999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 5
@@ -102,7 +102,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 479999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 6
@@ -118,7 +118,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "100 ml",
     "price": 399900,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Diseñador",
     "promo": "",
     "id": 7
@@ -134,7 +134,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 319999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 8
@@ -150,7 +150,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 299999,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Diseñador",
     "promo": "",
     "id": 9
@@ -166,7 +166,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 299999,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Diseñador",
     "promo": "",
     "id": 10
@@ -182,7 +182,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 229900,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 11
@@ -214,7 +214,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "100 ml",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Diseñador",
     "promo": "",
     "id": 13
@@ -230,7 +230,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Diseñador",
     "promo": "",
     "id": 14
@@ -246,7 +246,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 110000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 15
@@ -262,7 +262,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 110000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 16
@@ -278,7 +278,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 110000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 17
@@ -294,7 +294,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 249900,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 18
@@ -310,7 +310,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 249900,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 19
@@ -326,7 +326,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 20
@@ -342,7 +342,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 21
@@ -358,7 +358,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 22
@@ -374,7 +374,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 23
@@ -390,7 +390,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 24
@@ -406,7 +406,7 @@ const RAW = [
     "subtitle": "",
     "size": "80 ml",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 25
@@ -454,7 +454,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 28
@@ -470,7 +470,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 29
@@ -486,7 +486,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 30
@@ -502,7 +502,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 31
@@ -518,7 +518,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 32
@@ -534,7 +534,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 33
@@ -550,7 +550,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 34
@@ -726,7 +726,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 45
@@ -742,7 +742,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "100 ml",
     "price": 1849999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 46
@@ -758,7 +758,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "100 ml",
     "price": 849999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 47
@@ -774,7 +774,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 749999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 48
@@ -790,7 +790,7 @@ const RAW = [
     "subtitle": "Parfum",
     "size": "100 ml",
     "price": 729999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 49
@@ -806,7 +806,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "100 ml",
     "price": 550000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 50
@@ -822,7 +822,7 @@ const RAW = [
     "subtitle": "Eau de Parfum",
     "size": "100 ml",
     "price": 500000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 51
@@ -838,7 +838,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 499999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 52
@@ -854,7 +854,7 @@ const RAW = [
     "subtitle": "Eau de Toilette",
     "size": "100 ml",
     "price": 450000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Diseñador",
     "promo": "",
     "id": 53
@@ -870,7 +870,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 249999,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "",
     "id": 54
@@ -886,7 +886,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 55
@@ -902,7 +902,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 56
@@ -918,7 +918,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 57
@@ -934,7 +934,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 58
@@ -950,7 +950,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 59
@@ -966,7 +966,7 @@ const RAW = [
     "subtitle": "",
     "size": "80 ml",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 60
@@ -982,7 +982,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 61
@@ -998,7 +998,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Ella",
+    "category": "Mujer",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 62
@@ -1014,7 +1014,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 290000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 63
@@ -1030,7 +1030,7 @@ const RAW = [
     "subtitle": "",
     "size": "10 ml",
     "price": 249999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 64
@@ -1046,7 +1046,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 249999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 65
@@ -1062,7 +1062,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 249999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 66
@@ -1078,7 +1078,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 249999,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "",
     "id": 67
@@ -1094,7 +1094,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 68
@@ -1110,7 +1110,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 69
@@ -1126,7 +1126,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 70
@@ -1142,7 +1142,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 71
@@ -1158,7 +1158,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 72
@@ -1174,7 +1174,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 73
@@ -1190,7 +1190,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 74
@@ -1206,7 +1206,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 75
@@ -1222,7 +1222,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 76
@@ -1238,7 +1238,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 77
@@ -1254,7 +1254,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 78
@@ -1270,7 +1270,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 79
@@ -1286,7 +1286,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 80
@@ -1302,7 +1302,7 @@ const RAW = [
     "subtitle": "",
     "size": "",
     "price": 190000,
-    "category": "Para Él",
+    "category": "Hombre",
     "collection": "Árabes",
     "promo": "2 X $300.000",
     "id": 81
@@ -1631,10 +1631,10 @@ const RAW = [
 
 export const imageForFile = (file) => imgByFile[file] || '';
 export const PRODUCTS = RAW.map((p) => ({ ...p, image: imgByFile[p.img] || '' }));
-export const CATEGORIES = ['Todos', 'Para Él', 'Para Ella', 'Unisex'];
+export const CATEGORIES = ['Todos', 'Hombre', 'Mujer', 'Unisex'];
 export const COLLECTIONS = ['Diseñador', 'Árabes'];
 // Familias olfativas (tipos de aroma) — usadas en el filtro de la tienda y el panel admin
-export const FAMILIES = ['Amaderado', 'Oriental', 'Floral', 'Frutal', 'Dulce', 'Cítrico', 'Acuático', 'Aromático'];
+export const FAMILIES = ['Amaderado', 'Oriental', 'Floral', 'Frutal', 'Dulce', 'Cítrico', 'Acuático', 'Aromático', 'Vainilla', 'Fresco', 'Ámbar', 'Oud', 'Gourmand'];
 // Mapa slug -> familia, para re-aplicar etiquetas a catálogos guardados que aún no las tengan
 export const TAG_BY_SLUG = Object.fromEntries(RAW.map((p) => [p.slug, p.tag]).filter(([, t]) => !!t));
 export const TAGS_BY_SLUG = Object.fromEntries(RAW.map((p) => [p.slug, (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : [])]).filter(([, t]) => t.length));
