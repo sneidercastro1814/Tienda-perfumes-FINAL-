@@ -67,6 +67,11 @@ const FAMILY_META = {
   "Cítrico":   { emoji: "🍋", hint: "Cítricos frescos" },
   "Acuático":  { emoji: "🌊", hint: "Marino, fresco, limpio" },
   "Aromático": { emoji: "🌿", hint: "Lavanda, hierbas, fougère" },
+  "Vainilla":  { emoji: "🍦", hint: "Vainilla cremosa y cálida" },
+  "Fresco":    { emoji: "❄️", hint: "Ligero, limpio, refrescante" },
+  "Ámbar":     { emoji: "🟠", hint: "Ámbar cálido y resinoso" },
+  "Oud":       { emoji: "🪵", hint: "Oud intenso y profundo" },
+  "Gourmand":  { emoji: "🍮", hint: "Dulce, caramelo, postre" },
 };
 
 /* ════════════════════════════════════════════════════════════════
@@ -235,12 +240,14 @@ body::after {
 .nav { background: rgba(12,12,11,0.97); backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%); border-bottom: 1px solid var(--border); padding: 0 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; height: 72px; }
 .nav-logo-img { height: 46px; width: auto; display: block; flex-shrink: 0; }
 .nav-logo { display: flex; align-items: center; gap: 14px; cursor: pointer; transition: opacity 0.3s; }
+.nav-logo-c { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.nav-left { display: flex; align-items: center; gap: 8px; }
 .nav-logo:hover { opacity: 0.75; }
 .nav-logo-text { display: flex; flex-direction: column; }
 .l-rey { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--gold); letter-spacing: 7px; display: block; line-height: 1; }
 .l-da { font-size: 10px; font-weight: 500; letter-spacing: 7px; color: var(--gold); opacity: 0.45; display: block; margin-top: 4px; }
 .nav-sep { display: none; }
-.nav-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; z-index: 1; }
+.nav-links { display: flex; gap: 2px; align-items: center; }
 .nl { font-size: 12px; font-weight: 500; letter-spacing: 2.5px; color: rgba(255,255,255,0.72); cursor: pointer; text-transform: uppercase; background: none; border: none; transition: color 0.25s; padding: 8px 13px; position: relative; }
 .nl::after { content: ''; position: absolute; bottom: 2px; left: 50%; right: 50%; height: 1px; background: var(--gold); transition: left 0.35s, right 0.35s; }
 .nl:hover::after, .nl.act::after { left: 13px; right: 13px; }
@@ -266,9 +273,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .mobile-menu .nl::after { display: none; }
 .mobile-menu .nl:hover, .mobile-menu .nl.act { background: rgba(201,168,76,0.05); color: var(--gold); }
 
-/* ── CARRUSEL HERO (ancho completo, de borde a borde, sin franjas blancas) ── */
-.hero-carousel { padding: 0 0 16px; background: var(--bg); position: relative; }
-.hc-viewport { position: relative; z-index: 1; width: 100%; margin: 0; overflow: hidden; background: #0a0a09; border-bottom: 1px solid rgba(201,168,76,0.42); box-shadow: 0 26px 60px -34px rgba(0,0,0,0.55); aspect-ratio: 1350 / 714; max-height: 720px; }
+/* ── CARRUSEL HERO (centrado, con franjas blancas a los lados) ── */
+.hero-carousel { padding: 22px clamp(14px, 4vw, 52px) 18px; background: var(--bg); position: relative; }
+.hc-viewport { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin: 0 auto; overflow: hidden; background: #0a0a09; border: 1px solid rgba(201,168,76,0.42); border-radius: 16px; box-shadow: 0 26px 60px -30px rgba(0,0,0,0.55); aspect-ratio: 1350 / 714; max-height: 720px; }
 .hc-track { display: flex; height: 100%; transition: transform 0.85s cubic-bezier(.45,0,.15,1); }
 .hc-slide { position: relative; min-width: 100%; height: 100%; border: none; padding: 0; margin: 0; cursor: pointer; background: #0a0a09; display: block; overflow: hidden; }
 /* banner COMPLETO: llena todo el marco sin fondo difuminado */
@@ -280,6 +287,13 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .hc-dot { width: 8px; height: 8px; border-radius: 50%; border: none; background: rgba(255,255,255,0.4); cursor: pointer; padding: 0; transition: all 0.35s; }
 .hc-dot:hover { background: rgba(255,255,255,0.7); }
 .hc-dot.act { background: var(--gold); width: 26px; border-radius: 5px; box-shadow: 0 0 12px rgba(201,168,76,0.7); }
+.hc-promo { position: absolute; top: 16px; left: 16px; z-index: 6; display: inline-flex; align-items: center; gap: 7px; background: rgba(10,9,7,0.6); border: 1px solid rgba(201,168,76,0.6); color: var(--gold-l); font-family: var(--sans); font-weight: 800; font-size: 16px; letter-spacing: 0.5px; padding: 9px 15px; border-radius: 999px; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: transform 0.25s, box-shadow 0.25s; }
+.hc-promo:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(201,168,76,0.42); }
+.hc-promo-txt { background: linear-gradient(135deg, var(--gold-l), var(--gold)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hc-flame { display: inline-block; font-size: 17px; transform-origin: 50% 90%; animation: flame 0.9s ease-in-out infinite; }
+.hc-flame2 { animation-delay: 0.45s; }
+@keyframes flame { 0%,100% { transform: scale(1) rotate(-3deg); filter: brightness(1); } 25% { transform: scale(1.18) rotate(3deg); filter: brightness(1.25); } 50% { transform: scale(0.95) rotate(-2deg); filter: brightness(0.95); } 75% { transform: scale(1.12) rotate(2deg); filter: brightness(1.15); } }
+@media (max-width: 768px) { .hc-promo { font-size: 13px; padding: 7px 12px; top: 12px; left: 12px; } .hc-flame { font-size: 14px; } }
 
 /* ── DESTACADOS (íconos dorados) ── */
 .featured { background: var(--bg); padding: 30px 52px 12px; display: flex; flex-wrap: wrap; gap: 22px 32px; justify-content: center; }
@@ -319,6 +333,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .sec-title { font-family: var(--serif); font-size: 42px; font-weight: 600; letter-spacing: 0.5px; }
 .sec-title span { color: var(--gold); font-style: italic; }
 .sec-cnt { font-size: 12px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; }
+.sec-tools { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .pgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(201,168,76,0.08); max-width: 1180px; margin: 0 auto; }
 .pcard { background: var(--bg); cursor: pointer; overflow: hidden; transition: all 0.45s cubic-bezier(0.25,0.46,0.45,0.94); position: relative; display: flex; flex-direction: column; }
 .pcard::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 55%); opacity: 0; transition: opacity 0.4s; z-index: 1; pointer-events: none; }
@@ -333,13 +348,14 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
 .pcard:hover .pcard-name { color: var(--gold-d); }
 .pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; min-height: 11px; }
+.pcard-aroma { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 11px; border-radius: 999px; }
 .pcard-price { font-family: var(--serif); font-size: 25px; font-weight: 500; color: var(--gold-d); }
 .pcard-curr { font-size: 13px; opacity: 0.5; font-family: var(--sans); font-weight: 300; letter-spacing: 1px; }
 .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid rgba(0,0,0,0.07); }
 .pcard-orig { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 .pcard-orig::before { content: '✓'; color: var(--gold); font-weight: 700; }
-.quick-buy { background: transparent; color: var(--gold-d); border: 1px solid rgba(201,168,76,0.3); font-size: 11px; font-weight: 600; letter-spacing: 2px; padding: 9px 18px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; font-family: var(--sans); }
-.quick-buy:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+.quick-buy { background: #0a0a09; color: #fff; border: 1px solid #0a0a09; font-size: 11px; font-weight: 600; letter-spacing: 2px; padding: 9px 18px; cursor: pointer; transition: all 0.25s; text-transform: uppercase; font-family: var(--sans); }
+.quick-buy:hover, .quick-buy:active, .quick-buy:focus { background: var(--gold); color: #000; border-color: var(--gold); }
 
 /* ── Carruseles de productos en el inicio ── */
 .prow { max-width: 1280px; margin: 0 auto; padding: 44px 52px 8px; }
@@ -377,7 +393,13 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08); }
 .pd-chip { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; border: 1px solid var(--border); color: var(--text-dim); }
 .pd-chip.gold { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
-.pd-price { font-family: var(--serif); font-size: 40px; font-weight: 500; color: var(--gold-d); margin-bottom: 24px; letter-spacing: 0.5px; }
+.pd-price { font-family: var(--serif); font-size: 40px; font-weight: 500; color: var(--gold-d); margin-bottom: 12px; letter-spacing: 0.5px; }
+.pd-trust { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.pd-stars { font-size: 13px; letter-spacing: 1px; }
+.pd-trust-txt { font-size: 13px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.2px; }
+.pd-seals { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.pd-seal { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.pd-stock { display: inline-flex; align-items: center; gap: 7px; margin: -10px 0 26px; font-size: 13px; font-weight: 700; letter-spacing: 0.2px; color: #c0392b; background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.22); padding: 9px 16px; border-radius: 10px; }
 .pd-curr { font-size: 18px; opacity: 0.5; font-family: var(--sans); font-weight: 300; }
 .pd-promo { display: flex; align-items: center; gap: 12px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); padding: 14px 18px; margin-bottom: 26px; }
 .pd-promo b { color: var(--gold-d); font-family: var(--serif); font-size: 22px; }
@@ -568,7 +590,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ════════ RESPONSIVE ════════ */
 @media (max-width: 1200px) {
   .nav { padding: 0 32px; }
-  .hero-carousel { padding: 0 0 8px; }
+  .hero-carousel { padding: 16px 18px 8px; }
   .featured { padding: 24px 32px 6px; }
   .products-wrap { padding: 48px 32px 72px; }
   .filters { padding: 0 32px; }
@@ -600,7 +622,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .ann-i { padding: 0 24px; }
   .announce::before, .announce::after { width: 50px; }
 
-  .hero-carousel { padding: 0 0 8px; }
+  .hero-carousel { padding: 14px 14px 8px; }
   .hc-arrow { width: 40px; height: 40px; font-size: 22px; }
   .hc-prev { left: 12px; } .hc-next { right: 12px; }
   .hc-dots { bottom: 12px; padding: 6px 12px; }
@@ -1057,20 +1079,20 @@ const PayBadges = ({ className = "" }) => (
 
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
-  category: "Para Él", collection: "Árabes", promo: false,
+  category: "Hombre", collection: "Árabes", promo: false,
   tag: "", description: "", image: "",
 };
 
-const FILTER_TABS = ["Todos", "Para Él", "Para Ella", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
+const FILTER_TABS = ["Todos", "Hombre", "Mujer", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
 
 /* Pestañas que abren su propia página al hacer clic (orden de aparición) */
-const CATEGORY_TABS = ["Para Él", "Para Ella", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
+const CATEGORY_TABS = ["Hombre", "Mujer", "2 × $300.000", "Diseñador", "Árabes", "Destacados"];
 
 /* Contenido del encabezado (hero) de cada página de categoría.
    La imagen se usa como fondo del banner; el resto es texto editable. */
 const CATEGORY_META = {
-  "Para Él":       { eyebrow: "Colección", pre: "Para",          hi: "Él",          banner: "feat1",   desc: "Fragancias intensas, amaderadas y con carácter. Encuentra el perfume que define tu presencia." },
-  "Para Ella":     { eyebrow: "Colección", pre: "Para",          hi: "Ella",        banner: "feat2",   desc: "Aromas florales, dulces y envolventes. Esencias pensadas para realzar tu elegancia." },
+  "Hombre":       { eyebrow: "Colección", pre: "Para",          hi: "Hombre",      banner: "feat1",   desc: "Fragancias intensas, amaderadas y con carácter. Encuentra el perfume que define tu presencia." },
+  "Mujer":     { eyebrow: "Colección", pre: "Para",          hi: "Mujer",       banner: "feat2",   desc: "Aromas florales, dulces y envolventes. Esencias pensadas para realzar tu elegancia." },
   "Unisex":        { eyebrow: "Colección", pre: "",              hi: "Unisex",      banner: "feat3",   desc: "Fragancias versátiles que rompen las reglas. Para quienes eligen su aroma sin etiquetas." },
   "2 × $300.000":  { eyebrow: "Promoción", pre: "Promo",         hi: "2 × $300.000", banner: "banner2", desc: "Arma tu combo: lleva dos perfumes árabes seleccionados por $300.000. La mejor relación precio–calidad." },
   "Diseñador":     { eyebrow: "Colección", pre: "Perfumes de",   hi: "Diseñador",   banner: "banner1", desc: "Las casas más reconocidas del mundo. 100% originales, con la firma de las grandes marcas." },
@@ -1081,8 +1103,8 @@ const CATEGORY_META = {
 /* Slug de URL de cada categoría → permite abrir cada una en una PESTAÑA NUEVA
    del navegador con un enlace tipo  ?categoria=para-el  */
 const CATEGORY_SLUGS = {
-  "Para Él": "para-el",
-  "Para Ella": "para-ella",
+  "Hombre": "hombre",
+  "Mujer": "mujer",
   "Unisex": "unisex",
   "2 × $300.000": "promo",
   "Diseñador": "disenador",
@@ -1110,6 +1132,20 @@ function sortProducts(arr, mode) {
 }
 const PROMO_LABEL = "2 X $300.000";
 
+/* Rangos de precio para el filtro del catálogo (los elige el cliente) */
+const PRICE_RANGES = [
+  { id: "all",     label: "Todos los precios",     min: 0,      max: Infinity },
+  { id: "u150",    label: "Menos de $150.000",     min: 0,      max: 150000 },
+  { id: "150-250", label: "$150.000 – $250.000",   min: 150000, max: 250000 },
+  { id: "250-400", label: "$250.000 – $400.000",   min: 250000, max: 400000 },
+  { id: "400-600", label: "$400.000 – $600.000",   min: 400000, max: 600000 },
+  { id: "600",     label: "Más de $600.000",       min: 600000, max: Infinity },
+];
+const inPriceRange = (price, id) => {
+  const r = PRICE_RANGES.find((x) => x.id === id) || PRICE_RANGES[0];
+  return price >= r.min && price < r.max;
+};
+
 /* Selección curada de "Productos destacados" (por slug del catálogo original) */
 const FEATURED_SLUGS = [
   "dior-sauvage-649999",
@@ -1127,8 +1163,8 @@ const FEATURED_SLUGS = [
 function matchFilter(p, f) {
   if (f === "Todos") return true;
   if (f === "Destacados") return FEATURED_SLUGS.includes(p.slug);
-  if (f === "Para Él") return p.category === "Para Él" || p.category === "Unisex";
-  if (f === "Para Ella") return p.category === "Para Ella" || p.category === "Unisex";
+  if (f === "Hombre") return p.category === "Hombre" || p.category === "Unisex";
+  if (f === "Mujer") return p.category === "Mujer" || p.category === "Unisex";
   if (f === "Unisex") return p.category === "Unisex";
   if (f === "2 × $300.000") return !!p.promo;
   // cualquier otro filtro se trata como nombre de colección
@@ -1236,10 +1272,12 @@ export default function ReyDelAroma() {
   const [products, setProducts] = useState(loadInitialProducts);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [qty, setQty] = useState(1);
+  const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [catFilter, setCatFilter] = useState(initialCat || "Todos");
   const [sortBy, setSortBy] = useState("recomendado"); // ordenamiento elegido por el cliente
+  const [priceFilter, setPriceFilter] = useState("all"); // filtro por rango de precio
   const [toast, setToast] = useState(null);
   const [adminAuth, setAdminAuth] = useState(false);
   const [adminPw, setAdminPw] = useState("");
@@ -1416,7 +1454,7 @@ export default function ReyDelAroma() {
   const quickFilter = (f) => { setView("store"); setCatFilter(f); setTagFilter("Todos"); setSearch(""); setSearchOpen(false); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } setTimeout(goCatalog, 80); };
   const submitSearch = () => { setView("store"); setMenuOpen(false); setTimeout(goCatalog, 80); };
 
-  /* Abre la página propia de una categoría (Para Él, Para Ella, Unisex, 2 × $300.000, …) */
+  /* Abre la página propia de una categoría (Hombre, Mujer, Unisex, 2 × $300.000, …) */
   const goCategory = (f) => {
     setCatFilter(f);
     setTagFilter("Todos");
@@ -1440,6 +1478,7 @@ export default function ReyDelAroma() {
   const openProduct = (p) => {
     setSelectedProduct(p);
     setQty(1);
+    setSelSize(null);
     setView("product");
     window.scrollTo({ top: 0 });
   };
@@ -1463,12 +1502,13 @@ export default function ReyDelAroma() {
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
   const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const q = search.trim().toLowerCase();
-  const matched = q
+  const matched = (q
     ? products.filter((p) =>
         [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, p.tag]
           .filter(Boolean).join(" ").toLowerCase().includes(q)
       )
-    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter));
+    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter))
+  ).filter((p) => inPriceRange(p.price, priceFilter));
   const filtered = sortProducts(matched, sortBy);
 
   // Resultados en vivo bajo la lupa (primeros 6 mientras el cliente escribe)
@@ -1601,7 +1641,7 @@ export default function ReyDelAroma() {
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Para Él", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "" });
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "" });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
@@ -1720,9 +1760,9 @@ export default function ReyDelAroma() {
   ];
   const featBadges = [
     { img: feat4, cap: "2 × $300.000", filter: "2 × $300.000" },
-    { img: feat3, cap: "Productos Destacados", filter: "Destacados" },
-    { img: feat1, cap: "Hombre", filter: "Para Él" },
-    { img: feat2, cap: "Mujer", filter: "Para Ella" },
+    { img: feat3, cap: "Destacados", filter: "Destacados" },
+    { img: feat1, cap: "Hombre", filter: "Hombre" },
+    { img: feat2, cap: "Mujer", filter: "Mujer" },
   ];
   /* Carruseles de productos en el inicio (2×300, Unisex, Diseñador) */
   const homeRows = [
@@ -1788,6 +1828,11 @@ export default function ReyDelAroma() {
           <div className="hc-progress">
             <div className={`hc-progress-bar${pauseSlide ? " paused" : " run"}`} key={slide} style={{ animationDuration: `${banners[slide]?.dur || 9000}ms` }} />
           </div>
+          <button className="hc-promo" onClick={(e) => { e.stopPropagation(); goFilter("2 × $300.000"); }} aria-label="Promoción 2 por $300.000">
+            <span className="hc-flame">🔥</span>
+            <span className="hc-promo-txt">2×300</span>
+            <span className="hc-flame hc-flame2">🔥</span>
+          </button>
         </div>
       </section>
 
@@ -1829,7 +1874,12 @@ export default function ReyDelAroma() {
               : catFilter === "Destacados" ? <>Productos <span>Destacados</span></>
               : <><span>{catFilter}</span></>}
           </h2>
-          <span className="sec-cnt">{filtered.length} fragancia{filtered.length !== 1 ? "s" : ""}{!q && tagFilter !== "Todos" && catFilter !== "Todos" ? ` · ${tagFilter}` : ""}</span>
+          <div className="sec-tools">
+            <span className="sec-cnt">{filtered.length} fragancia{filtered.length !== 1 ? "s" : ""}{!q && tagFilter !== "Todos" && catFilter !== "Todos" ? ` · ${tagFilter}` : ""}</span>
+            <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
+              {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+            </select>
+          </div>
         </div>
         <div className="pgrid">
           {filtered.map((p) => (
@@ -1843,6 +1893,7 @@ export default function ReyDelAroma() {
                 <div className="pcard-name">{p.name}</div>
                 <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                 <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
               </div>
               <div className="pcard-foot">
                 <span className="pcard-orig">Original</span>
@@ -1881,6 +1932,7 @@ export default function ReyDelAroma() {
                     <div className="pcard-name">{p.name}</div>
                     <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                     <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                    {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
                   </div>
                   <div className="pcard-foot">
                     <span className="pcard-orig">Original</span>
@@ -1948,6 +2000,12 @@ export default function ReyDelAroma() {
         {/* Barra: ordenar */}
         <div className="catpage-toolbar">
           <div className="sort-ctrl">
+            <span className="sort-lbl">Precio</span>
+            <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
+              {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+            </select>
+          </div>
+          <div className="sort-ctrl">
             <span className="sort-lbl">Ordenar</span>
             <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
               {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
@@ -1984,6 +2042,7 @@ export default function ReyDelAroma() {
                   <div className="pcard-name">{p.name}</div>
                   <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                   <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                  {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
                 </div>
                 <div className="pcard-foot">
                   <span className="pcard-orig">Original</span>
@@ -2011,6 +2070,12 @@ export default function ReyDelAroma() {
     const p = selectedProduct;
     const words = p.name.split(" ");
     const last = words.pop();
+    const variants = Array.isArray(p.variants) && p.variants.length ? p.variants : null;
+    const activeVar = variants ? (variants.find((v) => v.size === selSize) || variants[0]) : null;
+    const shownPrice = activeVar ? activeVar.price : p.price;
+    const shownSize = activeVar ? activeVar.size : (p.size || "");
+    const shownImg = activeVar && activeVar.img ? (imageForFile(activeVar.img) || p.image) : p.image;
+    const aromas = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
     return (
       <div className="pd-wrap">
         <div className="bc">
@@ -2023,7 +2088,7 @@ export default function ReyDelAroma() {
         <div className="pd-grid">
           <div>
             <div className="pd-main">
-              {p.image ? <img src={p.image} alt={p.name} className="pd-real-img" /> : <NoImg />}
+              {shownImg ? <img src={shownImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
             </div>
           </div>
 
@@ -2036,10 +2101,19 @@ export default function ReyDelAroma() {
               <span className="pd-chip gold">{p.brand}</span>
               <span className="pd-chip">{p.category}</span>
               <span className="pd-chip">{p.collection}</span>
-              {p.size && <span className="pd-chip">{p.size}</span>}
+              {shownSize && <span className="pd-chip">{shownSize}</span>}
             </div>
 
-            <div className="pd-price">{cop(p.price)} <span className="pd-curr">COP</span></div>
+            <div className="pd-price">{cop(shownPrice)} <span className="pd-curr">COP</span></div>
+            <div className="pd-trust">
+              <span className="pd-stars">⭐⭐⭐⭐⭐</span>
+              <span className="pd-trust-txt">Más de 500 clientes satisfechos</span>
+            </div>
+            <div className="pd-seals">
+              <span className="pd-seal">✓ 100% Original</span>
+              <span className="pd-seal">🔒 Pago seguro</span>
+              <span className="pd-seal">🚚 Envío a todo Colombia</span>
+            </div>
 
             {p.promo && (
               <div className="pd-promo">
@@ -2048,16 +2122,25 @@ export default function ReyDelAroma() {
               </div>
             )}
 
-            <AddiWidget price={p.price} className="pd-addi" />
+            <AddiWidget price={shownPrice} className="pd-addi" />
 
-            {p.size && (
+            {variants ? (
               <>
                 <div className="pd-sec-t">Presentación</div>
                 <div className="sizes-row">
-                  <button className="size-btn act">{p.size}</button>
+                  {variants.map((v) => (
+                    <button key={v.size} className={`size-btn${activeVar.size === v.size ? " act" : ""}`} onClick={() => setSelSize(v.size)}>{v.size}</button>
+                  ))}
                 </div>
               </>
-            )}
+            ) : shownSize ? (
+              <>
+                <div className="pd-sec-t">Presentación</div>
+                <div className="sizes-row">
+                  <button className="size-btn act">{shownSize}</button>
+                </div>
+              </>
+            ) : null}
 
             <div className="add-row">
               <div className="qty-ctrl">
@@ -2065,36 +2148,24 @@ export default function ReyDelAroma() {
                 <span className="qty-n">{qty}</span>
                 <button className="qty-btn" onClick={() => setQty((q) => q + 1)}>+</button>
               </div>
-              <button className="add-btn" onClick={() => addToCart(p, p.size || "", qty)}>Agregar al carrito 🛒</button>
+              <button className="add-btn" onClick={() => addToCart({ ...p, price: shownPrice, image: shownImg }, shownSize, qty)}>Agregar al carrito 🛒</button>
             </div>
             <div className="pd-buy">
-              <button className="buy-now-btn" onClick={() => buyNow(p, p.size || "", qty)}>Comprar ahora →</button>
+              <button className="buy-now-btn" onClick={() => buyNow({ ...p, price: shownPrice, image: shownImg }, shownSize, qty)}>Comprar ahora →</button>
             </div>
+            <div className="pd-stock">🔥 Quedan pocas unidades disponibles</div>
 
             <div className="pd-sec-t">Sobre la fragancia</div>
             <div className="pd-desc">{p.description || describe(p)}</div>
 
-            {p.tag && (
+            {aromas.length > 0 && (
               <div className="pd-aroma">
-                <span className="pd-aroma-k">Tipo de aroma</span>
-                <span className="pd-aroma-v">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</span>
+                <span className="pd-aroma-k">Notas de aroma</span>
+                {aromas.map((a) => (
+                  <span key={a} className="pd-aroma-v">{FAMILY_META[a]?.emoji || "✨"} {a}</span>
+                ))}
               </div>
             )}
-
-            <div className="feats">
-              {[
-                { ic: "💎", lbl: "Autenticidad", val: "100% Original" },
-                { ic: "🚚", lbl: "Envío", val: "A toda Colombia" },
-                { ic: "💳", lbl: "Pago", val: "Wompi · Addi · Sistecrédito" },
-                { ic: "🔒", lbl: "Compra", val: "Rápida y segura" },
-              ].map((f, i) => (
-                <div key={i} className="feat">
-                  <div className="feat-ic">{f.ic}</div>
-                  <div className="feat-lbl">{f.lbl}</div>
-                  <div className="feat-val">{f.val}</div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -2319,7 +2390,7 @@ export default function ReyDelAroma() {
             <div className="fg">
               <label className="fl">Categoría</label>
               <select className="fsel" value={form.category} onChange={setF("category")}>
-                <option>Para Él</option><option>Para Ella</option><option>Unisex</option>
+                <option>Hombre</option><option>Mujer</option><option>Unisex</option>
               </select>
             </div>
             <div className="fg">
@@ -2698,34 +2769,35 @@ export default function ReyDelAroma() {
       )}
 
       <nav className="nav">
-        <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+        <div className={`nav-logo${view !== "admin" ? " nav-logo-c" : ""}`} onClick={() => { setView("store"); setCatFilter("Todos"); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
           <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
           <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
         </div>
 
         {view !== "admin" ? (
           <>
-            <div className="nav-sep" />
-            <div className="nav-links">
-              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
-              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
-              <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer">Para Él</a>
-              <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer">Para Ella</a>
-              <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
+            <div className="nav-left">
+              <button className={`hamburger${menuOpen ? " open" : ""}`} onClick={() => { setMenuOpen((o) => !o); setSearchOpen(false); }} aria-label="Menú">
+                <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
+              </button>
+              <div className="nav-links">
+                <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
+                <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
+                <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
+                <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
+                <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
+              </div>
             </div>
             <div className="nav-r">
               <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
               <button className="icon-btn" onClick={() => setCartOpen(true)} aria-label="Carrito">🛒 {cartCount > 0 && <span className="cbadge">{cartCount}</span>}</button>
               <button className="icon-btn" onClick={() => setView("admin")} title="Panel Admin" aria-label="Admin">⚙️</button>
-              <button className={`hamburger${menuOpen ? " open" : ""}`} onClick={() => { setMenuOpen((o) => !o); setSearchOpen(false); }} aria-label="Menú">
-                <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
-              </button>
             </div>
             <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Inicio</a>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
-              <a className="nl" href={categoryUrl("Para Él")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Él</a>
-              <a className="nl" href={categoryUrl("Para Ella")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Para Ella</a>
+              <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Hombre</a>
+              <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Mujer</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>2 × $300.000</a>
