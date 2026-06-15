@@ -2777,6 +2777,7 @@ export default function ReyDelAroma() {
                 <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
                 <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
                 <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
+                <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
                 <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
               </div>
             </div>
@@ -2790,6 +2791,7 @@ export default function ReyDelAroma() {
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
               <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Hombre</a>
               <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Mujer</a>
+              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
               <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>2 × $300.000</a>
