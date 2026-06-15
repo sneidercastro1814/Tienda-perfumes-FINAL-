@@ -836,7 +836,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 @media (max-width: 768px) { .subscribe { padding: 48px 16px; } .sub-title { font-size: 30px; } .sub-form { flex-direction: column; } .sub-btn { padding: 15px; } .sub-logo { height: 62px; } }
 
 /* ── FILTRO POR FAMILIA OLFATIVA (TIPO DE AROMA) ── */
-.fam-filters { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.fam-filters { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 0; padding: 24px 52px 8px; border-bottom: none; }
 .fam-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-right: 4px; font-weight: 600; }
 .fam-tab { display: inline-flex; align-items: center; gap: 6px; background: var(--bg2); border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.4px; padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .fam-tab:hover { border-color: var(--gold); color: var(--gold-d); transform: translateY(-1px); }
@@ -975,7 +975,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 }
 
 @media (max-width: 768px) {
-  .fam-filters { gap: 6px; }
+  .fam-filters { gap: 6px; padding: 18px 16px 6px; }
   .fam-tab { font-size: 11px; padding: 7px 11px; }
   .search-results { margin-top: 8px; }
   .sr-item { padding: 11px 13px; gap: 11px; }
@@ -1011,7 +1011,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cat-tab-home:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 
 /* Barra de herramientas (volver + ordenar) */
-.catpage-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 16px; max-width: 1180px; margin: 0 auto; padding: 30px 52px 0; flex-wrap: wrap; }
+.catpage-toolbar { display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap; background: var(--bg2); padding: 8px 52px 22px; border-bottom: 1px solid rgba(0,0,0,0.07); }
 .catpage-back { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 11px 20px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
 .catpage-back:hover { border-color: var(--gold); color: var(--gold-d); transform: translateX(-2px); }
 
@@ -1021,7 +1021,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .catpage-desc { font-size: 14px; }
   .cat-tabs { padding: 14px 16px; gap: 8px; top: 64px; }
   .cat-tab { font-size: 11.5px; padding: 9px 14px; }
-  .catpage-toolbar { padding: 22px 16px 0; gap: 12px; }
+  .catpage-toolbar { padding: 6px 16px 18px; gap: 12px; }
 }
 @media (max-width: 480px) {
   .catpage-title { font-size: 33px; }
@@ -1989,15 +1989,18 @@ export default function ReyDelAroma() {
     const meta = CATEGORY_META[catFilter] || { eyebrow: "Colección", pre: "", hi: catFilter, banner: "banner1", desc: "" };
     return (
       <div className="catpage">
-        {/* Pestañas para saltar entre categorías */}
-        <div className="cat-tabs">
-          <button className="cat-tab cat-tab-home" onClick={() => quickFilter("Todos")}>← Todo el catálogo</button>
-          {CATEGORY_TABS.map((t) => (
-            <button key={t} className={`cat-tab${catFilter === t ? " act" : ""}`} onClick={() => goCategory(t)}>{t}</button>
+        {/* Filtro por familia olfativa (tipo de aroma) */}
+        <div className="filters fam-filters">
+          <span className="fam-label">Tipo de aroma</span>
+          <button className={`fam-tab${tagFilter === "Todos" ? " act" : ""}`} onClick={() => setTagFilter("Todos")}>Todos</button>
+          {aromaList.map((fam) => (
+            <button key={fam} className={`fam-tab${tagFilter === fam ? " act" : ""}`} onClick={() => setTagFilter(fam)} title={FAMILY_META[fam]?.hint || ""}>
+              <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
+            </button>
           ))}
         </div>
 
-        {/* Barra: ordenar */}
+        {/* Barra: precio y ordenar (debajo de tipo de aroma) */}
         <div className="catpage-toolbar">
           <div className="sort-ctrl">
             <span className="sort-lbl">Precio</span>
@@ -2011,17 +2014,6 @@ export default function ReyDelAroma() {
               {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
             </select>
           </div>
-        </div>
-
-        {/* Filtro por familia olfativa (tipo de aroma) */}
-        <div className="filters fam-filters">
-          <span className="fam-label">Tipo de aroma</span>
-          <button className={`fam-tab${tagFilter === "Todos" ? " act" : ""}`} onClick={() => setTagFilter("Todos")}>Todos</button>
-          {aromaList.map((fam) => (
-            <button key={fam} className={`fam-tab${tagFilter === fam ? " act" : ""}`} onClick={() => setTagFilter(fam)} title={FAMILY_META[fam]?.hint || ""}>
-              <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
-            </button>
-          ))}
         </div>
 
         {/* Productos de la categoría */}
