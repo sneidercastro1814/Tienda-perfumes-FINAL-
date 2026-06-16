@@ -254,6 +254,10 @@ body::after {
 .nl:hover, .nl.act { color: var(--gold); }
 a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .mobile-menu a.nl { display: block; }
+.nl-promo { color: var(--gold-l); font-weight: 700; }
+.nl-promo-txt { white-space: nowrap; }
+.nl-flame { display: inline-block; font-size: 14px; margin: 0 4px; line-height: 1; transform-origin: 50% 90%; animation: flame 0.9s ease-in-out infinite; }
+.nl-flame2 { animation-delay: 0.45s; }
 .nav-r { display: flex; align-items: center; gap: 6px; }
 .icon-btn { background: none; border: 1px solid transparent; color: rgba(255,255,255,0.8); cursor: pointer; font-size: 18px; padding: 7px 10px; transition: all 0.25s; position: relative; line-height: 1; border-radius: 2px; }
 .icon-btn:hover { color: var(--gold); border-color: var(--border); background: rgba(255,255,255,0.07); }
@@ -2779,11 +2783,11 @@ export default function ReyDelAroma() {
           <>
             <div className="nav-links">
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
+              <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer"><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
               <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
               <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
-              <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer">2 × $300.000</a>
             </div>
             <div className="nav-r">
               <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
@@ -2795,13 +2799,13 @@ export default function ReyDelAroma() {
             </div>
             <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Inicio</a>
+              <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
               <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Hombre</a>
               <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Mujer</a>
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
-              <a className="nl" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>2 × $300.000</a>
             </div>
           </>
         ) : (
