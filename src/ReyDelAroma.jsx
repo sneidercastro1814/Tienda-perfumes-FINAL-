@@ -1459,7 +1459,7 @@ export default function ReyDelAroma() {
 
   const goCatalog = () => document.getElementById("cat")?.scrollIntoView({ behavior: "smooth" });
   const quickFilter = (f) => { setView("store"); setCatFilter(f); setTagFilter("Todos"); setSearch(""); setSearchOpen(false); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } setTimeout(goCatalog, 80); };
-  const submitSearch = () => { setView("store"); setMenuOpen(false); setTimeout(goCatalog, 80); };
+  const submitSearch = () => { if (!search.trim()) return; setSearchOpen(false); setView("store"); setMenuOpen(false); setTimeout(goCatalog, 90); };
 
   /* Abre la página propia de una categoría (Hombre, Mujer, Unisex, 2 × $300.000, …) */
   const goCategory = (f) => {
