@@ -396,10 +396,11 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-chip { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; border: 1px solid var(--border); color: var(--text-dim); }
 .pd-chip.gold { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
 .pd-price { font-family: var(--serif); font-size: 40px; font-weight: 500; color: var(--gold-d); margin-bottom: 12px; letter-spacing: 0.5px; }
-.pd-trust { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
-.pd-stars { font-size: 13px; letter-spacing: 1px; }
+.pd-reassure { display: flex; flex-direction: column; align-items: center; gap: 13px; margin: 2px 0 30px; padding-top: 18px; border-top: 1px solid rgba(0,0,0,0.07); }
+.pd-trust { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.pd-stars { font-size: 23px; letter-spacing: 3px; line-height: 1; }
 .pd-trust-txt { font-size: 13px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.2px; }
-.pd-seals { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.pd-seals { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .pd-seal { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
 .pd-stock { display: inline-flex; align-items: center; gap: 7px; margin: -10px 0 26px; font-size: 13px; font-weight: 700; letter-spacing: 0.2px; color: #c0392b; background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.22); padding: 9px 16px; border-radius: 10px; }
 .pd-curr { font-size: 18px; opacity: 0.5; font-family: var(--sans); font-weight: 300; }
@@ -2102,15 +2103,6 @@ export default function ReyDelAroma() {
             </div>
 
             <div className="pd-price">{cop(shownPrice)} <span className="pd-curr">COP</span></div>
-            <div className="pd-trust">
-              <span className="pd-stars">⭐⭐⭐⭐⭐</span>
-              <span className="pd-trust-txt">Más de 500 clientes satisfechos</span>
-            </div>
-            <div className="pd-seals">
-              <span className="pd-seal">✓ 100% Original</span>
-              <span className="pd-seal">🔒 Pago seguro</span>
-              <span className="pd-seal">🚚 Envío a todo Colombia</span>
-            </div>
 
             {p.promo && (
               <div className="pd-promo">
@@ -2151,6 +2143,18 @@ export default function ReyDelAroma() {
               <button className="buy-now-btn" onClick={() => buyNow({ ...p, price: shownPrice, image: shownImg }, shownSize, qty)}>Comprar ahora →</button>
             </div>
             <div className="pd-stock">🔥 Quedan pocas unidades disponibles</div>
+
+            <div className="pd-reassure">
+              <div className="pd-trust">
+                <span className="pd-stars">⭐⭐⭐⭐⭐</span>
+                <span className="pd-trust-txt">Más de 500 clientes satisfechos</span>
+              </div>
+              <div className="pd-seals">
+                <span className="pd-seal">✓ 100% Original</span>
+                <span className="pd-seal">🔒 Pago seguro</span>
+                <span className="pd-seal">🚚 Envío a todo Colombia</span>
+              </div>
+            </div>
 
             <div className="pd-sec-t">Sobre la fragancia</div>
             <div className="pd-desc">{p.description || describe(p)}</div>
