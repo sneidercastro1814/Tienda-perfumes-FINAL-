@@ -360,7 +360,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ── Carruseles de productos en el inicio ── */
 .prow { max-width: 1280px; margin: 0 auto; padding: 44px 52px 8px; }
 .prow-hdr { text-align: center; margin-bottom: 24px; }
-.prow-title { font-family: var(--serif); font-size: 30px; font-weight: 600; letter-spacing: 0.3px; }
+.prow-title { font-family: var(--serif); font-size: 30px; font-weight: 600; letter-spacing: 0.3px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.prow-flame { display: inline-block; font-size: 0.8em; transform-origin: 50% 90%; animation: flame 0.9s ease-in-out infinite; }
+.prow-flame2 { animation-delay: 0.45s; }
 .prow-all { margin-top: 8px; display: inline-block; background: none; border: none; color: var(--gold-d); font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: color 0.2s; }
 .prow-all:hover { color: var(--gold); }
 .prow-wrap { position: relative; }
@@ -1766,7 +1768,7 @@ export default function ReyDelAroma() {
   ];
   /* Carruseles de productos en el inicio (2×300, Unisex, Diseñador) */
   const homeRows = [
-    { id: "row-promo", title: "🔥 2 × $300.000", filter: "2 × $300.000" },
+    { id: "row-promo", title: "2 × $300.000", filter: "2 × $300.000" },
     { id: "row-disenador", title: "Diseñador", filter: "Diseñador" },
   ].map((r) => ({ ...r, list: products.filter((p) => matchFilter(p, r.filter)) }));
 
@@ -1828,11 +1830,6 @@ export default function ReyDelAroma() {
           <div className="hc-progress">
             <div className={`hc-progress-bar${pauseSlide ? " paused" : " run"}`} key={slide} style={{ animationDuration: `${banners[slide]?.dur || 9000}ms` }} />
           </div>
-          <button className="hc-promo" onClick={(e) => { e.stopPropagation(); goFilter("2 × $300.000"); }} aria-label="Promoción 2 por $300.000">
-            <span className="hc-flame">🔥</span>
-            <span className="hc-promo-txt">2×300</span>
-            <span className="hc-flame hc-flame2">🔥</span>
-          </button>
         </div>
       </section>
 
@@ -1915,7 +1912,15 @@ export default function ReyDelAroma() {
       {!browsing && homeRows.map((row) => row.list.length > 0 && (
         <section key={row.id} className="prow">
           <div className="prow-hdr">
-            <h2 className="prow-title">{row.title}</h2>
+            <h2 className="prow-title">
+              {row.id === "row-promo" ? (
+                <>
+                  <span className="prow-flame">🔥</span>
+                  <span className="prow-title-txt">{row.title}</span>
+                  <span className="prow-flame prow-flame2">🔥</span>
+                </>
+              ) : row.title}
+            </h2>
             <button className="prow-all" onClick={() => goFilter(row.filter)}>Ver todos →</button>
           </div>
           <div className="prow-wrap">
