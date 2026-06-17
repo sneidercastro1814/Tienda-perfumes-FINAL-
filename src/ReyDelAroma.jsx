@@ -552,8 +552,16 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cart-trust { display: flex; flex-direction: column; align-items: center; gap: 9px; margin: 10px 0 16px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.07); }
 .cart-trust .cart-note { margin: 0; font-weight: 600; }
 .cart-trust .pay-badges.sm { margin-top: 0; }
-.cart-keep { display: block; width: 100%; background: none; border: none; color: var(--text-muted); font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; padding: 14px 0 2px; transition: color 0.2s; }
-.cart-keep:hover { color: var(--gold-d); }
+.cart-more { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; margin-top: 14px; padding: 13px 16px; background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04)); border: 1.5px solid var(--gold); border-radius: 12px; cursor: pointer; font-family: var(--sans); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; animation: cartMorePulse 2.2s ease-in-out infinite; }
+.cart-more-main { font-size: 14px; font-weight: 700; color: var(--gold-d); letter-spacing: 0.3px; }
+.cart-more-sub { font-size: 11px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.3px; }
+.cart-more:hover { transform: translateY(-2px); background: linear-gradient(135deg, rgba(201,168,76,0.20), rgba(201,168,76,0.08)); box-shadow: 0 10px 26px rgba(201,168,76,0.32); animation: none; }
+@keyframes cartMorePulse {
+  0% { box-shadow: 0 0 0 0 rgba(201,168,76,0.45); transform: scale(1); }
+  70% { box-shadow: 0 0 0 10px rgba(201,168,76,0); transform: scale(1.018); }
+  100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .cart-more { animation: none; } }
 .empty-cart { text-align: center; padding: 80px 24px; color: var(--text-muted); }
 .empty-icon { font-size: 48px; margin-bottom: 18px; opacity: 0.25; }
 
@@ -2949,7 +2957,10 @@ export default function ReyDelAroma() {
                   <PayBadges className="sm" />
                 </div>
                 <button className="co-checkout-btn" onClick={() => goCheckout(cart)}>Finalizar compra →</button>
-                <button className="cart-keep" onClick={() => setCartOpen(false)}>← Seguir comprando</button>
+                <button className="cart-more" onClick={() => setCartOpen(false)}>
+                  <span className="cart-more-main">🎁 Agregar otro perfume</span>
+                  <span className="cart-more-sub">Aprovecha nuestras promociones</span>
+                </button>
               </div>
             )}
           </div>
