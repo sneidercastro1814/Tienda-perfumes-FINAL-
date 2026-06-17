@@ -520,7 +520,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .img-preview-rm { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: #d64545; color: #fff; border: none; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
 
 /* ── CARRITO ── */
-.cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); animation: fadeIn 0.3s ease; }
+.cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 400px; background: var(--bg2); border-left: 1px solid var(--border); z-index: 201; display: flex; flex-direction: column; animation: slideIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
@@ -528,7 +528,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cart-title { font-family: var(--serif); font-size: 28px; font-weight: 400; letter-spacing: 1px; }
 .cart-x { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; line-height: 1; transition: color 0.2s; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; }
 .cart-x:hover { color: var(--text); }
-.cart-body { flex: 1; overflow-y: auto; padding: 8px 16px; }
+.cart-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 8px 16px; }
 .ci { display: flex; gap: 16px; padding: 18px 8px; border-bottom: 1px solid rgba(0,0,0,0.07); }
 .ci-img { width: 62px; height: 78px; background: #fff; border: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .ci-real-img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
@@ -679,6 +679,11 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .form-g { grid-template-columns: 1fr; }
 
   .cart-drawer { width: 100%; }
+  .cart-hdr { padding: 18px 18px; }
+  .cart-body { padding: 6px 12px; }
+  .cart-foot { padding: 16px 18px calc(18px + env(safe-area-inset-bottom, 0px)); }
+  .cart-title { font-size: 24px; }
+  .cart-ta { font-size: 27px; }
 }
 @media (max-width: 480px) {
   .pgrid { grid-template-columns: repeat(2,1fr); }
@@ -1400,11 +1405,33 @@ export default function ReyDelAroma() {
     return () => clearTimeout(t);
   }, [pauseSlide, view, slide, banners.length]);
 
-  /* bloquear el scroll del fondo mientras la búsqueda superpuesta está abierta */
+  /* Bloquea el scroll del fondo mientras el CARRITO o la búsqueda están abiertos.
+     Técnica robusta para celular: fija el body y guarda/restaura la posición del
+     scroll, para que el fondo no se mueva detrás del panel. */
   useEffect(() => {
-    document.body.style.overflow = searchOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [searchOpen]);
+    if (!(searchOpen || cartOpen)) return;
+    const scrollY = window.scrollY;
+    const b = document.body;
+    const prev = {
+      position: b.style.position, top: b.style.top, left: b.style.left,
+      right: b.style.right, width: b.style.width, overflow: b.style.overflow,
+    };
+    b.style.position = "fixed";
+    b.style.top = `-${scrollY}px`;
+    b.style.left = "0";
+    b.style.right = "0";
+    b.style.width = "100%";
+    b.style.overflow = "hidden";
+    return () => {
+      b.style.position = prev.position;
+      b.style.top = prev.top;
+      b.style.left = prev.left;
+      b.style.right = prev.right;
+      b.style.width = prev.width;
+      b.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, [searchOpen, cartOpen]);
 
   /* ── VENTAS: traer pedidos guardados desde el servidor (Netlify) ── */
   const fetchOrders = async (tokenArg) => {
