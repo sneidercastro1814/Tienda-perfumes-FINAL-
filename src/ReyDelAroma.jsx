@@ -549,6 +549,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cart-tl { font-size: 12px; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
 .cart-ta { font-family: var(--serif); font-size: 31px; font-weight: 500; color: var(--gold-d); }
 .cart-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 12px; letter-spacing: 0.5px; line-height: 1.6; }
+.cart-trust { display: flex; flex-direction: column; align-items: center; gap: 9px; margin: 10px 0 16px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.07); }
+.cart-trust .cart-note { margin: 0; font-weight: 600; }
+.cart-trust .pay-badges.sm { margin-top: 0; }
 .cart-keep { display: block; width: 100%; background: none; border: none; color: var(--text-muted); font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; padding: 14px 0 2px; transition: color 0.2s; }
 .cart-keep:hover { color: var(--gold-d); }
 .empty-cart { text-align: center; padding: 80px 24px; color: var(--text-muted); }
@@ -2940,13 +2943,13 @@ export default function ReyDelAroma() {
             {cart.length > 0 && (
               <div className="cart-foot">
                 <div className="cart-tr"><span className="cart-tl">Total</span><span className="cart-ta">{cop(cartTotal)}</span></div>
-                {cartTotal < SHIPPING.bogotaFreeFrom
-                  ? <div className="cart-ship">🚚 Te faltan <b>{cop(SHIPPING.bogotaFreeFrom - cartTotal)}</b> para envío gratis en Bogotá</div>
-                  : <div className="cart-ship free">🚚 ¡Tienes envío <b>GRATIS</b> en Bogotá!</div>}
+                <div className="cart-ship free">🔥 ¡Envío <b>GRATIS</b> en Bogotá! 🔥</div>
+                <div className="cart-trust">
+                  <div className="cart-note">🔒 Pago 100% seguro</div>
+                  <PayBadges className="sm" />
+                </div>
                 <button className="co-checkout-btn" onClick={() => goCheckout(cart)}>Finalizar compra →</button>
                 <button className="cart-keep" onClick={() => setCartOpen(false)}>← Seguir comprando</button>
-                <div className="cart-note">Pago 100% seguro</div>
-                <PayBadges className="sm" />
               </div>
             )}
           </div>
