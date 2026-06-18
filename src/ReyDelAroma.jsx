@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, COLLECTIONS } from "./data/products";
 import banner1 from "./assets/banners/banner-1.jpg";
 import banner2 from "./assets/banners/banner-2.jpg";
@@ -1088,6 +1088,58 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .srch-count { margin-top: 13px; }
   .srch-empty h3 { font-size: 23px; }
 }
+
+/* ── PANEL DE FILTROS (cajón lateral, dorado y negro) ── */
+.filt-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
+.filt-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: 380px; max-width: 88vw; background: #0b0b0a; color: #f4f1e6; border-right: 1px solid var(--border-h); z-index: 201; display: flex; flex-direction: column; animation: slideInLeft 0.38s cubic-bezier(0.25,0.46,0.45,0.94); }
+@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.filt-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 22px 16px; border-bottom: 1px solid rgba(201,168,76,0.28); flex-shrink: 0; }
+.filt-head-l { display: flex; align-items: center; gap: 10px; }
+.filt-title { font-family: var(--serif); font-size: 23px; font-weight: 600; color: #fff; }
+.filt-title span { color: var(--gold); font-style: italic; }
+.filt-clear { background: none; border: none; color: var(--gold-l); font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: color 0.2s; text-decoration: underline; text-underline-offset: 3px; }
+.filt-clear:hover { color: #fff; }
+.filt-x { background: none; border: none; color: var(--gold); font-size: 24px; line-height: 1; cursor: pointer; padding: 2px 6px; border-radius: 8px; transition: background 0.2s; }
+.filt-x:hover { background: rgba(201,168,76,0.14); }
+.filt-body { flex: 1; overflow-y: auto; padding: 8px 22px 20px; }
+.filt-sec { padding: 22px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.filt-sec:last-child { border-bottom: none; }
+.filt-sec-t { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.filt-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.filt-chip { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.3); color: #d8d4c4; font-family: var(--sans); font-size: 12.5px; font-weight: 600; padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.filt-chip:hover { border-color: var(--gold); color: #fff; }
+.filt-chip.act { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-l) 100%); border-color: var(--gold-l); color: #1a1407; font-weight: 700; box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
+/* Slider de precio (doble manija) */
+.filt-price-vals { font-size: 13px; color: #d8d4c4; margin-bottom: 18px; letter-spacing: 0.3px; }
+.filt-price-vals b { color: var(--gold-l); font-weight: 700; }
+.filt-range { position: relative; height: 34px; margin: 0 6px; }
+.filt-range-track { position: absolute; top: 14px; left: 0; right: 0; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.14); }
+.filt-range-fill { position: absolute; top: 14px; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--gold) 0%, var(--gold-l) 100%); }
+.filt-range input[type=range] { position: absolute; top: 0; left: 0; width: 100%; height: 34px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.filt-range input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid var(--gold); cursor: pointer; pointer-events: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.4); margin-top: 0; }
+.filt-range input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid var(--gold); cursor: pointer; pointer-events: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.filt-range input[type=range]::-webkit-slider-runnable-track { background: none; height: 34px; }
+.filt-range input[type=range]::-moz-range-track { background: none; }
+.filt-foot { flex-shrink: 0; padding: 16px 22px 22px; border-top: 1px solid rgba(201,168,76,0.28); background: #0b0b0a; }
+.filt-apply { width: 100%; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-l) 100%); border: none; color: #1a1407; font-family: var(--sans); font-size: 15px; font-weight: 800; letter-spacing: 0.3px; padding: 15px; border-radius: 12px; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; box-shadow: 0 8px 22px rgba(201,168,76,0.28); }
+.filt-apply:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(201,168,76,0.4); }
+.filt-apply:active { transform: translateY(0); }
+/* Botón Filtros del navbar (campana de embudo) */
+.filt-btn-badge { position: absolute; top: -3px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--gold); color: #1a1407; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; line-height: 1; }
+
+/* ── PÁGINA DE RESULTADOS FILTRADOS ── */
+.filt-active { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; align-items: center; }
+.filt-active-lbl { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-right: 2px; }
+.filt-tag { display: inline-flex; align-items: center; gap: 7px; background: rgba(201,168,76,0.14); border: 1px solid rgba(201,168,76,0.45); color: var(--gold-l); font-size: 12.5px; font-weight: 600; padding: 6px 8px 6px 14px; border-radius: 999px; }
+.filt-tag button { background: rgba(255,255,255,0.12); border: none; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.filt-tag button:hover { background: rgba(255,255,255,0.3); }
+.filt-edit { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid rgba(201,168,76,0.5); color: var(--gold-l); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; padding: 9px 18px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+.filt-edit:hover { border-color: var(--gold); background: rgba(201,168,76,0.12); color: #fff; }
+@media (max-width: 768px) {
+  .filt-drawer { width: 340px; }
+  .filt-body { padding: 8px 18px 20px; }
+  .filt-head { padding: 18px 18px 14px; }
+}
 `;
 
 /* ──────────────────────────────────────────────────────────────
@@ -1404,6 +1456,22 @@ export default function ReyDelAroma() {
   const [newCollection, setNewCollection] = useState("");
   const [newAroma, setNewAroma] = useState("");
 
+  /* ── PANEL DE FILTROS (Aroma · Sexo · Precio · Categoría) ── */
+  const [filtersOpen, setFiltersOpen] = useState(false); // cajón abierto/cerrado
+  const [fAroma, setFAroma] = useState("Todos");
+  const [fSex, setFSex] = useState("Todos");
+  const [fCat, setFCat] = useState("Todos");
+  // Límites de precio (mín/máx reales del catálogo, redondeados a 10.000)
+  const priceBounds = useMemo(() => {
+    const ps = products.map((p) => Number(p.price)).filter((n) => Number.isFinite(n) && n > 0);
+    if (!ps.length) return { min: 0, max: 1000000 };
+    return { min: Math.floor(Math.min(...ps) / 10000) * 10000, max: Math.ceil(Math.max(...ps) / 10000) * 10000 };
+  }, [products]);
+  const [priceLo, setPriceLo] = useState(priceBounds.min);
+  const [priceHi, setPriceHi] = useState(priceBounds.max);
+  // Al cargar (o si cambia el catálogo) ajustamos el slider a los límites reales
+  useEffect(() => { setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); }, [priceBounds.min, priceBounds.max]);
+
   const banners = [
     { src: banner2, alt: "2 perfumes por $300.000", filter: "2 × $300.000", dur: 15000 },
     { src: banner1, alt: "Más de 50 referencias disponibles", filter: "Todos", dur: 9000 },
@@ -1475,7 +1543,7 @@ export default function ReyDelAroma() {
      Técnica robusta para celular: fija el body y guarda/restaura la posición del
      scroll, para que el fondo no se mueva detrás del panel. */
   useEffect(() => {
-    if (!(searchOpen || cartOpen)) return;
+    if (!(searchOpen || cartOpen || filtersOpen)) return;
     const scrollY = window.scrollY;
     const b = document.body;
     const prev = {
@@ -1497,7 +1565,7 @@ export default function ReyDelAroma() {
       b.style.overflow = prev.overflow;
       window.scrollTo(0, scrollY);
     };
-  }, [searchOpen, cartOpen]);
+  }, [searchOpen, cartOpen, filtersOpen]);
 
   /* ── VENTAS: traer pedidos guardados desde el servidor (Netlify) ── */
   const fetchOrders = async (tokenArg) => {
@@ -1631,6 +1699,37 @@ export default function ReyDelAroma() {
 
   // Resultados en vivo bajo la lupa (primeros 6 mientras el cliente escribe)
   const searchResults = q ? filtered.slice(0, 6) : [];
+
+  /* ── FILTRADO DEL PANEL (Aroma · Sexo · Precio · Categoría), combinables ── */
+  // Categorías disponibles: las colecciones reales + la promo + destacados
+  const collectionOpts = Array.from(new Set([...collectionList, ...products.map((p) => p.collection)].filter(Boolean)));
+  const catOptions = [...collectionOpts, "2 × $300.000", "Destacados"];
+  const fSexMatch = (p) =>
+    fSex === "Todos" ? true
+    : fSex === "Hombre" ? (p.category === "Hombre" || p.category === "Unisex")
+    : fSex === "Mujer" ? (p.category === "Mujer" || p.category === "Unisex")
+    : p.category === "Unisex";
+  const fCatMatch = (p) =>
+    fCat === "Todos" ? true
+    : fCat === "2 × $300.000" ? !!p.promo
+    : fCat === "Destacados" ? FEATURED_SLUGS.includes(p.slug)
+    : p.collection === fCat;
+  const fAromaMatch = (p) => {
+    if (fAroma === "Todos") return true;
+    const tags = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
+    return tags.includes(fAroma);
+  };
+  const fPriceMatch = (p) => p.price >= priceLo && p.price <= priceHi;
+  const priceTouched = priceLo > priceBounds.min || priceHi < priceBounds.max;
+  const panelResults = sortProducts(
+    products.filter((p) => fSexMatch(p) && fCatMatch(p) && fAromaMatch(p) && fPriceMatch(p)),
+    "recomendado"
+  );
+  const activeFilterCount = (fAroma !== "Todos" ? 1 : 0) + (fSex !== "Todos" ? 1 : 0) + (fCat !== "Todos" ? 1 : 0) + (priceTouched ? 1 : 0);
+
+  const openFilters = () => { setSearchOpen(false); setMenuOpen(false); setFiltersOpen(true); };
+  const clearFilters = () => { setFAroma("Todos"); setFSex("Todos"); setFCat("Todos"); setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); };
+  const applyFilters = () => { setFiltersOpen(false); setMenuOpen(false); setView("filtros"); window.scrollTo({ top: 0 }); };
 
   /* Totales del checkout: subtotal, descuento del cupón, envío y total. */
   const computeTotals = (items = checkoutItems) => {
@@ -2256,6 +2355,83 @@ export default function ReyDelAroma() {
               <button onClick={() => goCategory("Unisex")}>Unisex</button>
               <button onClick={() => goCategory("Árabes")}>Árabes</button>
               <button onClick={() => goCategory("2 × $300.000")}>2 × $300.000</button>
+            </div>
+          </div>
+        )}
+
+        <Footer />
+      </div>
+    );
+  };
+
+  /* ── VISTA RESULTADOS FILTRADOS (Aroma · Sexo · Precio · Categoría) ── */
+  const FilterResultsView = () => {
+    const n = panelResults.length;
+    return (
+      <div className="srch">
+        <section className="srch-hero">
+          <div className="srch-hero-in">
+            <div className="srch-bc">
+              <button className="bc-lnk" onClick={() => { setView("store"); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>Inicio</button>
+              <span aria-hidden="true">›</span>
+              <span className="cur">Filtros</span>
+            </div>
+            <div className="srch-eyebrow">🎚️ Catálogo filtrado</div>
+            <h1 className="srch-title">Tu <span>selección</span></h1>
+            <span className="srch-count">{n} fragancia{n !== 1 ? "s" : ""}</span>
+
+            {/* Filtros activos (se pueden quitar uno a uno) + editar */}
+            <div className="filt-active">
+              {activeFilterCount > 0 && <span className="filt-active-lbl">Filtros:</span>}
+              {fAroma !== "Todos" && (
+                <span className="filt-tag">{FAMILY_META[fAroma]?.emoji || "✨"} {fAroma}<button onClick={() => setFAroma("Todos")} aria-label="Quitar aroma">✕</button></span>
+              )}
+              {fSex !== "Todos" && (
+                <span className="filt-tag">{fSex}<button onClick={() => setFSex("Todos")} aria-label="Quitar sexo">✕</button></span>
+              )}
+              {fCat !== "Todos" && (
+                <span className="filt-tag">{fCat}<button onClick={() => setFCat("Todos")} aria-label="Quitar categoría">✕</button></span>
+              )}
+              {priceTouched && (
+                <span className="filt-tag">{cop(priceLo)} – {cop(priceHi)}<button onClick={() => { setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); }} aria-label="Quitar precio">✕</button></span>
+              )}
+              <button className="filt-edit" onClick={openFilters}>⚙️ Editar filtros</button>
+            </div>
+          </div>
+        </section>
+
+        {n > 0 ? (
+          <div className="products-wrap srch-products">
+            <div className="pgrid">
+              {panelResults.map((p) => (
+                <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
+                  <div className="pcard-img">
+                    {p.promo && <span className="pcard-badge">2 × $300.000</span>}
+                    {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+                  </div>
+                  <div className="pcard-body">
+                    <div className="pcard-cat">{p.brand}</div>
+                    <div className="pcard-name">{p.name}</div>
+                    <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+                    <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                    {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
+                  </div>
+                  <div className="pcard-foot">
+                    <span className="pcard-orig">Original</span>
+                    <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="srch-empty">
+            <div className="srch-empty-ic">🫙</div>
+            <h3>Sin <span>coincidencias</span></h3>
+            <p>Ningún perfume cumple con esta combinación de filtros. Prueba ampliando el rango de precio o quitando alguna opción.</p>
+            <div className="srch-sugg">
+              <button onClick={openFilters}>Ajustar filtros</button>
+              <button onClick={clearFilters}>Limpiar todo</button>
             </div>
           </div>
         )}
@@ -2989,6 +3165,12 @@ export default function ReyDelAroma() {
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
             </div>
             <div className="nav-r">
+              <button className={`icon-btn${filtersOpen ? " act" : ""}`} onClick={openFilters} aria-label="Filtros" title="Filtros">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }}>
+                  <path d="M3 5h18M6 12h12M10 19h4" />
+                </svg>
+                {activeFilterCount > 0 && <span className="filt-btn-badge">{activeFilterCount}</span>}
+              </button>
               <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
               <button className="icon-btn" onClick={() => setCartOpen(true)} aria-label="Carrito">🛒 {cartCount > 0 && <span className="cbadge">{cartCount}</span>}</button>
               <button className="icon-btn" onClick={() => setView("admin")} title="Panel Admin" aria-label="Admin">⚙️</button>
@@ -3075,10 +3257,101 @@ export default function ReyDelAroma() {
       {view === "store" && StoreView()}
       {view === "category" && CategoryView()}
       {view === "search" && SearchView()}
+      {view === "filtros" && FilterResultsView()}
       {view === "product" && ProductDetailView()}
       {view === "checkout" && CheckoutView()}
       {view === "pago-resultado" && PaymentResultView()}
       {view === "admin" && AdminView()}
+
+      {/* ── PANEL DE FILTROS (cajón lateral) ── */}
+      {view !== "admin" && filtersOpen && (
+        <>
+          <div className="filt-overlay" onClick={() => setFiltersOpen(false)} />
+          <div className="filt-drawer" role="dialog" aria-modal="true" aria-label="Filtros">
+            <div className="filt-head">
+              <div className="filt-head-l">
+                <span className="filt-title">Filtrar <span>perfumes</span></span>
+                {activeFilterCount > 0 && <button className="filt-clear" onClick={clearFilters}>Limpiar</button>}
+              </div>
+              <button className="filt-x" onClick={() => setFiltersOpen(false)} aria-label="Cerrar filtros">✕</button>
+            </div>
+
+            <div className="filt-body">
+              {/* AROMA */}
+              <div className="filt-sec">
+                <div className="filt-sec-t">✨ Aroma</div>
+                <div className="filt-chips">
+                  <button className={`filt-chip${fAroma === "Todos" ? " act" : ""}`} onClick={() => setFAroma("Todos")}>Todos</button>
+                  {aromaList.map((fam) => (
+                    <button key={fam} className={`filt-chip${fAroma === fam ? " act" : ""}`} onClick={() => setFAroma(fam)}>
+                      <span>{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* SEXO */}
+              <div className="filt-sec">
+                <div className="filt-sec-t">⚥ Sexo</div>
+                <div className="filt-chips">
+                  {["Todos", "Hombre", "Mujer", "Unisex"].map((s) => (
+                    <button key={s} className={`filt-chip${fSex === s ? " act" : ""}`} onClick={() => setFSex(s)}>{s}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* PRECIO */}
+              <div className="filt-sec">
+                <div className="filt-sec-t">💰 Precio</div>
+                <div className="filt-price-vals">Desde <b>{cop(priceLo)}</b> hasta <b>{cop(priceHi)}</b></div>
+                <div className="filt-range">
+                  <div className="filt-range-track" />
+                  <div
+                    className="filt-range-fill"
+                    style={{
+                      left: `${((priceLo - priceBounds.min) / Math.max(1, priceBounds.max - priceBounds.min)) * 100}%`,
+                      right: `${(1 - (priceHi - priceBounds.min) / Math.max(1, priceBounds.max - priceBounds.min)) * 100}%`,
+                    }}
+                  />
+                  <input
+                    type="range"
+                    min={priceBounds.min}
+                    max={priceBounds.max}
+                    step={10000}
+                    value={priceLo}
+                    onChange={(e) => setPriceLo(Math.min(Number(e.target.value), priceHi - 10000))}
+                    aria-label="Precio mínimo"
+                  />
+                  <input
+                    type="range"
+                    min={priceBounds.min}
+                    max={priceBounds.max}
+                    step={10000}
+                    value={priceHi}
+                    onChange={(e) => setPriceHi(Math.max(Number(e.target.value), priceLo + 10000))}
+                    aria-label="Precio máximo"
+                  />
+                </div>
+              </div>
+
+              {/* CATEGORÍA */}
+              <div className="filt-sec">
+                <div className="filt-sec-t">🏷️ Categoría</div>
+                <div className="filt-chips">
+                  <button className={`filt-chip${fCat === "Todos" ? " act" : ""}`} onClick={() => setFCat("Todos")}>Todos</button>
+                  {catOptions.map((c) => (
+                    <button key={c} className={`filt-chip${fCat === c ? " act" : ""}`} onClick={() => setFCat(c)}>{c}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="filt-foot">
+              <button className="filt-apply" onClick={applyFilters}>Ver {panelResults.length} resultado{panelResults.length !== 1 ? "s" : ""}</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {cartOpen && (
         <>
