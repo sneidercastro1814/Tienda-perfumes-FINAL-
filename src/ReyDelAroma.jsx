@@ -2065,21 +2065,6 @@ export default function ReyDelAroma() {
         </div>
       </section>
 
-      {/* Filtro por tipo de aroma — debajo del carrusel, en banda propia */}
-      {!q && (
-        <section className="aroma-bar">
-          <div className="aroma-bar-title">Explora por <span>tipo de aroma</span></div>
-          <div className="aroma-bar-pills">
-            <button className={`fam-tab${tagFilter === "Todos" ? " act" : ""}`} onClick={() => setTagFilter("Todos")}>Todos</button>
-            {availableAromas.map((fam) => (
-              <button key={fam} className={`fam-tab${tagFilter === fam ? " act" : ""}`} onClick={() => setTagFilter(fam)} title={FAMILY_META[fam]?.hint || ""}>
-                <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* Destacados (íconos dorados) */}
       <section className="featured">
         {featBadges.map((b, i) => (
@@ -2226,18 +2211,7 @@ export default function ReyDelAroma() {
     const meta = CATEGORY_META[catFilter] || { eyebrow: "Colección", pre: "", hi: catFilter, banner: "banner1", desc: "" };
     return (
       <div className="catpage">
-        {/* Filtro por familia olfativa (tipo de aroma) */}
-        <div className="filters fam-filters">
-          <span className="fam-label">Tipo de aroma</span>
-          <button className={`fam-tab${tagFilter === "Todos" ? " act" : ""}`} onClick={() => setTagFilter("Todos")}>Todos</button>
-          {availableAromas.map((fam) => (
-            <button key={fam} className={`fam-tab${tagFilter === fam ? " act" : ""}`} onClick={() => setTagFilter(fam)} title={FAMILY_META[fam]?.hint || ""}>
-              <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
-            </button>
-          ))}
-        </div>
-
-        {/* Barra: precio y ordenar (debajo de tipo de aroma) */}
+        {/* Barra: precio y ordenar */}
         <div className="catpage-toolbar">
           <div className="sort-ctrl">
             <span className="sort-lbl">Precio</span>
