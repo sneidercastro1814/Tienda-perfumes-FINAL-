@@ -9,7 +9,6 @@ import feat3 from "./assets/featured/feat-3.jpg";
 import feat4 from "./assets/featured/feat-4.jpg";
 import feat5 from "./assets/featured/feat-5.jpg";
 import logoPrincipal from "./assets/logo-principal.png";
-import selloOriginal from "./assets/sello-original.png";
 import logoWompi from "./assets/payments/wompi.png";
 import logoAddi from "./assets/payments/addi.png";
 import logoSistecredito from "./assets/payments/sistecredito.png";
@@ -348,9 +347,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-real-img { width: 100%; height: 100%; object-fit: contain; padding: 24px; transition: transform 0.5s; }
 .pcard:hover .pcard-real-img { transform: scale(1.05); }
 .pcard-badge { position: absolute; top: 16px; left: 0; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px 6px 12px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-/* Sello "100% ORIGINAL" en todas las tarjetas de producto */
-.pcard-img::after { content: ''; position: absolute; right: 12px; bottom: 12px; width: 72px; height: 72px; background: url(${selloOriginal}) center/contain no-repeat; filter: drop-shadow(0 3px 9px rgba(0,0,0,0.30)); z-index: 3; pointer-events: none; transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1); transform-origin: center; }
-.pcard:hover .pcard-img::after { transform: scale(1.08) rotate(-4deg); }
+/* Etiqueta "100% ORIGINAL" — esquina superior derecha, estilo sello premium */
+.pcard-img::after { content: '✓ 100% Original'; position: absolute; top: 13px; right: 13px; display: inline-flex; align-items: center; font-family: var(--sans); font-weight: 800; font-size: 9px; letter-spacing: 1px; color: var(--gold-l); background: rgba(10,9,7,0.82); border: 1px solid rgba(201,168,76,0.6); padding: 5px 11px; border-radius: 999px; box-shadow: 0 4px 14px rgba(0,0,0,0.22); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); text-transform: uppercase; white-space: nowrap; z-index: 3; pointer-events: none; transition: transform 0.35s ease, box-shadow 0.35s ease; }
+.pcard:hover .pcard-img::after { transform: scale(1.05); box-shadow: 0 7px 20px rgba(0,0,0,0.30); }
 .pcard-body { padding: 22px 24px 12px; flex: 1; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
@@ -395,7 +394,6 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
 .pd-main { width: 100%; aspect-ratio: 1/1; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; }
-.pd-main::after { content: ''; position: absolute; right: 18px; bottom: 18px; width: 104px; height: 104px; background: url(${selloOriginal}) center/contain no-repeat; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.30)); z-index: 2; pointer-events: none; }
 .pd-info { padding-top: 8px; }
 .pd-badge { display: inline-block; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 6px 16px; text-transform: uppercase; margin-bottom: 22px; }
 .pd-name { font-family: var(--serif); font-size: 52px; font-weight: 600; line-height: 0.95; margin-bottom: 10px; letter-spacing: 0.5px; }
@@ -664,7 +662,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pgrid { grid-template-columns: repeat(2,1fr); }
   .sec-title { font-size: 31px; }
   .pcard-img { height: 220px; }
-  .pcard-img::after { width: 58px; height: 58px; right: 10px; bottom: 10px; }
+  .pcard-img::after { font-size: 8.5px; padding: 4px 9px; top: 11px; right: 11px; }
   .pcard-body { padding: 16px 16px 8px; }
   .pcard-name { font-size: 20px; min-height: 42px; }
   .pcard-price { font-size: 22px; }
@@ -710,8 +708,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .hc-arrow { width: 32px; height: 32px; font-size: 18px; }
   .feat-badge { width: 45%; }
   .pcard-img { height: 172px; }
-  .pcard-img::after { width: 48px; height: 48px; right: 8px; bottom: 8px; }
-  .pd-main::after { width: 72px; height: 72px; right: 12px; bottom: 12px; }
+  .pcard-img::after { content: '100% Original'; font-size: 7px; letter-spacing: 0.4px; padding: 3px 7px; top: 9px; right: 8px; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
