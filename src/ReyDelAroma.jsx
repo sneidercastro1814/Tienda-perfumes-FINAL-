@@ -1700,6 +1700,21 @@ export default function ReyDelAroma() {
   // Resultados en vivo bajo la lupa (primeros 6 mientras el cliente escribe)
   const searchResults = q ? filtered.slice(0, 6) : [];
 
+  /* Aromas que REALMENTE tienen productos (evita filtros vacíos como Vainilla, Oud, etc.).
+     El admin sigue viendo la lista completa para poder etiquetar; esto es solo para los filtros del cliente. */
+  const aromaCounts = useMemo(() => {
+    const m = {};
+    for (const p of products) {
+      const tags = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
+      for (const t of tags) if (t) m[t] = (m[t] || 0) + 1;
+    }
+    return m;
+  }, [products]);
+  const availableAromas = [
+    ...aromaList.filter((a) => aromaCounts[a] > 0),
+    ...Object.keys(aromaCounts).filter((a) => aromaCounts[a] > 0 && !aromaList.includes(a)),
+  ];
+
   /* ── FILTRADO DEL PANEL (Aroma · Sexo · Precio · Categoría), combinables ── */
   // Categorías disponibles: las colecciones reales + la promo + destacados
   const collectionOpts = Array.from(new Set([...collectionList, ...products.map((p) => p.collection)].filter(Boolean)));
@@ -2054,7 +2069,7 @@ export default function ReyDelAroma() {
           <div className="aroma-bar-title">Explora por <span>tipo de aroma</span></div>
           <div className="aroma-bar-pills">
             <button className={`fam-tab${tagFilter === "Todos" ? " act" : ""}`} onClick={() => setTagFilter("Todos")}>Todos</button>
-            {aromaList.map((fam) => (
+            {availableAromas.map((fam) => (
               <button key={fam} className={`fam-tab${tagFilter === fam ? " act" : ""}`} onClick={() => setTagFilter(fam)} title={FAMILY_META[fam]?.hint || ""}>
                 <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
               </button>
@@ -2213,7 +2228,7 @@ export default function ReyDelAroma() {
         <div className="filters fam-filters">
           <span className="fam-label">Tipo de aroma</span>
           <button className={`fam-tab${tagFilter === "Todos" ? " act" : ""}`} onClick={() => setTagFilter("Todos")}>Todos</button>
-          {aromaList.map((fam) => (
+          {availableAromas.map((fam) => (
             <button key={fam} className={`fam-tab${tagFilter === fam ? " act" : ""}`} onClick={() => setTagFilter(fam)} title={FAMILY_META[fam]?.hint || ""}>
               <span className="fam-emoji">{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
             </button>
@@ -3282,7 +3297,7 @@ export default function ReyDelAroma() {
                 <div className="filt-sec-t">✨ Aroma</div>
                 <div className="filt-chips">
                   <button className={`filt-chip${fAroma === "Todos" ? " act" : ""}`} onClick={() => setFAroma("Todos")}>Todos</button>
-                  {aromaList.map((fam) => (
+                  {availableAromas.map((fam) => (
                     <button key={fam} className={`filt-chip${fAroma === fam ? " act" : ""}`} onClick={() => setFAroma(fam)}>
                       <span>{FAMILY_META[fam]?.emoji || "✨"}</span>{fam}
                     </button>
