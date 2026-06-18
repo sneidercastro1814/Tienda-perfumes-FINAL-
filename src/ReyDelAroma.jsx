@@ -9,6 +9,7 @@ import feat3 from "./assets/featured/feat-3.jpg";
 import feat4 from "./assets/featured/feat-4.jpg";
 import feat5 from "./assets/featured/feat-5.jpg";
 import logoPrincipal from "./assets/logo-principal.png";
+import selloOriginal from "./assets/sello-original.png";
 import logoWompi from "./assets/payments/wompi.png";
 import logoAddi from "./assets/payments/addi.png";
 import logoSistecredito from "./assets/payments/sistecredito.png";
@@ -347,6 +348,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-real-img { width: 100%; height: 100%; object-fit: contain; padding: 24px; transition: transform 0.5s; }
 .pcard:hover .pcard-real-img { transform: scale(1.05); }
 .pcard-badge { position: absolute; top: 16px; left: 0; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px 6px 12px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+/* Sello "100% ORIGINAL" en todas las tarjetas de producto */
+.pcard-img::after { content: ''; position: absolute; right: 12px; bottom: 12px; width: 72px; height: 72px; background: url(${selloOriginal}) center/contain no-repeat; filter: drop-shadow(0 3px 9px rgba(0,0,0,0.30)); z-index: 3; pointer-events: none; transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1); transform-origin: center; }
+.pcard:hover .pcard-img::after { transform: scale(1.08) rotate(-4deg); }
 .pcard-body { padding: 22px 24px 12px; flex: 1; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
@@ -391,6 +395,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
 .pd-main { width: 100%; aspect-ratio: 1/1; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; }
+.pd-main::after { content: ''; position: absolute; right: 18px; bottom: 18px; width: 104px; height: 104px; background: url(${selloOriginal}) center/contain no-repeat; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.30)); z-index: 2; pointer-events: none; }
 .pd-info { padding-top: 8px; }
 .pd-badge { display: inline-block; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 6px 16px; text-transform: uppercase; margin-bottom: 22px; }
 .pd-name { font-family: var(--serif); font-size: 52px; font-weight: 600; line-height: 0.95; margin-bottom: 10px; letter-spacing: 0.5px; }
@@ -659,6 +664,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pgrid { grid-template-columns: repeat(2,1fr); }
   .sec-title { font-size: 31px; }
   .pcard-img { height: 220px; }
+  .pcard-img::after { width: 58px; height: 58px; right: 10px; bottom: 10px; }
   .pcard-body { padding: 16px 16px 8px; }
   .pcard-name { font-size: 20px; min-height: 42px; }
   .pcard-price { font-size: 22px; }
@@ -704,6 +710,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .hc-arrow { width: 32px; height: 32px; font-size: 18px; }
   .feat-badge { width: 45%; }
   .pcard-img { height: 172px; }
+  .pcard-img::after { width: 48px; height: 48px; right: 8px; bottom: 8px; }
+  .pd-main::after { width: 72px; height: 72px; right: 12px; bottom: 12px; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
@@ -3167,7 +3175,7 @@ export default function ReyDelAroma() {
             <div className="nav-links">
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
               <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer"><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
-              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Catálogo</a>
+              <a className="nl" href={homeUrl()} onClick={(e) => { e.preventDefault(); quickFilter("Todos"); }}>Catálogo</a>
               <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
               <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
@@ -3183,7 +3191,7 @@ export default function ReyDelAroma() {
             <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Inicio</a>
               <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
-              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Catálogo</a>
+              <a className="nl" href={homeUrl()} onClick={(e) => { e.preventDefault(); quickFilter("Todos"); }}>Catálogo</a>
               <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Hombre</a>
               <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Mujer</a>
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
