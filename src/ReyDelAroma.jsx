@@ -2216,24 +2216,8 @@ export default function ReyDelAroma() {
 
         {term && n > 0 ? (
           <>
-            {/* Filtros que sí aplican a una búsqueda: precio y orden */}
-            <div className="catpage-toolbar">
-              <div className="sort-ctrl">
-                <span className="sort-lbl">Precio</span>
-                <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
-                  {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
-                </select>
-              </div>
-              <div className="sort-ctrl">
-                <span className="sort-lbl">Ordenar</span>
-                <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
-                  {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-                </select>
-              </div>
-            </div>
-
             {/* Solo los productos que coinciden con lo buscado */}
-            <div className="products-wrap">
+            <div className="products-wrap srch-products">
               <div className="pgrid">
                 {filtered.map((p) => (
                   <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
