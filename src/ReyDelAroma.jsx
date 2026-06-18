@@ -1121,6 +1121,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .filt-range input[type=range]::-webkit-slider-runnable-track { background: none; height: 34px; }
 .filt-range input[type=range]::-moz-range-track { background: none; }
 .filt-foot { flex-shrink: 0; padding: 16px 22px 22px; border-top: 1px solid rgba(201,168,76,0.28); background: #0b0b0a; }
+.filt-clear-btn { width: 100%; background: none; border: 1px solid rgba(201,168,76,0.4); color: var(--gold-l); font-family: var(--sans); font-size: 13.5px; font-weight: 600; letter-spacing: 0.3px; padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
+.filt-clear-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.1); color: #fff; }
 .filt-apply { width: 100%; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-l) 100%); border: none; color: #1a1407; font-family: var(--sans); font-size: 15px; font-weight: 800; letter-spacing: 0.3px; padding: 15px; border-radius: 12px; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; box-shadow: 0 8px 22px rgba(201,168,76,0.28); }
 .filt-apply:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(201,168,76,0.4); }
 .filt-apply:active { transform: translateY(0); }
@@ -3286,7 +3288,6 @@ export default function ReyDelAroma() {
             <div className="filt-head">
               <div className="filt-head-l">
                 <span className="filt-title">Filtrar <span>perfumes</span></span>
-                {activeFilterCount > 0 && <button className="filt-clear" onClick={clearFilters}>Limpiar</button>}
               </div>
               <button className="filt-x" onClick={() => setFiltersOpen(false)} aria-label="Cerrar filtros">✕</button>
             </div>
@@ -3362,6 +3363,7 @@ export default function ReyDelAroma() {
             </div>
 
             <div className="filt-foot">
+              <button className="filt-clear-btn" onClick={clearFilters}>Limpiar filtros</button>
               <button className="filt-apply" onClick={applyFilters}>Ver {panelResults.length} resultado{panelResults.length !== 1 ? "s" : ""}</button>
             </div>
           </div>
