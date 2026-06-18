@@ -1051,6 +1051,43 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .catpage-hero { min-height: 230px; }
   .catpage-eyebrow { letter-spacing: 3.5px; }
 }
+
+/* ── PÁGINA PROPIA DE RESULTADOS DE BÚSQUEDA ── */
+.srch { background: var(--bg); min-height: 62vh; }
+.srch-hero { position: relative; background: linear-gradient(180deg, #0c0c0b 0%, #16140e 100%); border-bottom: 1px solid var(--border-h); padding: 32px 52px 36px; overflow: hidden; animation: catFade 0.5s ease; }
+.srch-hero::after { content: ""; position: absolute; right: -70px; top: -70px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(201,168,76,0.18), transparent 70%); pointer-events: none; }
+.srch-hero-in { position: relative; z-index: 2; max-width: 1040px; margin: 0 auto; }
+.srch-bc { display: flex; gap: 9px; align-items: center; font-size: 11.5px; color: rgba(255,255,255,0.6); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 18px; }
+.srch-bc .bc-lnk { cursor: pointer; transition: color 0.2s; background: none; border: none; color: inherit; font-family: var(--sans); font-size: inherit; letter-spacing: inherit; text-transform: inherit; padding: 0; }
+.srch-bc .bc-lnk:hover { color: var(--gold-l); }
+.srch-bc .cur { color: var(--gold); }
+.srch-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-l); margin-bottom: 12px; }
+.srch-title { font-family: var(--serif); font-size: 40px; font-weight: 600; color: #fff; line-height: 1.1; letter-spacing: 0.3px; }
+.srch-title span { color: var(--gold); font-style: italic; }
+.srch-count { display: inline-block; margin-top: 16px; font-size: 11.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold-l); border: 1px solid rgba(201,168,76,0.45); border-radius: 999px; padding: 7px 16px; }
+.srch-refine { display: flex; align-items: center; gap: 10px; margin-top: 22px; max-width: 520px; background: rgba(255,255,255,0.06); border: 1px solid rgba(201,168,76,0.4); border-radius: 999px; padding: 11px 18px; transition: border-color 0.2s, background 0.2s; }
+.srch-refine:focus-within { border-color: var(--gold); background: rgba(255,255,255,0.1); }
+.srch-refine svg { width: 19px; height: 19px; color: var(--gold); flex-shrink: 0; }
+.srch-refine input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: #fff; font-family: var(--sans); font-size: 15px; }
+.srch-refine input::placeholder { color: rgba(255,255,255,0.5); }
+.srch-refine-x { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 15px; cursor: pointer; flex-shrink: 0; padding: 2px 4px; line-height: 1; transition: color 0.2s; }
+.srch-refine-x:hover { color: var(--gold-l); }
+.srch-empty { text-align: center; padding: 72px 24px 84px; max-width: 560px; margin: 0 auto; }
+.srch-empty-ic { font-size: 52px; margin-bottom: 18px; }
+.srch-empty h3 { font-family: var(--serif); font-size: 27px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.srch-empty h3 span { color: var(--gold-d); font-style: italic; }
+.srch-empty p { font-size: 15px; color: var(--text-dim); line-height: 1.6; margin-bottom: 28px; }
+.srch-sugg-lbl { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+.srch-sugg { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.srch-sugg button { background: var(--bg2); border: 1px solid var(--border); color: var(--text-dim); font-family: var(--sans); font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+.srch-sugg button:hover { border-color: var(--gold); color: var(--gold-d); transform: translateY(-1px); }
+@media (max-width: 768px) {
+  .srch-hero { padding: 22px 16px 26px; }
+  .srch-title { font-size: 28px; }
+  .srch-refine { max-width: 100%; }
+  .srch-count { margin-top: 13px; }
+  .srch-empty h3 { font-size: 23px; }
+}
 `;
 
 /* ──────────────────────────────────────────────────────────────
@@ -1285,13 +1322,31 @@ function categoryUrl(name) {
   const slug = CATEGORY_SLUGS[name];
   return slug ? `${homeUrl()}?categoria=${slug}` : homeUrl();
 }
+/* URL y lectura del término de búsqueda (?busqueda=<texto>): permite que la
+   página de resultados sobreviva a un refresh y se pueda compartir/abrir directo. */
+function searchUrl(query) {
+  const term = (query || "").trim();
+  return term ? `${homeUrl()}?busqueda=${encodeURIComponent(term)}` : homeUrl();
+}
+function readSearchParam() {
+  try {
+    const v = new URLSearchParams(window.location.search).get("busqueda");
+    return v ? v.trim() : "";
+  } catch { return ""; }
+}
 
 /* ──────────────────────────────────────────────────────────────
    COMPONENTE PRINCIPAL
 ────────────────────────────────────────────────────────────── */
 export default function ReyDelAroma() {
   const initialCat = readCategoryParam(); // si la URL trae ?categoria=… abrimos esa página directamente
-  const [view, setView] = useState(() => (readWompiReturn().fromWompi ? "pago-resultado" : (initialCat ? "category" : "store")));
+  const initialSearch = readSearchParam(); // si la URL trae ?busqueda=… abrimos la página de resultados
+  const [view, setView] = useState(() => (
+    readWompiReturn().fromWompi ? "pago-resultado"
+    : initialSearch ? "search"
+    : initialCat ? "category"
+    : "store"
+  ));
   const [products, setProducts] = useState(loadInitialProducts);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [qty, setQty] = useState(1);
@@ -1311,7 +1366,7 @@ export default function ReyDelAroma() {
   const [appReady, setAppReady] = useState(false);
   const [slide, setSlide] = useState(0);
   const [pauseSlide, setPauseSlide] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch || "");
   const [searchOpen, setSearchOpen] = useState(false);
   const [tagFilter, setTagFilter] = useState("Todos"); // filtro por familia olfativa (tipo de aroma)
 
@@ -1497,7 +1552,25 @@ export default function ReyDelAroma() {
 
   const goCatalog = () => document.getElementById("cat")?.scrollIntoView({ behavior: "smooth" });
   const quickFilter = (f) => { setView("store"); setCatFilter(f); setTagFilter("Todos"); setSearch(""); setSearchOpen(false); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } setTimeout(goCatalog, 80); };
-  const submitSearch = () => { if (!search.trim()) return; setSearchOpen(false); setView("store"); setMenuOpen(false); setTimeout(goCatalog, 90); };
+  /* Envía la búsqueda a su PÁGINA propia de resultados (distinta a la de inicio). */
+  const submitSearch = () => {
+    const term = search.trim();
+    if (!term) return;
+    setSearchOpen(false);
+    setMenuOpen(false);
+    setView("search");
+    try { window.history.replaceState({}, "", searchUrl(term)); } catch { /* ignore */ }
+    window.scrollTo({ top: 0 });
+  };
+  /* Cierra los resultados, limpia el término y vuelve al inicio. */
+  const exitSearch = () => {
+    setSearch("");
+    setSearchOpen(false);
+    setMenuOpen(false);
+    setView("store");
+    try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
+    window.scrollTo({ top: 0 });
+  };
 
   /* Abre la página propia de una categoría (Hombre, Mujer, Unisex, 2 × $300.000, …) */
   const goCategory = (f) => {
@@ -2098,6 +2171,110 @@ export default function ReyDelAroma() {
             )}
           </div>
         </div>
+
+        <Footer />
+      </div>
+    );
+  };
+
+  /* ── VISTA RESULTADOS DE BÚSQUEDA (página propia, distinta al inicio) ── */
+  const SearchView = () => {
+    const term = search.trim();
+    const n = filtered.length;
+    return (
+      <div className="srch">
+        {/* Encabezado de resultados: limpio y enfocado solo en la búsqueda */}
+        <section className="srch-hero">
+          <div className="srch-hero-in">
+            <div className="srch-bc">
+              <button className="bc-lnk" onClick={exitSearch}>Inicio</button>
+              <span aria-hidden="true">›</span>
+              <span className="cur">Búsqueda</span>
+            </div>
+            <div className="srch-eyebrow">🔍 Resultados de búsqueda</div>
+            <h1 className="srch-title">{term ? <>Resultados para <span>«{term}»</span></> : <>Buscar <span>perfumes</span></>}</h1>
+            {term && <span className="srch-count">{n} fragancia{n !== 1 ? "s" : ""} encontrada{n !== 1 ? "s" : ""}</span>}
+
+            {/* Refinar la búsqueda sin salir de la página */}
+            <div className="srch-refine">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Refinar búsqueda…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Escape") exitSearch(); }}
+                aria-label="Refinar búsqueda"
+              />
+              {search && <button className="srch-refine-x" onClick={exitSearch} aria-label="Limpiar búsqueda">✕</button>}
+            </div>
+          </div>
+        </section>
+
+        {term && n > 0 ? (
+          <>
+            {/* Filtros que sí aplican a una búsqueda: precio y orden */}
+            <div className="catpage-toolbar">
+              <div className="sort-ctrl">
+                <span className="sort-lbl">Precio</span>
+                <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
+                  {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+                </select>
+              </div>
+              <div className="sort-ctrl">
+                <span className="sort-lbl">Ordenar</span>
+                <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
+                  {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Solo los productos que coinciden con lo buscado */}
+            <div className="products-wrap">
+              <div className="pgrid">
+                {filtered.map((p) => (
+                  <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
+                    <div className="pcard-img">
+                      {p.promo && <span className="pcard-badge">2 × $300.000</span>}
+                      {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+                    </div>
+                    <div className="pcard-body">
+                      <div className="pcard-cat">{p.brand}</div>
+                      <div className="pcard-name">{p.name}</div>
+                      <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+                      <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                      {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
+                    </div>
+                    <div className="pcard-foot">
+                      <span className="pcard-orig">Original</span>
+                      <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Sin término (buscador vacío) o sin coincidencias: página útil con sugerencias */
+          <div className="srch-empty">
+            <div className="srch-empty-ic">{term ? "🔎" : "🛍️"}</div>
+            <h3>{term ? <>Sin resultados para <span>«{term}»</span></> : <>¿Qué perfume <span>buscas</span>?</>}</h3>
+            <p>{term
+              ? "No encontramos perfumes que coincidan con tu búsqueda. Revisa la ortografía o explora nuestras categorías."
+              : "Escribe arriba el nombre, la marca o el tipo de aroma que quieres encontrar."}</p>
+            <div className="srch-sugg-lbl">Explora por categoría</div>
+            <div className="srch-sugg">
+              <button onClick={() => goCategory("Hombre")}>Hombre</button>
+              <button onClick={() => goCategory("Mujer")}>Mujer</button>
+              <button onClick={() => goCategory("Unisex")}>Unisex</button>
+              <button onClick={() => goCategory("Árabes")}>Árabes</button>
+              <button onClick={() => goCategory("2 × $300.000")}>2 × $300.000</button>
+            </div>
+          </div>
+        )}
 
         <Footer />
       </div>
@@ -2812,7 +2989,7 @@ export default function ReyDelAroma() {
       )}
 
       <nav className="nav">
-        <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+        <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setSearch(""); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
           <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
           <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
         </div>
@@ -2913,6 +3090,7 @@ export default function ReyDelAroma() {
 
       {view === "store" && StoreView()}
       {view === "category" && CategoryView()}
+      {view === "search" && SearchView()}
       {view === "product" && ProductDetailView()}
       {view === "checkout" && CheckoutView()}
       {view === "pago-resultado" && PaymentResultView()}
