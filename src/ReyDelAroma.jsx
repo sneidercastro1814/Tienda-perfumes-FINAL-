@@ -1089,6 +1089,14 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .srch-empty h3 { font-size: 23px; }
 }
 
+/* ── BOTÓN DE FILTROS EN EL INICIO (a la derecha, sobre las filas de productos) ── */
+.home-filter-bar { display: flex; justify-content: flex-end; padding: 18px 52px 0; }
+.home-filter-btn { position: relative; display: inline-flex; align-items: center; gap: 9px; background: #0b0b0a; border: 1px solid var(--border-h); color: var(--gold-l); font-family: var(--sans); font-size: 13.5px; font-weight: 700; letter-spacing: 0.6px; padding: 11px 22px; border-radius: 999px; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+.home-filter-btn:hover { border-color: var(--gold); color: #fff; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(201,168,76,0.22); }
+.home-filter-btn svg { display: block; }
+.home-filter-badge { min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; background: linear-gradient(135deg, var(--gold), var(--gold-l)); color: #1a1407; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+@media (max-width: 768px) { .home-filter-bar { padding: 14px 16px 0; } }
+
 /* ── PANEL DE FILTROS (cajón lateral, dorado y negro) ── */
 .filt-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
 .filt-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: 380px; max-width: 88vw; background: #0b0b0a; color: #f4f1e6; border-right: 1px solid var(--border-h); z-index: 201; display: flex; flex-direction: column; animation: slideInLeft 0.38s cubic-bezier(0.25,0.46,0.45,0.94); }
@@ -2074,6 +2082,15 @@ export default function ReyDelAroma() {
           </button>
         ))}
       </section>
+
+      {/* Botón de filtros — a la derecha, arriba de las filas de productos */}
+      <div className="home-filter-bar">
+        <button className="home-filter-btn" onClick={openFilters}>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
+          Filtros
+          {activeFilterCount > 0 && <span className="home-filter-badge">{activeFilterCount}</span>}
+        </button>
+      </div>
 
       {/* Barra de categorías retirada por solicitud */}
 
@@ -3156,12 +3173,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
             </div>
             <div className="nav-r">
-              <button className={`icon-btn${filtersOpen ? " act" : ""}`} onClick={openFilters} aria-label="Filtros" title="Filtros">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }}>
-                  <path d="M3 5h18M6 12h12M10 19h4" />
-                </svg>
-                {activeFilterCount > 0 && <span className="filt-btn-badge">{activeFilterCount}</span>}
-              </button>
               <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
               <button className="icon-btn" onClick={() => setCartOpen(true)} aria-label="Carrito">🛒 {cartCount > 0 && <span className="cbadge">{cartCount}</span>}</button>
               <button className="icon-btn" onClick={() => setView("admin")} title="Panel Admin" aria-label="Admin">⚙️</button>
