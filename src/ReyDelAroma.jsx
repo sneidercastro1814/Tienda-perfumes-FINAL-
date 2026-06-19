@@ -394,6 +394,15 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
 .pd-main { width: 100%; aspect-ratio: 1/1; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; }
+/* Etiqueta colgante "100% Original" en la imagen de detalle */
+.pd-hangpin { position: absolute; top: 6px; right: 78px; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f0dca0, #b8973f); box-shadow: 0 1px 3px rgba(0,0,0,0.35); z-index: 5; pointer-events: none; }
+.pd-hangtag { position: absolute; top: 104px; right: 48px; width: 72px; height: 94px; display: flex; align-items: flex-end; justify-content: center; text-align: center; padding: 0 7px 14px; box-sizing: border-box; background: linear-gradient(150deg, #181c1e, #0a0c0d); border: 1px solid rgba(201,168,76,0.6); border-radius: 9px; box-shadow: 0 14px 26px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.06); transform: rotate(8deg); transform-origin: 50% -82px; z-index: 4; pointer-events: none; font-family: var(--sans); animation: pd-tag-sway 3.6s ease-in-out infinite alternate; }
+.pd-hangtag::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: 2.2px; height: 92px; margin-left: -1.1px; background: linear-gradient(to top, #a8862f, #e8d48a); border-radius: 2px; }
+.pd-hangtag::after { content: ''; position: absolute; top: 10px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px rgba(201,168,76,0.7), inset 0 1px 2px rgba(0,0,0,0.4); }
+.pd-hangtag-in { font-size: 10px; font-weight: 800; letter-spacing: 0.7px; line-height: 1.18; color: var(--gold-l); text-transform: uppercase; }
+.pd-hangtag-in b { display: block; font-size: 15px; letter-spacing: 0; margin-bottom: 1px; }
+.pd-hangtag-stars { display: block; font-size: 8px; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; }
+@keyframes pd-tag-sway { 0% { transform: rotate(6.5deg); } 100% { transform: rotate(9.5deg); } }
 .pd-info { padding-top: 8px; }
 .pd-badge { display: inline-block; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 6px 16px; text-transform: uppercase; margin-bottom: 22px; }
 .pd-name { font-family: var(--serif); font-size: 52px; font-weight: 600; line-height: 0.95; margin-bottom: 10px; letter-spacing: 0.5px; }
@@ -564,7 +573,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   70% { box-shadow: 0 0 0 10px rgba(201,168,76,0); transform: scale(1.018); }
   100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); transform: scale(1); }
 }
-@media (prefers-reduced-motion: reduce) { .cart-more { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .cart-more { animation: none; } .pd-hangtag { animation: none; } }
 .empty-cart { text-align: center; padding: 80px 24px; color: var(--text-muted); }
 .empty-icon { font-size: 48px; margin-bottom: 18px; opacity: 0.25; }
 
@@ -709,6 +718,11 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .feat-badge { width: 45%; }
   .pcard-img { height: 172px; }
   .pcard-img::after { content: '100% Original'; font-size: 7px; letter-spacing: 0.4px; padding: 3px 7px; top: 9px; right: 8px; }
+  .pd-hangpin { right: 56px; }
+  .pd-hangtag { top: 78px; right: 34px; width: 60px; height: 78px; transform-origin: 50% -66px; padding: 0 6px 12px; }
+  .pd-hangtag::before { height: 74px; }
+  .pd-hangtag-in { font-size: 9px; }
+  .pd-hangtag-in b { font-size: 13px; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
@@ -2479,6 +2493,10 @@ export default function ReyDelAroma() {
           <div>
             <div className="pd-main">
               {shownImg ? <img src={shownImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
+              <span className="pd-hangpin" aria-hidden="true" />
+              <div className="pd-hangtag" aria-hidden="true">
+                <span className="pd-hangtag-in"><span className="pd-hangtag-stars">★★★</span><b>100%</b>Original</span>
+              </div>
             </div>
           </div>
 
