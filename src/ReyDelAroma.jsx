@@ -1232,6 +1232,7 @@ const CATEGORY_TABS = ["Hombre", "Mujer", "2 × $300.000", "Diseñador", "Árabe
 /* Contenido del encabezado (hero) de cada página de categoría.
    La imagen se usa como fondo del banner; el resto es texto editable. */
 const CATEGORY_META = {
+  "Todos":        { eyebrow: "Colección", pre: "Nuestra",       hi: "Colección",   banner: "banner1", desc: "Todo nuestro catálogo de perfumes 100% originales, reunido en un solo lugar." },
   "Hombre":       { eyebrow: "Colección", pre: "Para",          hi: "Hombre",      banner: "feat1",   desc: "Fragancias intensas, amaderadas y con carácter. Encuentra el perfume que define tu presencia." },
   "Mujer":     { eyebrow: "Colección", pre: "Para",          hi: "Mujer",       banner: "feat2",   desc: "Aromas florales, dulces y envolventes. Esencias pensadas para realzar tu elegancia." },
   "Unisex":        { eyebrow: "Colección", pre: "",              hi: "Unisex",      banner: "feat3",   desc: "Fragancias versátiles que rompen las reglas. Para quienes eligen su aroma sin etiquetas." },
@@ -1244,6 +1245,7 @@ const CATEGORY_META = {
 /* Slug de URL de cada categoría → permite abrir cada una en una PESTAÑA NUEVA
    del navegador con un enlace tipo  ?categoria=para-el  */
 const CATEGORY_SLUGS = {
+  "Todos": "catalogo",
   "Hombre": "hombre",
   "Mujer": "mujer",
   "Unisex": "unisex",
@@ -1647,8 +1649,19 @@ export default function ReyDelAroma() {
     showToast("¡Gracias por suscribirte! 👑");
   };
 
-  const goCatalog = () => document.getElementById("cat")?.scrollIntoView({ behavior: "smooth" });
-  const quickFilter = (f) => { setView("store"); setCatFilter(f); setTagFilter("Todos"); setSearch(""); setSearchOpen(false); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } setTimeout(goCatalog, 80); };
+  /* "Catálogo" / "Todos" → abre la página propia con TODO el catálogo (grid completo) */
+  const quickFilter = (f) => {
+    setCatFilter(f);
+    setTagFilter("Todos");
+    setSortBy("recomendado");
+    setPriceFilter("all");
+    setSearch("");
+    setSearchOpen(false);
+    setMenuOpen(false);
+    setView("category");
+    try { window.history.replaceState({}, "", categoryUrl(f)); } catch { /* ignore */ }
+    window.scrollTo({ top: 0 });
+  };
   /* Envía la búsqueda a su PÁGINA propia de resultados (distinta a la de inicio). */
   const submitSearch = () => {
     const term = search.trim();
@@ -2125,7 +2138,6 @@ export default function ReyDelAroma() {
               : <><span>{catFilter}</span></>}
           </h2>
           <div className="sec-tools">
-            <span className="sec-cnt">{filtered.length} fragancia{filtered.length !== 1 ? "s" : ""}{!q && tagFilter !== "Todos" && catFilter !== "Todos" ? ` · ${tagFilter}` : ""}</span>
             <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
               {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
             </select>
@@ -2267,7 +2279,6 @@ export default function ReyDelAroma() {
         <div className="products-wrap">
           <div className="sec-hdr">
             <h2 className="sec-title">{meta.pre ? `${meta.pre} ` : ""}<span>{meta.hi}</span></h2>
-            <span className="sec-cnt">{filtered.length} fragancia{filtered.length !== 1 ? "s" : ""}</span>
           </div>
           <div className="pgrid">
             {filtered.map((p) => (
