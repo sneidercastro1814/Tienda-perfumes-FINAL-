@@ -96,15 +96,17 @@ const ADDI = {
 };
 
 const SISTECREDITO = {
+  // Integración por API (pasarela). Las llaves viven en el SERVIDOR (Vercel,
+  // variables SISTECREDITO_*); aquí solo encendemos/apagamos el método con
+  // VITE_SISTECREDITO_ENABLED = "true".
   enabled: String(ENV.VITE_SISTECREDITO_ENABLED ?? "false") === "true",
-  url: ENV.VITE_SISTECREDITO_URL || "",
 };
 
 // Mapa que usa la UI para mostrar/ocultar métodos
 const PAYMENTS = {
   wompi: { enabled: !!WOMPI.publicKey },
   addi: { enabled: ADDI.enabled && !!ADDI.slug },
-  sistecredito: { enabled: SISTECREDITO.enabled && !!SISTECREDITO.url },
+  sistecredito: { enabled: SISTECREDITO.enabled },
 };
 
 /* Referencia única para cada pedido */
@@ -162,17 +164,6 @@ function AddiWidget({ price, className }) {
     </div>
   );
 }
-
-/* Abre un enlace externo agregando monto + referencia como parámetros */
-const openWithParams = (raw, params) => {
-  try {
-    const u = new URL(raw);
-    Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, String(v)));
-    window.open(u.toString(), "_blank");
-  } catch {
-    window.open(raw, "_blank");
-  }
-};
 
 /* ──────────────────────────────────────────────────────────────
    ESTILOS GLOBALES
@@ -1391,6 +1382,19 @@ function readWompiReturn() {
   }
 }
 
+/* ¿El usuario está volviendo de Sistecrédito? Al terminar, la pasarela agrega
+   a la urlResponse:  ?sistecredito=1&paymentRef=<_id>&transactionId=...&orderId=... */
+function readSistecreditoReturn() {
+  try {
+    const p = new URLSearchParams(window.location.search);
+    const fromSiste = p.get("sistecredito") === "1";
+    const id = p.get("paymentRef") || p.get("transactionId") || "";
+    return fromSiste ? { fromSiste: true, id } : { fromSiste: false, id: "" };
+  } catch {
+    return { fromSiste: false, id: "" };
+  }
+}
+
 /* Lee ?categoria=<slug> de la URL y devuelve el nombre de la categoría (o null).
    Es lo que permite que una pestaña nueva se abra ya mostrando esa categoría. */
 function readCategoryParam() {
@@ -1426,6 +1430,7 @@ export default function ReyDelAroma() {
   const initialSearch = readSearchParam(); // si la URL trae ?busqueda=… abrimos la página de resultados
   const [view, setView] = useState(() => (
     readWompiReturn().fromWompi ? "pago-resultado"
+    : readSistecreditoReturn().fromSiste ? "pago-resultado"
     : initialSearch ? "search"
     : initialCat ? "category"
     : "store"
@@ -1462,7 +1467,7 @@ export default function ReyDelAroma() {
   const [payMethod, setPayMethod] = useState("wompi");
   const [coForm, setCoForm] = useState({ name: "", cedula: "", phone: "", email: "", city: "", address: "" });
   const [placing, setPlacing] = useState(false);
-  const [payResult, setPayResult] = useState(() => (readWompiReturn().fromWompi ? { loading: true } : null)); // resultado tras volver de Wompi
+  const [payResult, setPayResult] = useState(() => (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste ? { loading: true } : null)); // resultado tras volver de Wompi o Sistecrédito
 
   /* ── VENTAS (panel admin en tiempo real) ── */
   const [orders, setOrders] = useState([]);
@@ -1560,6 +1565,31 @@ export default function ReyDelAroma() {
         try { localStorage.removeItem("rda-cart-v1"); } catch { /* ignore */ }
       })
       .catch(() => setPayResult({ loading: false, status: "ERROR", txId: id }));
+  }, []);
+
+  /* ── RETORNO DESDE SISTECRÉDITO ──
+     Igual que con Wompi: limpiamos la URL y consultamos el estado final real
+     en la pasarela (vía nuestra función /api/sistecredito-status). */
+  useEffect(() => {
+    const { fromSiste, id } = readSistecreditoReturn();
+    if (!fromSiste) return;
+    window.history.replaceState({}, "", window.location.pathname);
+
+    const PEND = ["Pending", "PendingForPaymentMethod", "Started"];
+    const finish = (status, reference = "") => {
+      let s = "ERROR";
+      if (status === "Approved") s = "APPROVED";
+      else if (PEND.includes(status)) s = "PENDING";
+      else if (status) s = "DECLINED";
+      setPayResult({ loading: false, status: s, txId: id, reference });
+      try { localStorage.removeItem("rda-cart-v1"); } catch { /* ignore */ }
+    };
+
+    if (!id) { finish(""); return; }
+    fetch(`/api/sistecredito-status?transactionId=${encodeURIComponent(id)}`)
+      .then((r) => r.json())
+      .then((d) => finish(d.status || "", d.reference || ""))
+      .catch(() => finish(""));
   }, []);
 
   /* auto-avance del carrusel (cada banner con su propia duración) */
@@ -1860,6 +1890,21 @@ export default function ReyDelAroma() {
   const isCheckoutFormValid = () =>
     coForm.name.trim() && coForm.cedula.trim() && coForm.phone.trim() && coForm.city.trim() && coForm.address.trim();
 
+  /* Espera (polling) a que Sistecrédito entregue la URL de pago tras crear la
+     transacción. Devuelve la URL, "" si la transacción falló o no llegó a tiempo. */
+  const waitSistecreditoUrl = async (transactionId) => {
+    for (let i = 0; i < 15; i++) {
+      await new Promise((r) => setTimeout(r, 1800));
+      try {
+        const r = await fetch(`/api/sistecredito-status?transactionId=${encodeURIComponent(transactionId)}`);
+        const d = await r.json();
+        if (d.redirectUrl) return d.redirectUrl;
+        if (d.failed) return "";
+      } catch { /* sigue intentando */ }
+    }
+    return "";
+  };
+
   const placeOrder = async () => {
     if (!isCheckoutFormValid()) return showToast("Completa tus datos de envío");
 
@@ -1889,10 +1934,23 @@ export default function ReyDelAroma() {
       return;
     }
     if (payMethod === "sistecredito") {
-      setPlacing(false);
-      if (!SISTECREDITO.url) return showToast("Falta configurar el enlace de Sistecrédito");
-      openWithParams(SISTECREDITO.url, { amount: total, reference });
-      showToast("Te llevamos a Sistecrédito para terminar el pago");
+      try {
+        showToast("Conectando con Sistecrédito…");
+        const res = await fetch("/api/sistecredito-create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reference, amount: total, cedula: coForm.cedula.trim(), docType: "CC" }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || "No se pudo iniciar el pago con Sistecrédito.");
+        let url = data.redirectUrl;
+        if (!url && data.transactionId) url = await waitSistecreditoUrl(data.transactionId);
+        if (!url) throw new Error("Sistecrédito no entregó el enlace de pago. Intenta de nuevo.");
+        window.location.href = url;
+      } catch (e) {
+        setPlacing(false);
+        showToast(e.message || "No se pudo iniciar el pago con Sistecrédito.");
+      }
       return;
     }
     setPlacing(false);
