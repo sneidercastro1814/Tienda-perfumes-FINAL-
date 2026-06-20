@@ -2,24 +2,26 @@
    SISTECRÉDITO · CREAR TRANSACCIÓN  (Vercel)
    Ruta automática:  POST /api/sistecredito-create
 
-   Crea la intención de pago en la pasarela de Sistecrédito y devuelve la
-   URL a la que hay que redirigir al cliente para que pague a cuotas.
+   Crea la intención de pago en la pasarela de Sistecrédito y DEVUELVE DE
+   INMEDIATO el id de la transacción (+ la URL de pago si ya viene lista).
+   La espera de la URL la hace el navegador llamando a /api/sistecredito-status,
+   así esta función nunca se cuelga ni agota el tiempo del servidor.
 
    ⚠️ Las LLAVES viven SOLO aquí (servidor). Nunca en el navegador ni en GitHub.
-   Configúralas en  Vercel → Project Settings → Environment Variables:
+   Variables en  Vercel → Project Settings → Environment Variables:
 
      SISTECREDITO_SUBSCRIPTION_KEY = (tu Ocp-Apim-Subscription-Key)
      SISTECREDITO_STORE_ID         = (ApplicationKey  ·  storeId)
      SISTECREDITO_VENDOR_ID        = (ApplicationToken ·  vendorId  =  tu "Vender id")
      SISTECREDITO_ENV              = Staging        (cámbialo a Production al salir a real)
      SISTECREDITO_SIMULATE         = (opcional) Approved | Rejected | Pending …
-                                     ↳ úsalo para PROBAR el flujo sin una cédula real.
-                                       Déjalo vacío para el flujo real.
    ════════════════════════════════════════════════════════════════ */
 
 const BASE = "https://api.credinet.co/pay";
 const SISTE_PAYMENT_METHOD_ID = 2;                 // Sistecrédito (Staging y Production)
 const FAIL = ["Rejected", "Cancelled", "Expired", "Abandoned", "Failed"];
+
+export const config = { maxDuration: 30 };         // margen por si la pasarela tarda
 
 function baseHeaders() {
   return {
@@ -39,16 +41,9 @@ function siteOrigin(req) {
   return `${proto}://${host}`;
 }
 
-async function getTx(transactionId) {
-  const url = `${BASE}/GetTransactionResponse?transactionId=${encodeURIComponent(transactionId)}`;
-  const r = await fetch(url, { method: "GET", headers: baseHeaders() });
-  return r.json().catch(() => ({}));
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method Not Allowed" });
 
-  // Verifica que las 3 llaves estén configuradas
   if (
     !process.env.SISTECREDITO_SUBSCRIPTION_KEY ||
     !process.env.SISTECREDITO_STORE_ID ||
@@ -82,44 +77,48 @@ export default async function handler(req, res) {
       client: { docType, document: String(cedula).trim() },
     };
 
-    const r = await fetch(`${BASE}/create`, {
-      method: "POST",
-      headers: baseHeaders(),
-      body: JSON.stringify(body),
-    });
-    const j = await r.json().catch(() => ({}));
+    // Una sola llamada a la pasarela. Si la red falla, devolvemos un error claro.
+    let r, j;
+    try {
+      r = await fetch(`${BASE}/create`, {
+        method: "POST",
+        headers: baseHeaders(),
+        body: JSON.stringify(body),
+      });
+      j = await r.json().catch(() => ({}));
+    } catch (netErr) {
+      return res.status(502).json({ ok: false, error: `No se pudo conectar con Sistecrédito: ${netErr.message}` });
+    }
 
-    // Error de la pasarela: HTTP 400, o HTTP 200 con errorCode != 0
+    // Queda registrado en Vercel → Runtime Logs para diagnóstico
+    console.log("Sistecrédito /create →", r.status, JSON.stringify(j).slice(0, 800));
+
+    // Error de la pasarela (HTTP != 200, o HTTP 200 con errorCode != 0)
     if (!r.ok || (j && j.errorCode && j.errorCode !== 0)) {
       return res.status(400).json({
         ok: false,
         error: j?.message || `Sistecrédito devolvió un error (HTTP ${r.status}).`,
         errorCode: j?.errorCode || null,
+        httpStatus: r.status,
       });
     }
 
     const data = j?.data || {};
-    const transactionId = data._id;
-    let status = data.transactionStatus || data?.paymentMethodResponse?.statusResponse || "";
-    let redirectUrl = data?.paymentMethodResponse?.paymentRedirectUrl || "";
-
-    // La URL puede no venir de inmediato: unos intentos cortos de polling.
-    // (Si no aparece aquí, el frontend sigue consultando /api/sistecredito-status.)
-    for (let i = 0; i < 3 && !redirectUrl && transactionId; i++) {
-      await new Promise((ok) => setTimeout(ok, 1200));
-      const jt = await getTx(transactionId);
-      const d = jt?.data || {};
-      status = d.transactionStatus || d?.paymentMethodResponse?.statusResponse || status;
-      redirectUrl = d?.paymentMethodResponse?.paymentRedirectUrl || "";
-      if (FAIL.includes(status)) break;
-    }
+    const transactionId = data._id || "";
+    const status = data.transactionStatus || data?.paymentMethodResponse?.statusResponse || "";
+    const redirectUrl = data?.paymentMethodResponse?.paymentRedirectUrl || "";
 
     if (FAIL.includes(status)) {
       return res.status(400).json({ ok: false, error: `La transacción no se pudo iniciar (${status}).`, status });
     }
+    if (!transactionId) {
+      return res.status(502).json({ ok: false, error: "Sistecrédito no devolvió un identificador de transacción." });
+    }
 
+    // Devolvemos ya. El navegador consulta /api/sistecredito-status hasta tener la URL.
     return res.status(200).json({ ok: true, transactionId, status, redirectUrl });
   } catch (err) {
+    console.error("sistecredito-create error:", err);
     return res.status(500).json({ ok: false, error: err.message });
   }
 }
