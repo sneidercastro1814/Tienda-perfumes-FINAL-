@@ -1939,7 +1939,7 @@ export default function ReyDelAroma() {
         const res = await fetch("/api/sistecredito-create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reference, amount: total, cedula: coForm.cedula.trim(), docType: "CC" }),
+          body: JSON.stringify({ reference, amount: total, cedula: coForm.cedula.trim(), docType: "CC", name: coForm.name.trim(), phone: coForm.phone.trim(), email: coForm.email.trim() }),
         });
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error || "No se pudo iniciar el pago con Sistecrédito.");
