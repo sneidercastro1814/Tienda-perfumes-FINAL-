@@ -2173,7 +2173,8 @@ export default function ReyDelAroma() {
         ))}
       </section>
 
-      {/* Botón de filtros — a la derecha, arriba de las filas de productos */}
+      {/* Botón de filtros — solo al entrar a una categoría o al buscar (NO en el inicio) */}
+      {browsing && (
       <div className="home-filter-bar">
         <button className="home-filter-btn" onClick={openFilters}>
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
@@ -2181,6 +2182,7 @@ export default function ReyDelAroma() {
           {activeFilterCount > 0 && <span className="home-filter-badge">{activeFilterCount}</span>}
         </button>
       </div>
+      )}
 
       {/* Barra de categorías retirada por solicitud */}
 
