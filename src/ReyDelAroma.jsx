@@ -29,6 +29,24 @@ const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(te
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
 
 /* ════════════════════════════════════════════════════════════════
+   SELECTOR DE MILILITROS — edita estos valores a tu gusto
+   El precio del catálogo se toma como el de REF_ML ml (frasco lleno).
+   El cliente puede elegir un preset o un valor personalizado y el
+   precio se recalcula proporcionalmente.
+════════════════════════════════════════════════════════════════ */
+const ML = {
+  REF_ML: 100,                  // a cuántos ml equivale el precio listado
+  PRESETS: [30, 50, 100],       // botones rápidos (mostrados en orden)
+  MIN: 5, MAX: 100, STEP: 5,    // rango del modo "Personalizado"
+};
+const priceForMl = (basePrice, ml) => {
+  const base = Number(basePrice) || 0;
+  if (ml >= ML.REF_ML) return base;                       // frasco lleno = precio del catálogo
+  const raw = (base / ML.REF_ML) * ml;
+  return Math.max(1000, Math.round(raw / 1000) * 1000);   // redondea a $1.000
+};
+
+/* ════════════════════════════════════════════════════════════════
    ENVÍOS — edita estos valores a tu gusto
    ════════════════════════════════════════════════════════════════ */
 const SHIPPING = {
@@ -423,6 +441,21 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .size-btn { padding: 12px 24px; font-size: 13px; font-weight: 400; border: 1px solid rgba(0,0,0,0.1); background: none; color: #777; cursor: pointer; transition: all 0.25s; font-family: var(--sans); letter-spacing: 1px; }
 .size-btn.act { border-color: var(--gold); color: var(--gold-d); background: rgba(201,168,76,0.06); }
 .size-btn:hover { border-color: #aaa; }
+.ml-pick { margin-bottom: 30px; }
+.ml-custom { margin-top: 14px; }
+.ml-range { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 999px; background: rgba(0,0,0,0.10); outline: none; cursor: pointer; margin: 8px 0 2px; }
+.ml-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%; background: var(--gold); border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.3); cursor: pointer; }
+.ml-range::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.3); cursor: pointer; }
+.ml-range::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(0,0,0,0.10); }
+.ml-num { display: inline-flex; align-items: center; margin-top: 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; overflow: hidden; background: #fff; }
+.ml-step { width: 46px; height: 50px; background: none; border: none; color: #666; font-size: 24px; cursor: pointer; transition: color 0.2s; line-height: 1; }
+.ml-step:hover { color: var(--gold); }
+.ml-input { width: 60px; height: 50px; text-align: center; border: none; border-left: 1px solid rgba(0,0,0,0.10); font-family: var(--serif); font-size: 18px; color: var(--text); background: #fff; -moz-appearance: textfield; }
+.ml-input::-webkit-outer-spin-button, .ml-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ml-unit { padding: 0 14px 0 10px; font-size: 13px; letter-spacing: 1px; color: var(--text-muted); }
+.ml-readout { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 18px; padding-top: 14px; border-top: 1px dashed rgba(0,0,0,0.14); }
+.ml-readout-ml { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-d); }
+.ml-readout-price { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--gold-d); }
 .add-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
 .qty-ctrl { display: flex; align-items: center; border: 1px solid rgba(0,0,0,0.12); }
 .qty-btn { width: 46px; height: 54px; background: none; border: none; color: #666; font-size: 25px; cursor: pointer; transition: color 0.2s; line-height: 1; }
@@ -1439,6 +1472,8 @@ export default function ReyDelAroma() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [qty, setQty] = useState(1);
   const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
+  const [selMl, setSelMl] = useState(null);     // mililitros elegidos en el detalle
+  const [mlCustom, setMlCustom] = useState(false); // modo "Personalizado" del selector de ml
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [catFilter, setCatFilter] = useState(initialCat || "Todos");
@@ -1737,6 +1772,8 @@ export default function ReyDelAroma() {
     setSelectedProduct(p);
     setQty(1);
     setSelSize(null);
+    setSelMl(null);
+    setMlCustom(false);
     setView("product");
     window.scrollTo({ top: 0 });
   };
@@ -1939,7 +1976,7 @@ export default function ReyDelAroma() {
         const res = await fetch("/api/sistecredito-create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reference, amount: total, cedula: coForm.cedula.trim(), docType: "CC", name: coForm.name.trim(), phone: coForm.phone.trim(), email: coForm.email.trim() }),
+          body: JSON.stringify({ reference, amount: total, cedula: coForm.cedula.trim(), docType: "CC" }),
         });
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error || "No se pudo iniciar el pago con Sistecrédito.");
@@ -2545,8 +2582,12 @@ export default function ReyDelAroma() {
     const last = words.pop();
     const variants = Array.isArray(p.variants) && p.variants.length ? p.variants : null;
     const activeVar = variants ? (variants.find((v) => v.size === selSize) || variants[0]) : null;
-    const shownPrice = activeVar ? activeVar.price : p.price;
-    const shownSize = activeVar ? activeVar.size : (p.size || "");
+    // Selector de mililitros (cuando el producto no trae variantes propias)
+    const curMl = selMl ?? ML.REF_ML;            // por defecto el frasco lleno
+    const mlPrice = priceForMl(p.price, curMl);
+    const mlPct = Math.round(((curMl - ML.MIN) / (ML.MAX - ML.MIN)) * 100);
+    const shownPrice = variants ? activeVar.price : mlPrice;
+    const shownSize = variants ? activeVar.size : `${curMl} ml`;
     const shownImg = activeVar && activeVar.img ? (imageForFile(activeVar.img) || p.image) : p.image;
     const aromas = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
     return (
@@ -2601,14 +2642,57 @@ export default function ReyDelAroma() {
                   ))}
                 </div>
               </>
-            ) : shownSize ? (
-              <>
-                <div className="pd-sec-t">Presentación</div>
+            ) : (
+              <div className="ml-pick">
+                <div className="pd-sec-t">Elige los mililitros</div>
                 <div className="sizes-row">
-                  <button className="size-btn act">{shownSize}</button>
+                  {ML.PRESETS.map((m) => (
+                    <button
+                      key={m}
+                      className={`size-btn${(!mlCustom && curMl === m) ? " act" : ""}`}
+                      onClick={() => { setMlCustom(false); setSelMl(m); }}
+                    >{m} ml</button>
+                  ))}
+                  <button
+                    className={`size-btn${mlCustom ? " act" : ""}`}
+                    onClick={() => { setSelMl(curMl); setMlCustom(true); }}
+                  >Personalizado</button>
                 </div>
-              </>
-            ) : null}
+
+                {mlCustom && (
+                  <div className="ml-custom">
+                    <input
+                      type="range"
+                      className="ml-range"
+                      min={ML.MIN} max={ML.MAX} step={ML.STEP}
+                      value={curMl}
+                      onChange={(e) => setSelMl(Number(e.target.value))}
+                      style={{ background: `linear-gradient(90deg, var(--gold) ${mlPct}%, rgba(0,0,0,0.10) ${mlPct}%)` }}
+                    />
+                    <div className="ml-num">
+                      <button className="ml-step" aria-label="Menos" onClick={() => setSelMl((v) => Math.max(ML.MIN, (v ?? ML.REF_ML) - ML.STEP))}>−</button>
+                      <input
+                        type="number"
+                        className="ml-input"
+                        min={ML.MIN} max={ML.MAX} step={ML.STEP}
+                        value={curMl}
+                        onChange={(e) => {
+                          const n = Math.round(Number(e.target.value) / ML.STEP) * ML.STEP;
+                          setSelMl(Math.min(ML.MAX, Math.max(ML.MIN, n || ML.MIN)));
+                        }}
+                      />
+                      <span className="ml-unit">ml</span>
+                      <button className="ml-step" aria-label="Más" onClick={() => setSelMl((v) => Math.min(ML.MAX, (v ?? ML.REF_ML) + ML.STEP))}>+</button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="ml-readout">
+                  <span className="ml-readout-ml">{curMl} ml seleccionados</span>
+                  <span className="ml-readout-price">{cop(mlPrice)}</span>
+                </div>
+              </div>
+            )}
 
             <div className="add-row">
               <div className="qty-ctrl">
