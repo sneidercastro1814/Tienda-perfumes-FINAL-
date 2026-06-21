@@ -1106,6 +1106,14 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .home-filter-btn svg { display: block; }
 .home-filter-badge { min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; background: linear-gradient(135deg, var(--gold), var(--gold-l)); color: #1a1407; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 @media (max-width: 768px) { .home-filter-bar { padding: 14px 16px 0; } }
+/* Botón Filtros junto al título de la sección (categoría / aroma) */
+.sec-hdr .home-filter-btn, .sec-tools .home-filter-btn { align-self: center; flex-shrink: 0; }
+/* Botón Filtros en los resultados de búsqueda (hero oscuro → variante dorada) */
+.srch-filter { margin-top: 20px; }
+.srch-filter-btn { display: inline-flex; align-items: center; gap: 9px; background: linear-gradient(135deg, var(--gold), var(--gold-l)); color: #1a1407; border: none; font-family: var(--sans); font-size: 13px; font-weight: 800; letter-spacing: 0.5px; padding: 11px 22px; border-radius: 999px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 6px 18px rgba(201,168,76,0.28); }
+.srch-filter-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(201,168,76,0.42); }
+.srch-filter-btn svg { display: block; }
+.srch-filter-badge { min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; background: #1a1407; color: var(--gold-l); font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 
 /* ── PANEL DE FILTROS (cajón lateral, dorado y negro) ── */
 .filt-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
@@ -2173,17 +2181,6 @@ export default function ReyDelAroma() {
         ))}
       </section>
 
-      {/* Botón de filtros — solo al entrar a una categoría o al buscar (NO en el inicio) */}
-      {browsing && (
-      <div className="home-filter-bar">
-        <button className="home-filter-btn" onClick={openFilters}>
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
-          Filtros
-          {activeFilterCount > 0 && <span className="home-filter-badge">{activeFilterCount}</span>}
-        </button>
-      </div>
-      )}
-
       {/* Barra de categorías retirada por solicitud */}
 
       {/* Productos — solo al buscar, filtrar por aroma o elegir categoría */}
@@ -2201,6 +2198,11 @@ export default function ReyDelAroma() {
             <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
               {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
             </select>
+            <button className="home-filter-btn" onClick={openFilters}>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
+              Filtros
+              {activeFilterCount > 0 && <span className="home-filter-badge">{activeFilterCount}</span>}
+            </button>
           </div>
         </div>
         <div className="pgrid">
@@ -2339,6 +2341,11 @@ export default function ReyDelAroma() {
         <div className="products-wrap">
           <div className="sec-hdr">
             <h2 className="sec-title">{meta.pre ? `${meta.pre} ` : ""}<span>{meta.hi}</span></h2>
+            <button className="home-filter-btn" onClick={openFilters}>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
+              Filtros
+              {activeFilterCount > 0 && <span className="home-filter-badge">{activeFilterCount}</span>}
+            </button>
           </div>
           <div className="pgrid">
             {filtered.map((p) => (
@@ -2408,6 +2415,16 @@ export default function ReyDelAroma() {
               />
               {search && <button className="srch-refine-x" onClick={exitSearch} aria-label="Limpiar búsqueda">✕</button>}
             </div>
+
+            {term && (
+              <div className="srch-filter">
+                <button className="srch-filter-btn" onClick={openFilters}>
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
+                  Filtros
+                  {activeFilterCount > 0 && <span className="srch-filter-badge">{activeFilterCount}</span>}
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
