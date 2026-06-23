@@ -370,11 +370,12 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .prow-track { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 14px 4px 24px; -ms-overflow-style: none; scrollbar-width: none; }
 .prow-track::-webkit-scrollbar { display: none; }
 .prow-card { flex: 0 0 auto; width: 272px; scroll-snap-align: start; border: 1px solid var(--border); }
-.prow-arrow { position: absolute; top: 38%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; background: #fff; border: 1px solid var(--border); color: var(--text); font-size: 24px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; box-shadow: 0 8px 24px rgba(0,0,0,0.14); transition: all 0.25s; }
-.prow-arrow:hover { background: var(--gold); color: #1a1208; border-color: var(--gold); }
-.prow-prev { left: -10px; } .prow-next { right: -10px; }
-@media (max-width: 768px) { .prow { padding: 30px 16px 4px; } .prow-title { font-size: 23px; } .prow-card { width: 200px; } .prow-arrow { display: none; } }
-@media (max-width: 480px) { .prow-card { width: 168px; } }
+.prow-arrow { position: absolute; top: 38%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 1px solid var(--border); color: var(--text); font-size: 26px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 6; box-shadow: 0 8px 26px rgba(0,0,0,0.20); transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s; }
+.prow-arrow:hover { background: var(--gold); color: #1a1208; border-color: var(--gold); transform: translateY(-50%) scale(1.08); }
+.prow-arrow:active { transform: translateY(-50%) scale(0.96); }
+.prow-prev { left: -8px; } .prow-next { right: -8px; }
+@media (max-width: 768px) { .prow { padding: 30px 16px 4px; } .prow-title { font-size: 23px; } .prow-card { width: 200px; } .prow-arrow { width: 40px; height: 40px; font-size: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.22); } .prow-prev { left: 2px; } .prow-next { right: 2px; } }
+@media (max-width: 480px) { .prow-card { width: 168px; } .prow-arrow { width: 36px; height: 36px; font-size: 20px; } .prow-prev { left: 0; } .prow-next { right: 0; } }
 .empty-state { grid-column: 1/-1; text-align: center; padding: 100px; color: var(--text-muted); }
 .empty-state-icon { font-size: 56px; margin-bottom: 18px; opacity: 0.25; }
 
