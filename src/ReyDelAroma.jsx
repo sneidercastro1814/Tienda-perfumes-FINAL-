@@ -349,6 +349,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-aroma { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 11px; border-radius: 999px; }
 .pcard-price { font-family: var(--serif); font-size: 25px; font-weight: 500; color: var(--gold-d); }
 .pcard-curr { font-size: 13px; opacity: 0.5; font-family: var(--sans); font-weight: 300; letter-spacing: 1px; }
+.pcard-trust { display: flex; align-items: center; gap: 7px; margin-top: 11px; flex-wrap: wrap; }
+.pcard-stars { color: var(--gold); font-size: 12.5px; letter-spacing: 1.5px; line-height: 1; flex-shrink: 0; }
+.pcard-trust-txt { font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px; color: var(--text-dim); }
 .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid rgba(0,0,0,0.07); }
 .pcard-orig { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 .pcard-orig::before { content: '✓'; color: var(--gold); font-weight: 700; }
@@ -719,6 +722,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pcard-name { font-size: 17px; min-height: 40px; }
   .pcard-sub { margin-bottom: 10px; letter-spacing: 1.5px; }
   .pcard-price { font-size: 19px; }
+  .pcard-trust { gap: 5px; margin-top: 9px; }
+  .pcard-stars { font-size: 10.5px; letter-spacing: 1px; }
+  .pcard-trust-txt { font-size: 9.5px; letter-spacing: 0.2px; }
   .pcard-foot { padding: 11px 13px; }
   .quick-buy { padding: 8px 12px; font-size: 10px; letter-spacing: 1px; }
   .pcard-orig { font-size: 10px; letter-spacing: 1px; }
@@ -2217,6 +2223,7 @@ export default function ReyDelAroma() {
                 <div className="pcard-name">{p.name}</div>
                 <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                 <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
                 {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
               </div>
               <div className="pcard-foot">
@@ -2264,6 +2271,7 @@ export default function ReyDelAroma() {
                     <div className="pcard-name">{p.name}</div>
                     <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                     <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                    <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
                     {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
                   </div>
                   <div className="pcard-foot">
@@ -2359,6 +2367,7 @@ export default function ReyDelAroma() {
                   <div className="pcard-name">{p.name}</div>
                   <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                   <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                  <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
                   {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
                 </div>
                 <div className="pcard-foot">
@@ -2444,6 +2453,7 @@ export default function ReyDelAroma() {
                       <div className="pcard-name">{p.name}</div>
                       <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                       <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                      <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
                       {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
                     </div>
                     <div className="pcard-foot">
@@ -2529,6 +2539,7 @@ export default function ReyDelAroma() {
                     <div className="pcard-name">{p.name}</div>
                     <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
                     <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+                    <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
                     {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
                   </div>
                   <div className="pcard-foot">
