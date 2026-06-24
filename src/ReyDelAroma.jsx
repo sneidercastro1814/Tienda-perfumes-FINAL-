@@ -34,20 +34,42 @@ const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
 const SHIPPING = {
   // Monto desde el cual el envío es GRATIS en Bogotá (en pesos)
   bogotaFreeFrom: 250000,
-  // Zonas de envío y su costo (en pesos). El cliente elige una al pagar.
-  zones: [
-    { id: "bogota",        label: "Bogotá",                         cost: 8000  },
-    { id: "nacional",      label: "Resto de Colombia",              cost: 15000 },
-    { id: "internacional", label: "Fuera del país (internacional)", cost: 15000 },
+  // Costo de envío para municipios no listados (tarifa nacional estándar)
+  otherCost: 18000,
+  // Texto de la opción "otra ciudad" en el selector
+  otherLabel: "Otra ciudad / municipio",
+  // Tarifas de envío por ciudad de Colombia, agrupadas por costo (en pesos).
+  // El precio se asigna AUTOMÁTICAMENTE cuando el cliente elige su ciudad.
+  tiers: [
+    { cost: 8000,  cities: ["Bogotá"] },
+    { cost: 12000, cities: ["Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Cúcuta", "Pereira", "Manizales", "Armenia", "Ibagué", "Villavicencio", "Neiva", "Pasto", "Montería", "Santa Marta", "Soacha", "Soledad", "Bello", "Envigado", "Itagüí", "Floridablanca", "Chía", "Zipaquirá", "Madrid", "Mosquera", "Funza", "Facatativá"] },
+    { cost: 15000, cities: ["Popayán", "Tunja", "Valledupar", "Sincelejo", "Riohacha", "Quibdó", "Florencia", "Yopal", "Duitama", "Sogamoso", "Girardot", "Tuluá", "Palmira", "Buenaventura", "Apartadó", "Maicao", "Magangué", "Cartago", "Buga", "Sahagún"] },
+    { cost: 22000, cities: ["San Andrés", "Leticia", "Mitú", "Inírida", "Puerto Carreño", "Mocoa", "Arauca", "Puerto Asís"] },
   ],
 };
 
-/* Costo de envío según la zona y el subtotal del pedido.
-   En Bogotá es GRATIS a partir de SHIPPING.bogotaFreeFrom. */
-function shippingCost(zoneId, subtotal) {
-  const zone = SHIPPING.zones.find((z) => z.id === zoneId) || SHIPPING.zones[0];
-  if (zone.id === "bogota" && subtotal >= SHIPPING.bogotaFreeFrom) return 0;
-  return zone.cost;
+// Lista plana de ciudades { name, cost }, ordenada alfabéticamente (Bogotá primero).
+const SHIPPING_CITIES = (() => {
+  const flat = [];
+  SHIPPING.tiers.forEach((t) => t.cities.forEach((name) => flat.push({ name, cost: t.cost })));
+  flat.sort((a, b) => {
+    if (a.name === "Bogotá") return -1;
+    if (b.name === "Bogotá") return 1;
+    return a.name.localeCompare(b.name, "es");
+  });
+  return flat;
+})();
+
+/* Costo de envío según la CIUDAD elegida y el subtotal del pedido.
+   - Sin ciudad aún: 0 (todavía no suma; el cliente debe elegirla para pagar).
+   - Bogotá: GRATIS a partir de SHIPPING.bogotaFreeFrom.
+   - Ciudad no listada / "otra": tarifa nacional estándar. */
+function shippingCost(cityName, subtotal) {
+  if (!cityName) return 0;
+  if (cityName === SHIPPING.otherLabel) return SHIPPING.otherCost;
+  if (cityName === "Bogotá" && subtotal >= SHIPPING.bogotaFreeFrom) return 0;
+  const found = SHIPPING_CITIES.find((c) => c.name === cityName);
+  return found ? found.cost : SHIPPING.otherCost;
 }
 
 /* Descuento que aplica un cupón sobre un subtotal. */
@@ -1475,7 +1497,7 @@ export default function ReyDelAroma() {
   /* ── CHECKOUT / PAGO ── */
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [payMethod, setPayMethod] = useState("wompi");
-  const [coForm, setCoForm] = useState({ name: "", cedula: "", phone: "", email: "", city: "", address: "" });
+  const [coForm, setCoForm] = useState({ name: "", cedula: "", phone: "", email: "", city: "", cityCustom: "", address: "" });
   const [placing, setPlacing] = useState(false);
   const [payResult, setPayResult] = useState(() => (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste ? { loading: true } : null)); // resultado tras volver de Wompi o Sistecrédito
 
@@ -1490,7 +1512,6 @@ export default function ReyDelAroma() {
   const addiSentRef = useRef(false);      // un solo registro de pedido por checkout con Addi
 
   /* ── ENVÍO + CUPONES ── */
-  const [shipZone, setShipZone] = useState("bogota");
   const [coupons, setCoupons] = useState(loadCoupons);
   const [coCouponInput, setCoCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -1833,7 +1854,7 @@ export default function ReyDelAroma() {
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
     const discount = couponDiscount(appliedCoupon, subtotal);
     const base = Math.max(0, subtotal - discount);
-    const shipping = shippingCost(shipZone, subtotal);
+    const shipping = shippingCost(coForm.city, subtotal);
     return { subtotal, discount, base, shipping, total: base + shipping };
   };
 
@@ -1855,7 +1876,7 @@ export default function ReyDelAroma() {
   /* Datos del pedido que se guardan y se envían por correo */
   const buildOrderPayload = (reference) => {
     const { subtotal, discount, shipping, total } = computeTotals();
-    const zoneLabel = SHIPPING.zones.find((z) => z.id === shipZone)?.label || shipZone;
+    const finalCity = coForm.city === SHIPPING.otherLabel ? coForm.cityCustom.trim() : coForm.city.trim();
     return {
       reference,
       date: new Date().toISOString(),
@@ -1865,12 +1886,12 @@ export default function ReyDelAroma() {
         cedula: coForm.cedula.trim(),   // ← ID del cliente (Cédula / NIT)
         phone: coForm.phone.trim(),
         email: coForm.email.trim(),
-        city: coForm.city.trim(),
+        city: finalCity,
         address: coForm.address.trim(),
       },
       items: checkoutItems.map((it) => ({ name: it.name, brand: it.brand || "", size: it.size || "", qty: it.qty, price: it.price })),
       coupon: appliedCoupon ? appliedCoupon.code : "",
-      zone: zoneLabel,
+      zone: finalCity,
       subtotal, discount, shipping, total,
     };
   };
@@ -1898,7 +1919,8 @@ export default function ReyDelAroma() {
   };
 
   const isCheckoutFormValid = () =>
-    coForm.name.trim() && coForm.cedula.trim() && coForm.phone.trim() && coForm.city.trim() && coForm.address.trim();
+    coForm.name.trim() && coForm.cedula.trim() && coForm.phone.trim() && coForm.address.trim() &&
+    coForm.city.trim() && (coForm.city !== SHIPPING.otherLabel || coForm.cityCustom.trim());
 
   /* Espera (polling) a que Sistecrédito entregue la URL de pago tras crear la
      transacción. Devuelve la URL, "" si la transacción falló o no llegó a tiempo. */
@@ -1924,8 +1946,8 @@ export default function ReyDelAroma() {
     try {
       localStorage.setItem("rda-last-order", JSON.stringify({
         reference, method: payMethod, subtotal, discount, shipping, total,
-        coupon: appliedCoupon ? appliedCoupon.code : "", zone: shipZone,
-        items: checkoutItems, ...coForm, date: order.date,
+        coupon: appliedCoupon ? appliedCoupon.code : "", zone: order.zone,
+        items: checkoutItems, ...coForm, city: order.customer.city, date: order.date,
       }));
     } catch { /* ignore */ }
 
@@ -2761,18 +2783,21 @@ export default function ReyDelAroma() {
               <div className="fg"><label className="fl">Cédula / NIT *</label><input className="fi" type="text" inputMode="numeric" value={coForm.cedula} onChange={setCo("cedula")} placeholder="Ej. 1094…" /></div>
               <div className="fg"><label className="fl">Celular / WhatsApp *</label><input className="fi" type="tel" value={coForm.phone} onChange={setCo("phone")} placeholder="300 123 4567" /></div>
               <div className="fg"><label className="fl">Correo (opcional)</label><input className="fi" type="email" value={coForm.email} onChange={setCo("email")} placeholder="tu@correo.com" /></div>
-              <div className="fg"><label className="fl">Ciudad *</label><input className="fi" value={coForm.city} onChange={setCo("city")} placeholder="Ej. Medellín" /></div>
+              <div className="fg"><label className="fl">Ciudad *</label>
+                <select className="fsel" value={coForm.city} onChange={setCo("city")}>
+                  <option value="">Selecciona tu ciudad…</option>
+                  {SHIPPING_CITIES.map((c) => (
+                    <option key={c.name} value={c.name}>{c.name} · envío {cop(c.cost)}</option>
+                  ))}
+                  <option value={SHIPPING.otherLabel}>{SHIPPING.otherLabel} · envío {cop(SHIPPING.otherCost)}</option>
+                </select>
+              </div>
+              {coForm.city === SHIPPING.otherLabel && (
+                <div className="fg"><label className="fl">Escribe tu ciudad / municipio *</label><input className="fi" value={coForm.cityCustom} onChange={setCo("cityCustom")} placeholder="Ej. Garzón, Huila" /></div>
+              )}
               <div className="fg full"><label className="fl">Dirección de envío *</label><input className="fi" value={coForm.address} onChange={setCo("address")} placeholder="Calle 00 # 00-00, barrio" /></div>
               <div className="fg full">
-                <label className="fl">Zona de envío *</label>
-                <select className="fsel" value={shipZone} onChange={(e) => setShipZone(e.target.value)}>
-                  {SHIPPING.zones.map((z) => (
-                    <option key={z.id} value={z.id}>
-                      {z.label} — {z.id === "bogota" ? `gratis desde ${cop(SHIPPING.bogotaFreeFrom)}` : cop(z.cost)}
-                    </option>
-                  ))}
-                </select>
-                <div className="co-ship-note">🚚 En Bogotá el envío es <b>GRATIS</b> desde {cop(SHIPPING.bogotaFreeFrom)}. Fuera del país: {cop(15000)}.</div>
+                <div className="co-ship-note">🚚 El costo de envío se calcula <b>automáticamente</b> según tu ciudad. En <b>Bogotá es GRATIS</b> desde {cop(SHIPPING.bogotaFreeFrom)}.</div>
               </div>
             </div>
 
@@ -2830,10 +2855,10 @@ export default function ReyDelAroma() {
               <div className="co-brow"><span>Subtotal</span><span>{cop(subtotal)}</span></div>
               {discount > 0 && <div className="co-brow disc"><span>Descuento</span><span>−{cop(discount)}</span></div>}
               <div className="co-brow">
-                <span>Envío {SHIPPING.zones.find((z) => z.id === shipZone)?.label ? `(${SHIPPING.zones.find((z) => z.id === shipZone).label})` : ""}</span>
-                <span>{shipping === 0 ? <b className="co-free">GRATIS</b> : cop(shipping)}</span>
+                <span>Envío {coForm.city ? `(${coForm.city === SHIPPING.otherLabel ? (coForm.cityCustom.trim() || "otra ciudad") : coForm.city})` : ""}</span>
+                <span>{!coForm.city ? <span style={{ color: "var(--gold)", fontSize: 12, fontWeight: 700 }}>Elige tu ciudad</span> : shipping === 0 ? <b className="co-free">GRATIS</b> : cop(shipping)}</span>
               </div>
-              {shipZone === "bogota" && shipping > 0 && freeLeft > 0 && (
+              {coForm.city === "Bogotá" && shipping > 0 && freeLeft > 0 && (
                 <div className="co-ship-hint">Agrega {cop(freeLeft)} más y tu envío en Bogotá es gratis 🎉</div>
               )}
             </div>
