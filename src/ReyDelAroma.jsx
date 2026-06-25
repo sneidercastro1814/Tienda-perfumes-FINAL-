@@ -42,9 +42,8 @@ const SHIPPING = {
   // El precio se asigna AUTOMÁTICAMENTE cuando el cliente elige su ciudad.
   tiers: [
     { cost: 8000,  cities: ["Bogotá"] },
-    { cost: 12000, cities: ["Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Cúcuta", "Pereira", "Manizales", "Armenia", "Ibagué", "Villavicencio", "Neiva", "Pasto", "Montería", "Santa Marta", "Soacha", "Soledad", "Bello", "Envigado", "Itagüí", "Floridablanca", "Chía", "Zipaquirá", "Madrid", "Mosquera", "Funza", "Facatativá"] },
-    { cost: 15000, cities: ["Popayán", "Tunja", "Valledupar", "Sincelejo", "Riohacha", "Quibdó", "Florencia", "Yopal", "Duitama", "Sogamoso", "Girardot", "Tuluá", "Palmira", "Buenaventura", "Apartadó", "Maicao", "Magangué", "Cartago", "Buga", "Sahagún"] },
-    { cost: 22000, cities: ["San Andrés", "Leticia", "Mitú", "Inírida", "Puerto Carreño", "Mocoa", "Arauca", "Puerto Asís"] },
+    { cost: 12000, cities: ["Soacha", "Chía"] },
+    { cost: 18000, cities: ["Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Cúcuta", "Pereira", "Manizales", "Armenia", "Ibagué", "Villavicencio", "Neiva", "Pasto", "Montería", "Santa Marta", "Soledad", "Bello", "Envigado", "Itagüí", "Floridablanca", "Zipaquirá", "Madrid", "Mosquera", "Funza", "Facatativá", "Popayán", "Tunja", "Valledupar", "Sincelejo", "Riohacha", "Quibdó", "Florencia", "Yopal", "Duitama", "Sogamoso", "Girardot", "Tuluá", "Palmira", "Buenaventura", "Apartadó", "Maicao", "Magangué", "Cartago", "Buga", "Sahagún", "San Andrés", "Leticia", "Mitú", "Inírida", "Puerto Carreño", "Mocoa", "Arauca", "Puerto Asís"] },
   ],
 };
 
@@ -1513,7 +1512,6 @@ export default function ReyDelAroma() {
 
   /* ── ENVÍO + CUPONES ── */
   const [coupons, setCoupons] = useState(loadCoupons);
-  const [coCouponInput, setCoCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponForm, setCouponForm] = useState({ code: "", type: "percent", value: "" });
 
@@ -1557,6 +1555,12 @@ export default function ReyDelAroma() {
   /* guardar cupones en localStorage */
   useEffect(() => {
     try { localStorage.setItem(LS_COUPONS, JSON.stringify(coupons)); } catch { /* ignore */ }
+  }, [coupons]);
+
+  /* El cupón activo se aplica AUTOMÁTICAMENTE al pedido (el cliente no escribe ningún código).
+     Si hay varios activos, se usa el más reciente. Si no hay ninguno activo, no se aplica nada. */
+  useEffect(() => {
+    setAppliedCoupon(coupons.find((c) => c.active) || null);
   }, [coupons]);
 
   /* guardar colecciones y tipos de aroma en localStorage */
@@ -2057,15 +2061,6 @@ export default function ReyDelAroma() {
 
   /* ── CUPONES ── */
   const couponLabel = (c) => (c.type === "percent" ? `${c.value}% de descuento` : `${cop(c.value)} de descuento`);
-  const applyCoupon = () => {
-    const code = coCouponInput.trim().toUpperCase();
-    if (!code) return;
-    const found = coupons.find((c) => c.active && c.code.toUpperCase() === code);
-    if (!found) { setAppliedCoupon(null); return showToast("Cupón no válido o inactivo"); }
-    setAppliedCoupon(found);
-    showToast(`Cupón ${found.code} aplicado 🎉`);
-  };
-  const removeCoupon = () => { setAppliedCoupon(null); setCoCouponInput(""); };
   const addCoupon = () => {
     const code = couponForm.code.trim().toUpperCase();
     const value = parseInt(String(couponForm.value).replace(/[^\d]/g, "")) || 0;
@@ -2829,28 +2824,16 @@ export default function ReyDelAroma() {
                 </div>
               ))}
             </div>
-            <div className="co-coupon">
-              {appliedCoupon ? (
+            {appliedCoupon && (
+              <div className="co-coupon">
                 <div className="co-coupon-on">
                   <div className="co-coupon-on-info">
                     <span className="co-coupon-tag">🎟️ {appliedCoupon.code}</span>
-                    <span className="co-coupon-desc">{couponLabel(appliedCoupon)}</span>
+                    <span className="co-coupon-desc">{couponLabel(appliedCoupon)} · aplicado automáticamente</span>
                   </div>
-                  <button className="co-coupon-rm" onClick={removeCoupon}>Quitar</button>
                 </div>
-              ) : (
-                <div className="co-coupon-row">
-                  <input
-                    className="co-coupon-input"
-                    placeholder="¿Tienes un cupón?"
-                    value={coCouponInput}
-                    onChange={(e) => setCoCouponInput(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
-                  />
-                  <button className="co-coupon-btn" onClick={applyCoupon}>Aplicar</button>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
             <div className="co-breakdown">
               <div className="co-brow"><span>Subtotal</span><span>{cop(subtotal)}</span></div>
               {discount > 0 && <div className="co-brow disc"><span>Descuento</span><span>−{cop(discount)}</span></div>}
@@ -3032,7 +3015,7 @@ export default function ReyDelAroma() {
               <button className="btn-o" onClick={() => setAdminView("list")}>← Volver</button>
             </div>
           </div>
-          <div className="admin-info">Crea cupones de descuento para tus clientes. Los aplican al pagar escribiendo el código. Se guardan en este navegador.</div>
+          <div className="admin-info">Crea cupones de descuento. El cupón activo se aplica <b>automáticamente</b> al pagar (el cliente no escribe ningún código). Si activas varios, se aplica el más reciente. Se guardan en este navegador.</div>
 
           <div className="coupon-create">
             <div className="fg">
