@@ -1292,6 +1292,7 @@ function sortProducts(arr, mode) {
   }
 }
 const PROMO_LABEL = "2 X $300.000";
+const PROMO_UNIT_DISCOUNT = 40000; // $ de descuento por CADA perfume incluido en la promo "2 × $300.000"
 
 /* Rangos de precio para el filtro del catálogo (los elige el cliente) */
 const PRICE_RANGES = [
@@ -1852,10 +1853,15 @@ export default function ReyDelAroma() {
   /* Totales del checkout: subtotal, descuento del cupón, envío y total. */
   const computeTotals = (items = checkoutItems) => {
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-    const discount = couponDiscount(appliedCoupon, subtotal);
+    const couponDisc = couponDiscount(appliedCoupon, subtotal);
+    // Promo "2 × $300.000": $40.000 de descuento por CADA perfume de la promo en el pedido.
+    // (190.000 − 40.000 = 150.000 → 2 perfumes = 300.000). Se aplica solo, sin escribir código.
+    const promoUnits = items.reduce((n, i) => n + (i.promo ? i.qty : 0), 0);
+    const promoDiscount = promoUnits * PROMO_UNIT_DISCOUNT;
+    const discount = Math.min(subtotal, couponDisc + promoDiscount);
     const base = Math.max(0, subtotal - discount);
     const shipping = shippingCost(coForm.city, subtotal);
-    return { subtotal, discount, base, shipping, total: base + shipping };
+    return { subtotal, couponDisc, promoUnits, promoDiscount, discount, base, shipping, total: base + shipping };
   };
 
   /* ── PAGO / CHECKOUT ── */
@@ -1875,7 +1881,7 @@ export default function ReyDelAroma() {
 
   /* Datos del pedido que se guardan y se envían por correo */
   const buildOrderPayload = (reference) => {
-    const { subtotal, discount, shipping, total } = computeTotals();
+    const { subtotal, discount, promoDiscount, shipping, total } = computeTotals();
     const finalCity = coForm.city === SHIPPING.otherLabel ? coForm.cityCustom.trim() : coForm.city.trim();
     return {
       reference,
@@ -1890,7 +1896,7 @@ export default function ReyDelAroma() {
         address: coForm.address.trim(),
       },
       items: checkoutItems.map((it) => ({ name: it.name, brand: it.brand || "", size: it.size || "", qty: it.qty, price: it.price })),
-      coupon: appliedCoupon ? appliedCoupon.code : "",
+      coupon: appliedCoupon ? appliedCoupon.code : (promoDiscount > 0 ? PROMO_LABEL : ""),
       zone: finalCity,
       subtotal, discount, shipping, total,
     };
@@ -1940,13 +1946,13 @@ export default function ReyDelAroma() {
   const placeOrder = async () => {
     if (!isCheckoutFormValid()) return showToast("Completa tus datos de envío");
 
-    const { subtotal, discount, shipping, total } = computeTotals();
+    const { subtotal, discount, promoDiscount, shipping, total } = computeTotals();
     const reference = newReference();
     const order = buildOrderPayload(reference);
     try {
       localStorage.setItem("rda-last-order", JSON.stringify({
         reference, method: payMethod, subtotal, discount, shipping, total,
-        coupon: appliedCoupon ? appliedCoupon.code : "", zone: order.zone,
+        coupon: appliedCoupon ? appliedCoupon.code : (promoDiscount > 0 ? PROMO_LABEL : ""), zone: order.zone,
         items: checkoutItems, ...coForm, city: order.customer.city, date: order.date,
       }));
     } catch { /* ignore */ }
@@ -2745,7 +2751,7 @@ export default function ReyDelAroma() {
         </div>
       );
     }
-    const { subtotal, discount, shipping, total } = computeTotals();
+    const { subtotal, couponDisc, promoUnits, promoDiscount, shipping, total } = computeTotals();
     const methods = [
       { id: "wompi", name: "Wompi", logo: logoWompi, desc: "Tarjeta · PSE · Nequi · Bancolombia", badge: "Pago inmediato" },
       { id: "addi", name: "Addi", logo: logoAddi, desc: "Paga a cuotas, sin tarjeta", badge: "A cuotas" },
@@ -2819,6 +2825,16 @@ export default function ReyDelAroma() {
                 </div>
               ))}
             </div>
+            {promoDiscount > 0 && (
+              <div className="co-coupon">
+                <div className="co-coupon-on">
+                  <div className="co-coupon-on-info">
+                    <span className="co-coupon-tag">🎟️ 2 × $300.000</span>
+                    <span className="co-coupon-desc">−{cop(PROMO_UNIT_DISCOUNT)} por perfume ({promoUnits} en tu pedido) · aplicado automáticamente</span>
+                  </div>
+                </div>
+              </div>
+            )}
             {appliedCoupon && (
               <div className="co-coupon">
                 <div className="co-coupon-on">
@@ -2831,7 +2847,8 @@ export default function ReyDelAroma() {
             )}
             <div className="co-breakdown">
               <div className="co-brow"><span>Subtotal</span><span>{cop(subtotal)}</span></div>
-              {discount > 0 && <div className="co-brow disc"><span>Descuento</span><span>−{cop(discount)}</span></div>}
+              {promoDiscount > 0 && <div className="co-brow disc"><span>Promo 2 × $300.000 ({promoUnits} {promoUnits === 1 ? "perfume" : "perfumes"})</span><span>−{cop(promoDiscount)}</span></div>}
+              {couponDisc > 0 && <div className="co-brow disc"><span>Descuento{appliedCoupon ? ` (${appliedCoupon.code})` : ""}</span><span>−{cop(couponDisc)}</span></div>}
               <div className="co-brow">
                 <span>Envío {coForm.city ? `(${coForm.city === SHIPPING.otherLabel ? (coForm.cityCustom.trim() || "otra ciudad") : coForm.city})` : ""}</span>
                 <span>{!coForm.city ? <span style={{ color: "var(--gold)", fontSize: 12, fontWeight: 700 }}>Elige tu ciudad</span> : shipping === 0 ? <b className="co-free">GRATIS</b> : cop(shipping)}</span>
