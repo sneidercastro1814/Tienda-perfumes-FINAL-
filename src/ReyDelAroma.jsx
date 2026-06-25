@@ -32,8 +32,6 @@ const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
    ENVÍOS — edita estos valores a tu gusto
    ════════════════════════════════════════════════════════════════ */
 const SHIPPING = {
-  // Monto desde el cual el envío es GRATIS en Bogotá (en pesos)
-  bogotaFreeFrom: 250000,
   // Costo de envío para municipios no listados (tarifa nacional estándar)
   otherCost: 18000,
   // Texto de la opción "otra ciudad" en el selector
@@ -59,14 +57,12 @@ const SHIPPING_CITIES = (() => {
   return flat;
 })();
 
-/* Costo de envío según la CIUDAD elegida y el subtotal del pedido.
+/* Costo de envío según la CIUDAD elegida.
    - Sin ciudad aún: 0 (todavía no suma; el cliente debe elegirla para pagar).
-   - Bogotá: GRATIS a partir de SHIPPING.bogotaFreeFrom.
    - Ciudad no listada / "otra": tarifa nacional estándar. */
 function shippingCost(cityName, subtotal) {
   if (!cityName) return 0;
   if (cityName === SHIPPING.otherLabel) return SHIPPING.otherCost;
-  if (cityName === "Bogotá" && subtotal >= SHIPPING.bogotaFreeFrom) return 0;
   const found = SHIPPING_CITIES.find((c) => c.name === cityName);
   return found ? found.cost : SHIPPING.otherCost;
 }
@@ -2750,7 +2746,6 @@ export default function ReyDelAroma() {
       );
     }
     const { subtotal, discount, shipping, total } = computeTotals();
-    const freeLeft = SHIPPING.bogotaFreeFrom - subtotal;
     const methods = [
       { id: "wompi", name: "Wompi", logo: logoWompi, desc: "Tarjeta · PSE · Nequi · Bancolombia", badge: "Pago inmediato" },
       { id: "addi", name: "Addi", logo: logoAddi, desc: "Paga a cuotas, sin tarjeta", badge: "A cuotas" },
@@ -2792,7 +2787,7 @@ export default function ReyDelAroma() {
               )}
               <div className="fg full"><label className="fl">Dirección de envío *</label><input className="fi" value={coForm.address} onChange={setCo("address")} placeholder="Calle 00 # 00-00, barrio" /></div>
               <div className="fg full">
-                <div className="co-ship-note">🚚 El costo de envío se calcula <b>automáticamente</b> según tu ciudad. En <b>Bogotá es GRATIS</b> desde {cop(SHIPPING.bogotaFreeFrom)}.</div>
+                <div className="co-ship-note">🚚 El costo de envío se calcula <b>automáticamente</b> según la ciudad que elijas.</div>
               </div>
             </div>
 
@@ -2841,9 +2836,6 @@ export default function ReyDelAroma() {
                 <span>Envío {coForm.city ? `(${coForm.city === SHIPPING.otherLabel ? (coForm.cityCustom.trim() || "otra ciudad") : coForm.city})` : ""}</span>
                 <span>{!coForm.city ? <span style={{ color: "var(--gold)", fontSize: 12, fontWeight: 700 }}>Elige tu ciudad</span> : shipping === 0 ? <b className="co-free">GRATIS</b> : cop(shipping)}</span>
               </div>
-              {coForm.city === "Bogotá" && shipping > 0 && freeLeft > 0 && (
-                <div className="co-ship-hint">Agrega {cop(freeLeft)} más y tu envío en Bogotá es gratis 🎉</div>
-              )}
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
             {payMethod === "addi" && PAYMENTS.addi.enabled ? (
@@ -2857,7 +2849,7 @@ export default function ReyDelAroma() {
                 <button className="co-pay-btn" onClick={placeOrder} disabled={placing}>
                   {placing ? "Redirigiendo a la pasarela…" : `Pagar con ${activeName}`}
                 </button>
-                <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
+                <div className="co-secure">🔒 Pago seguro · Envíos a toda Colombia</div>
               </>
             )}
             <a className="co-help" href={waLink("Hola Rey del Aroma 👑, tengo una duda con mi compra.")} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbenos</a>
