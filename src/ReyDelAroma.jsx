@@ -32,6 +32,8 @@ const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
    ENVÍOS — edita estos valores a tu gusto
    ════════════════════════════════════════════════════════════════ */
 const SHIPPING = {
+  // Monto desde el cual el envío es GRATIS en Bogotá (en pesos)
+  bogotaFreeFrom: 250000,
   // Costo de envío para municipios no listados (tarifa nacional estándar)
   otherCost: 18000,
   // Texto de la opción "otra ciudad" en el selector
@@ -41,7 +43,8 @@ const SHIPPING = {
   tiers: [
     { cost: 8000,  cities: ["Bogotá"] },
     { cost: 12000, cities: ["Soacha", "Chía"] },
-    { cost: 18000, cities: ["Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Cúcuta", "Pereira", "Manizales", "Armenia", "Ibagué", "Villavicencio", "Neiva", "Pasto", "Montería", "Santa Marta", "Soledad", "Bello", "Envigado", "Itagüí", "Floridablanca", "Zipaquirá", "Madrid", "Mosquera", "Funza", "Facatativá", "Popayán", "Tunja", "Valledupar", "Sincelejo", "Riohacha", "Quibdó", "Florencia", "Yopal", "Duitama", "Sogamoso", "Girardot", "Tuluá", "Palmira", "Buenaventura", "Apartadó", "Maicao", "Magangué", "Cartago", "Buga", "Sahagún", "San Andrés", "Leticia", "Mitú", "Inírida", "Puerto Carreño", "Mocoa", "Arauca", "Puerto Asís"] },
+    { cost: 18000, cities: ["Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Cúcuta", "Pereira", "Manizales", "Armenia", "Ibagué", "Villavicencio", "Neiva", "Pasto", "Montería", "Santa Marta", "Soledad", "Bello", "Envigado", "Itagüí", "Floridablanca", "Zipaquirá", "Madrid", "Mosquera", "Funza", "Facatativá", "Popayán", "Tunja", "Valledupar", "Sincelejo", "Riohacha", "Quibdó", "Florencia", "Yopal", "Duitama", "Sogamoso", "Girardot", "Tuluá", "Palmira", "Buenaventura", "Apartadó", "Maicao", "Magangué", "Cartago", "Buga", "Sahagún", "Leticia", "Mitú", "Inírida", "Puerto Carreño", "Mocoa", "Arauca", "Puerto Asís"] },
+    { cost: 50000, cities: ["San Andrés"] },
   ],
 };
 
@@ -57,12 +60,14 @@ const SHIPPING_CITIES = (() => {
   return flat;
 })();
 
-/* Costo de envío según la CIUDAD elegida.
+/* Costo de envío según la CIUDAD elegida y el subtotal del pedido.
    - Sin ciudad aún: 0 (todavía no suma; el cliente debe elegirla para pagar).
+   - Bogotá: GRATIS a partir de SHIPPING.bogotaFreeFrom.
    - Ciudad no listada / "otra": tarifa nacional estándar. */
 function shippingCost(cityName, subtotal) {
   if (!cityName) return 0;
   if (cityName === SHIPPING.otherLabel) return SHIPPING.otherCost;
+  if (cityName === "Bogotá" && subtotal >= SHIPPING.bogotaFreeFrom) return 0;
   const found = SHIPPING_CITIES.find((c) => c.name === cityName);
   return found ? found.cost : SHIPPING.otherCost;
 }
@@ -570,6 +575,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cart-tl { font-size: 12px; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
 .cart-ta { font-family: var(--serif); font-size: 31px; font-weight: 500; color: var(--gold-d); }
 .cart-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 12px; letter-spacing: 0.5px; line-height: 1.6; }
+.cart-bd { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.cart-bd-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--text); }
+.cart-bd-row span:first-child { color: var(--text-muted); }
+.cart-bd-row.disc span { color: #1c7c3e; font-weight: 600; }
 .cart-trust { display: flex; flex-direction: column; align-items: center; gap: 9px; margin: 10px 0 16px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.07); }
 .cart-trust .cart-note { margin: 0; font-weight: 600; }
 .cart-trust .pay-badges.sm { margin-top: 0; }
@@ -1791,6 +1800,11 @@ export default function ReyDelAroma() {
     setCart((prev) => prev.map((i) => (i.id === id && i.size === size ? { ...i, qty: Math.max(1, i.qty + delta) } : i)));
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
   const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  // Promo "2 × $300.000" en el carrito: mismo cálculo que el checkout (sin envío, que se elige después).
+  const cartPromoUnits = cart.reduce((n, i) => n + (i.promo ? i.qty : 0), 0);
+  const cartPromoDiscount = cartPromoUnits >= 2 ? cartPromoUnits * PROMO_UNIT_DISCOUNT : 0;
+  const cartCouponDisc = couponDiscount(appliedCoupon, cartTotal);
+  const cartFinalTotal = Math.max(0, cartTotal - cartPromoDiscount - cartCouponDisc);
   const q = search.trim().toLowerCase();
   const matched = (q
     ? products.filter((p) =>
@@ -2752,6 +2766,7 @@ export default function ReyDelAroma() {
       );
     }
     const { subtotal, couponDisc, promoUnits, promoDiscount, shipping, total } = computeTotals();
+    const freeLeft = SHIPPING.bogotaFreeFrom - subtotal;
     const methods = [
       { id: "wompi", name: "Wompi", logo: logoWompi, desc: "Tarjeta · PSE · Nequi · Bancolombia", badge: "Pago inmediato" },
       { id: "addi", name: "Addi", logo: logoAddi, desc: "Paga a cuotas, sin tarjeta", badge: "A cuotas" },
@@ -2793,7 +2808,7 @@ export default function ReyDelAroma() {
               )}
               <div className="fg full"><label className="fl">Dirección de envío *</label><input className="fi" value={coForm.address} onChange={setCo("address")} placeholder="Calle 00 # 00-00, barrio" /></div>
               <div className="fg full">
-                <div className="co-ship-note">🚚 El costo de envío se calcula <b>automáticamente</b> según la ciudad que elijas.</div>
+                <div className="co-ship-note">🚚 El costo de envío se calcula <b>automáticamente</b> según la ciudad que elijas. En <b>Bogotá es GRATIS</b> desde {cop(SHIPPING.bogotaFreeFrom)}.</div>
               </div>
             </div>
 
@@ -2858,6 +2873,9 @@ export default function ReyDelAroma() {
                 <span>Envío {coForm.city ? `(${coForm.city === SHIPPING.otherLabel ? (coForm.cityCustom.trim() || "otra ciudad") : coForm.city})` : ""}</span>
                 <span>{!coForm.city ? <span style={{ color: "var(--gold)", fontSize: 12, fontWeight: 700 }}>Elige tu ciudad</span> : shipping === 0 ? <b className="co-free">GRATIS</b> : cop(shipping)}</span>
               </div>
+              {coForm.city === "Bogotá" && shipping > 0 && freeLeft > 0 && (
+                <div className="co-ship-hint">Agrega {cop(freeLeft)} más y tu envío en Bogotá es gratis 🎉</div>
+              )}
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
             {payMethod === "addi" && PAYMENTS.addi.enabled ? (
@@ -2871,7 +2889,7 @@ export default function ReyDelAroma() {
                 <button className="co-pay-btn" onClick={placeOrder} disabled={placing}>
                   {placing ? "Redirigiendo a la pasarela…" : `Pagar con ${activeName}`}
                 </button>
-                <div className="co-secure">🔒 Pago seguro · Envíos a toda Colombia</div>
+                <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
               </>
             )}
             <a className="co-help" href={waLink("Hola Rey del Aroma 👑, tengo una duda con mi compra.")} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbenos</a>
@@ -3527,8 +3545,22 @@ export default function ReyDelAroma() {
             </div>
             {cart.length > 0 && (
               <div className="cart-foot">
-                <div className="cart-tr"><span className="cart-tl">Total</span><span className="cart-ta">{cop(cartTotal)}</span></div>
-                <div className="cart-ship free">🔥 ¡Envío <b>GRATIS</b> en Bogotá! 🔥</div>
+                {(cartPromoDiscount > 0 || cartCouponDisc > 0) && (
+                  <div className="cart-bd">
+                    <div className="cart-bd-row"><span>Subtotal</span><span>{cop(cartTotal)}</span></div>
+                    {cartPromoDiscount > 0 && <div className="cart-bd-row disc"><span>Promo 2 × $300.000 ({cartPromoUnits} {cartPromoUnits === 1 ? "perfume" : "perfumes"})</span><span>−{cop(cartPromoDiscount)}</span></div>}
+                    {cartCouponDisc > 0 && <div className="cart-bd-row disc"><span>Descuento{appliedCoupon ? ` (${appliedCoupon.code})` : ""}</span><span>−{cop(cartCouponDisc)}</span></div>}
+                  </div>
+                )}
+                <div className="cart-tr"><span className="cart-tl">Total</span><span className="cart-ta">{cop(cartFinalTotal)}</span></div>
+                {cartTotal >= SHIPPING.bogotaFreeFrom ? (
+                  <div className="cart-ship free">🎉 ¡Tu envío en Bogotá es <b>GRATIS</b>!</div>
+                ) : (
+                  <div className="cart-ship">🚚 Envío <b>GRATIS</b> a Bogotá a partir de {cop(SHIPPING.bogotaFreeFrom)} · te faltan {cop(SHIPPING.bogotaFreeFrom - cartTotal)}</div>
+                )}
+                {cartPromoUnits === 1 && (
+                  <div className="cart-ship">🎁 Agrega 1 perfume más de la promo <b>2 × $300.000</b> y ahorra {cop(PROMO_UNIT_DISCOUNT * 2)}</div>
+                )}
                 <div className="cart-trust">
                   <div className="cart-note">🔒 Pago 100% seguro</div>
                   <PayBadges className="sm" />
