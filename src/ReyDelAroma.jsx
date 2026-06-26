@@ -2381,22 +2381,6 @@ export default function ReyDelAroma() {
     const meta = CATEGORY_META[catFilter] || { eyebrow: "Colección", pre: "", hi: catFilter, banner: "banner1", desc: "" };
     return (
       <div className="catpage">
-        {/* Barra: precio y ordenar */}
-        <div className="catpage-toolbar">
-          <div className="sort-ctrl">
-            <span className="sort-lbl">Precio</span>
-            <select className="sort-sel" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} aria-label="Filtrar por precio">
-              {PRICE_RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
-            </select>
-          </div>
-          <div className="sort-ctrl">
-            <span className="sort-lbl">Ordenar</span>
-            <select className="sort-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Ordenar perfumes">
-              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-            </select>
-          </div>
-        </div>
-
         {/* Productos de la categoría */}
         <div className="products-wrap">
           <div className="sec-hdr">
