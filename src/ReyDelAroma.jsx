@@ -1854,10 +1854,10 @@ export default function ReyDelAroma() {
   const computeTotals = (items = checkoutItems) => {
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
     const couponDisc = couponDiscount(appliedCoupon, subtotal);
-    // Promo "2 × $300.000": $40.000 de descuento por CADA perfume de la promo en el pedido.
-    // (190.000 − 40.000 = 150.000 → 2 perfumes = 300.000). Se aplica solo, sin escribir código.
+    // Promo "2 × $300.000": $40.000 de descuento por CADA perfume de la promo,
+    // SOLO a partir de 2 unidades (con 1 sola NO aplica → 2 perfumes = 300.000).
     const promoUnits = items.reduce((n, i) => n + (i.promo ? i.qty : 0), 0);
-    const promoDiscount = promoUnits * PROMO_UNIT_DISCOUNT;
+    const promoDiscount = promoUnits >= 2 ? promoUnits * PROMO_UNIT_DISCOUNT : 0;
     const discount = Math.min(subtotal, couponDisc + promoDiscount);
     const base = Math.max(0, subtotal - discount);
     const shipping = shippingCost(coForm.city, subtotal);
@@ -2833,6 +2833,11 @@ export default function ReyDelAroma() {
                     <span className="co-coupon-desc">−{cop(PROMO_UNIT_DISCOUNT)} por perfume ({promoUnits} en tu pedido) · aplicado automáticamente</span>
                   </div>
                 </div>
+              </div>
+            )}
+            {promoUnits === 1 && (
+              <div className="co-coupon">
+                <div className="co-ship-hint">Agrega 1 perfume más de la sección <b>2 × $300.000</b> y llévate los 2 por $300.000 🎉</div>
               </div>
             )}
             {appliedCoupon && (
