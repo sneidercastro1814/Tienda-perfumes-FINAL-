@@ -12,6 +12,7 @@ import logoPrincipal from "./assets/logo-principal.png";
 import logoWompi from "./assets/payments/wompi.png";
 import logoAddi from "./assets/payments/addi.png";
 import logoSistecredito from "./assets/payments/sistecredito.png";
+import selloOriginal from "./assets/sello-original.png";
 
 /* ════════════════════════════════════════════════════════════════
    CONFIGURACIÓN — edita estos valores
@@ -277,7 +278,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cbadge { position: absolute; top: -4px; right: -5px; background: var(--gold); color: #000; font-size: 10px; font-weight: 700; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; }
 
 /* ── HAMBURGUESA / MENÚ MÓVIL ── */
-.hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; background: none; border: 1px solid var(--border); cursor: pointer; padding: 9px; border-radius: 2px; transition: border-color 0.25s; flex-shrink: 0; }
+.hamburger { display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; background: none; border: 1px solid var(--border); cursor: pointer; padding: 9px; border-radius: 2px; transition: border-color 0.25s; flex-shrink: 0; }
 .hamburger:hover { border-color: var(--gold); }
 .ham-line { display: block; height: 1px; background: rgba(255,255,255,0.8); transition: all 0.3s; transform-origin: center; }
 .hamburger.open .ham-line:nth-child(1) { transform: translateY(6px) rotate(45deg); background: var(--gold); }
@@ -289,6 +290,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .mobile-menu .nl:last-child { border-bottom: none; }
 .mobile-menu .nl::after { display: none; }
 .mobile-menu .nl:hover, .mobile-menu .nl.act { background: rgba(201,168,76,0.05); color: var(--gold); }
+.mobile-menu .nl-admin { display: block; border-top: 1px solid var(--border); border-bottom: none; margin-top: 6px; padding-top: 18px; color: var(--gold); }
 
 /* ── CARRUSEL HERO (centrado, con franjas blancas a los lados) ── */
 .hero-carousel { padding: 22px clamp(14px, 4vw, 52px) 18px; background: var(--bg); position: relative; }
@@ -360,6 +362,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-real-img { width: 100%; height: 100%; object-fit: contain; padding: 24px; transition: transform 0.5s; }
 .pcard:hover .pcard-real-img { transform: scale(1.05); }
 .pcard-badge { position: absolute; top: 16px; left: 0; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px 6px 12px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.pcard-seal { position: absolute; top: 12px; right: 12px; width: 56px; height: 56px; object-fit: contain; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 11px rgba(0,0,0,0.28)); }
 .pcard-body { padding: 22px 24px 12px; flex: 1; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
@@ -371,10 +374,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-trust { display: flex; align-items: center; gap: 7px; margin-top: 11px; flex-wrap: wrap; }
 .pcard-stars { color: var(--gold); font-size: 12.5px; letter-spacing: 1.5px; line-height: 1; flex-shrink: 0; }
 .pcard-trust-txt { font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px; color: var(--text-dim); }
-.pcard-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid rgba(0,0,0,0.07); }
-.pcard-orig { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-.pcard-orig::before { content: '✓'; color: var(--gold); font-weight: 700; }
-.quick-buy { background: #0a0a09; color: #fff; border: 1px solid #0a0a09; font-size: 11px; font-weight: 600; letter-spacing: 2px; padding: 9px 18px; cursor: pointer; transition: all 0.25s; text-transform: uppercase; font-family: var(--sans); }
+.pcard-foot { display: flex; align-items: center; padding: 14px 24px; border-top: 1px solid rgba(0,0,0,0.07); }
+.quick-buy { width: 100%; background: #0a0a09; color: #fff; border: 1px solid #0a0a09; font-size: 11px; font-weight: 600; letter-spacing: 2px; padding: 11px 18px; cursor: pointer; transition: all 0.25s; text-transform: uppercase; font-family: var(--sans); }
 .quick-buy:hover, .quick-buy:active, .quick-buy:focus { background: var(--gold); color: #000; border-color: var(--gold); }
 
 /* ── Carruseles de productos en el inicio ── */
@@ -579,9 +580,12 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .cart-bd-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--text); }
 .cart-bd-row span:first-child { color: var(--text-muted); }
 .cart-bd-row.disc span { color: #1c7c3e; font-weight: 600; }
-.cart-trust { display: flex; flex-direction: column; align-items: center; gap: 9px; margin: 10px 0 16px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.07); }
-.cart-trust .cart-note { margin: 0; font-weight: 600; }
-.cart-trust .pay-badges.sm { margin-top: 0; }
+.cart-seals { display: flex; gap: 8px; margin: 14px 0 12px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.07); }
+.cart-seal { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; padding: 11px 6px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; text-align: center; }
+.cart-seal-ic { font-size: 18px; line-height: 1; }
+.cart-seal-tx { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.25; color: var(--text-dim); }
+.cart-pays { display: flex; justify-content: center; margin-bottom: 14px; }
+.cart-pays .pay-badges.sm { margin-top: 0; }
 .cart-more { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; margin-top: 14px; padding: 13px 16px; background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04)); border: 1.5px solid var(--gold); border-radius: 12px; cursor: pointer; font-family: var(--sans); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; animation: cartMorePulse 2.2s ease-in-out infinite; }
 .cart-more-main { font-size: 14px; font-weight: 700; color: var(--gold-d); letter-spacing: 0.3px; }
 .cart-more-sub { font-size: 11px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.3px; }
@@ -748,8 +752,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pcard-stars { font-size: 10.5px; letter-spacing: 1px; }
   .pcard-trust-txt { font-size: 9.5px; letter-spacing: 0.2px; }
   .pcard-foot { padding: 11px 13px; }
-  .quick-buy { padding: 8px 12px; font-size: 10px; letter-spacing: 1px; }
-  .pcard-orig { font-size: 10px; letter-spacing: 1px; }
+  .quick-buy { padding: 9px 12px; font-size: 10px; letter-spacing: 1px; }
+  .pcard-seal { width: 44px; height: 44px; top: 9px; right: 9px; }
   .icon-btn { font-size: 16px; padding: 6px 7px; }
 }
 @media (max-width: 360px) {
@@ -1245,6 +1249,34 @@ const PayBadges = ({ className = "" }) => (
   </div>
 );
 
+/* ──────────────────────────────────────────────────────────────
+   TARJETA DE PRODUCTO (única, reutilizable en todas las vistas)
+   - Sello "100% Original" arriba a la derecha de la imagen
+   - Botón "+ Agregar" a lo ancho en el pie
+────────────────────────────────────────────────────────────── */
+function ProductCard({ p, className = "", onOpen, onAdd }) {
+  return (
+    <div className={`pcard${className ? " " + className : ""}`} onClick={() => onOpen(p)}>
+      <div className="pcard-img">
+        {p.promo && <span className="pcard-badge">2 × $300.000</span>}
+        <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
+        {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+      </div>
+      <div className="pcard-body">
+        <div className="pcard-cat">{p.brand}</div>
+        <div className="pcard-name">{p.name}</div>
+        <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+        <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+        <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
+        {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
+      </div>
+      <div className="pcard-foot">
+        <button className="quick-buy" onClick={(e) => { e.stopPropagation(); onAdd(p, p.size || "", 1); }}>+ Agregar</button>
+      </div>
+    </div>
+  );
+}
+
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
   category: "Hombre", collection: "Árabes", promo: false,
@@ -1350,6 +1382,17 @@ function describe(p) {
   return parts.join(" ");
 }
 
+/* Normaliza categorías antiguas: catálogos guardados en versiones anteriores pueden
+   tener "Para Él"/"Para Ella" como categoría, que ya no funcionan como filtro.
+   Las convertimos al formato actual ("Hombre"/"Mujer"). Es idempotente. */
+function fixCategory(c) {
+  const v = (c || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (v === "para el" || v === "hombre") return "Hombre";
+  if (v === "para ella" || v === "mujer") return "Mujer";
+  if (v === "unisex") return "Unisex";
+  return c || "Hombre";
+}
+
 /* Catálogo inicial: usa el guardado en localStorage si existe, si no el del archivo.
    Se ejecuta una sola vez como estado inicial (evita un parpadeo del catálogo). */
 function loadInitialProducts() {
@@ -1362,6 +1405,7 @@ function loadInitialProducts() {
         // y re-aplicar la familia olfativa (tag) por slug si el catálogo guardado aún no la tiene
         return parsed.map((p) => ({
           ...p,
+          category: fixCategory(p.category),
           image: (p.img && imageForFile(p.img)) || p.image || "",
           tag: p.tag || TAG_BY_SLUG[p.slug] || "",
         }));
@@ -1860,7 +1904,20 @@ export default function ReyDelAroma() {
   );
   const activeFilterCount = (fAroma !== "Todos" ? 1 : 0) + (fSex !== "Todos" ? 1 : 0) + (fCat !== "Todos" ? 1 : 0) + (priceTouched ? 1 : 0);
 
-  const openFilters = () => { setSearchOpen(false); setMenuOpen(false); setFiltersOpen(true); };
+  const openFilters = () => {
+    setSearchOpen(false); setMenuOpen(false);
+    /* Deja ya seleccionada la categoría que el cliente está viendo (Hombre, Mujer,
+       2 × $300.000, Diseñador, Árabes…) para que al filtrar no se pierda el contexto.
+       Solo rellena la dimensión si está en "Todos" (no pisa una elección manual). */
+    if (catFilter && catFilter !== "Todos") {
+      if (catFilter === "Hombre" || catFilter === "Mujer" || catFilter === "Unisex") {
+        setFSex((cur) => (cur === "Todos" ? catFilter : cur));
+      } else {
+        setFCat((cur) => (cur === "Todos" ? catFilter : cur));
+      }
+    }
+    setFiltersOpen(true);
+  };
   const clearFilters = () => { setFAroma("Todos"); setFSex("Todos"); setFCat("Todos"); setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); };
   const applyFilters = () => { setFiltersOpen(false); setMenuOpen(false); setView("filtros"); window.scrollTo({ top: 0 }); };
 
@@ -2242,24 +2299,7 @@ export default function ReyDelAroma() {
         </div>
         <div className="pgrid">
           {filtered.map((p) => (
-            <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
-              <div className="pcard-img">
-                {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-                {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
-              </div>
-              <div className="pcard-body">
-                <div className="pcard-cat">{p.brand}</div>
-                <div className="pcard-name">{p.name}</div>
-                <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
-                <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-                {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
-              </div>
-              <div className="pcard-foot">
-                <span className="pcard-orig">Original</span>
-                <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
-              </div>
-            </div>
+            <ProductCard key={p.id} p={p} onOpen={openProduct} onAdd={addToCart} />
           ))}
           {filtered.length === 0 && (
             <div className="empty-state">
@@ -2290,24 +2330,7 @@ export default function ReyDelAroma() {
             <button className="prow-arrow prow-prev" onClick={() => scrollRow(row.id, -1)} aria-label="Anterior">‹</button>
             <div className="prow-track" id={row.id}>
               {row.list.map((p) => (
-                <div key={p.id} className="pcard prow-card" onClick={() => openProduct(p)}>
-                  <div className="pcard-img">
-                    {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-                    {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
-                  </div>
-                  <div className="pcard-body">
-                    <div className="pcard-cat">{p.brand}</div>
-                    <div className="pcard-name">{p.name}</div>
-                    <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                    <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
-                    <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-                    {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
-                  </div>
-                  <div className="pcard-foot">
-                    <span className="pcard-orig">Original</span>
-                    <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
-                  </div>
-                </div>
+                <ProductCard key={p.id} p={p} onOpen={openProduct} onAdd={addToCart} className="prow-card" />
               ))}
             </div>
             <button className="prow-arrow prow-next" onClick={() => scrollRow(row.id, 1)} aria-label="Siguiente">›</button>
@@ -2386,24 +2409,7 @@ export default function ReyDelAroma() {
           </div>
           <div className="pgrid">
             {filtered.map((p) => (
-              <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
-                <div className="pcard-img">
-                  {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-                  {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
-                </div>
-                <div className="pcard-body">
-                  <div className="pcard-cat">{p.brand}</div>
-                  <div className="pcard-name">{p.name}</div>
-                  <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                  <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
-                  <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-                  {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
-                </div>
-                <div className="pcard-foot">
-                  <span className="pcard-orig">Original</span>
-                  <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
-                </div>
-              </div>
+              <ProductCard key={p.id} p={p} onOpen={openProduct} onAdd={addToCart} />
             ))}
             {filtered.length === 0 && (
               <div className="empty-state">
@@ -2472,24 +2478,7 @@ export default function ReyDelAroma() {
             <div className="products-wrap srch-products">
               <div className="pgrid">
                 {filtered.map((p) => (
-                  <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
-                    <div className="pcard-img">
-                      {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-                      {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
-                    </div>
-                    <div className="pcard-body">
-                      <div className="pcard-cat">{p.brand}</div>
-                      <div className="pcard-name">{p.name}</div>
-                      <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                      <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
-                      <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-                      {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
-                    </div>
-                    <div className="pcard-foot">
-                      <span className="pcard-orig">Original</span>
-                      <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
-                    </div>
-                  </div>
+                  <ProductCard key={p.id} p={p} onOpen={openProduct} onAdd={addToCart} />
                 ))}
               </div>
             </div>
@@ -2558,24 +2547,7 @@ export default function ReyDelAroma() {
           <div className="products-wrap srch-products">
             <div className="pgrid">
               {panelResults.map((p) => (
-                <div key={p.id} className="pcard" onClick={() => openProduct(p)}>
-                  <div className="pcard-img">
-                    {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-                    {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
-                  </div>
-                  <div className="pcard-body">
-                    <div className="pcard-cat">{p.brand}</div>
-                    <div className="pcard-name">{p.name}</div>
-                    <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-                    <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
-                    <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-                    {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
-                  </div>
-                  <div className="pcard-foot">
-                    <span className="pcard-orig">Original</span>
-                    <button className="quick-buy" onClick={(e) => { e.stopPropagation(); addToCart(p, p.size || "", 1); }}>+ Agregar</button>
-                  </div>
-                </div>
+                <ProductCard key={p.id} p={p} onOpen={openProduct} onAdd={addToCart} />
               ))}
             </div>
           </div>
@@ -3315,45 +3287,51 @@ export default function ReyDelAroma() {
       )}
 
       <nav className="nav">
-        <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setSearch(""); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
-          <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
-          <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
-        </div>
-
         {view !== "admin" ? (
           <>
-            <div className="nav-links">
-              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer">Inicio</a>
-              <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer"><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
-              <a className="nl" href={homeUrl()} onClick={(e) => { e.preventDefault(); quickFilter("Todos"); }}>Catálogo</a>
-              <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer">Hombre</a>
-              <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer">Mujer</a>
-              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer">Unisex</a>
-            </div>
-            <div className="nav-r">
-              <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
-              <button className="icon-btn" onClick={() => setCartOpen(true)} aria-label="Carrito">🛒 {cartCount > 0 && <span className="cbadge">{cartCount}</span>}</button>
-              <button className="icon-btn" onClick={() => setView("admin")} title="Panel Admin" aria-label="Admin">⚙️</button>
-              <button className={`hamburger${menuOpen ? " open" : ""}`} onClick={() => { setMenuOpen((o) => !o); setSearchOpen(false); }} aria-label="Menú">
+            {/* IZQUIERDA — botón de menú */}
+            <div className="nav-left">
+              <button className={`hamburger${menuOpen ? " open" : ""}`} onClick={() => { setMenuOpen((o) => !o); setSearchOpen(false); }} aria-label="Menú" aria-expanded={menuOpen}>
                 <span className="ham-line" /><span className="ham-line" /><span className="ham-line" />
               </button>
             </div>
+
+            {/* CENTRO — logo */}
+            <div className="nav-logo nav-logo-c" onClick={() => { setView("store"); setCatFilter("Todos"); setSearch(""); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+              <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
+              <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
+            </div>
+
+            {/* DERECHA — buscar + carrito */}
+            <div className="nav-r">
+              <button className={`icon-btn${searchOpen ? " act" : ""}`} onClick={() => { setSearchOpen((o) => !o); setMenuOpen(false); }} aria-label="Buscar">🔍</button>
+              <button className="icon-btn" onClick={() => setCartOpen(true)} aria-label="Carrito">🛒 {cartCount > 0 && <span className="cbadge">{cartCount}</span>}</button>
+            </div>
+
+            {/* Menú desplegable */}
             <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
               <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Inicio</a>
               <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
-              <a className="nl" href={homeUrl()} onClick={(e) => { e.preventDefault(); quickFilter("Todos"); }}>Catálogo</a>
+              <a className="nl" href={homeUrl()} onClick={(e) => { e.preventDefault(); quickFilter("Todos"); setMenuOpen(false); }}>Catálogo</a>
               <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Hombre</a>
               <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Mujer</a>
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
+              <button className="nl nl-admin" onClick={() => { setView("admin"); setMenuOpen(false); }}>⚙️ Administración</button>
             </div>
           </>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <span style={{ fontSize: 12, color: "#aaa", letterSpacing: 2.5, textTransform: "uppercase" }}>Administración</span>
-            <button className="nl" onClick={() => setView("store")}>← Volver a la tienda</button>
-          </div>
+          <>
+            <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setSearch(""); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+              <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
+              <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+              <span style={{ fontSize: 12, color: "#aaa", letterSpacing: 2.5, textTransform: "uppercase" }}>Administración</span>
+              <button className="nl" onClick={() => setView("store")}>← Volver a la tienda</button>
+            </div>
+          </>
         )}
       </nav>
 
@@ -3561,8 +3539,12 @@ export default function ReyDelAroma() {
                 {cartPromoUnits === 1 && (
                   <div className="cart-ship">🎁 Agrega 1 perfume más de la promo <b>2 × $300.000</b> y ahorra {cop(PROMO_UNIT_DISCOUNT * 2)}</div>
                 )}
-                <div className="cart-trust">
-                  <div className="cart-note">🔒 Pago 100% seguro</div>
+                <div className="cart-seals">
+                  <div className="cart-seal"><span className="cart-seal-ic">💎</span><span className="cart-seal-tx">100%<br />Original</span></div>
+                  <div className="cart-seal"><span className="cart-seal-ic">🔒</span><span className="cart-seal-tx">Pago<br />seguro</span></div>
+                  <div className="cart-seal"><span className="cart-seal-ic">🚚</span><span className="cart-seal-tx">Envío a toda<br />Colombia</span></div>
+                </div>
+                <div className="cart-pays">
                   <PayBadges className="sm" />
                 </div>
                 <button className="co-checkout-btn" onClick={() => goCheckout(cart)}>Finalizar compra →</button>
