@@ -362,7 +362,11 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-real-img { width: 100%; height: 100%; object-fit: contain; padding: 24px; transition: transform 0.5s; }
 .pcard:hover .pcard-real-img { transform: scale(1.05); }
 .pcard-badge { position: absolute; top: 16px; left: 0; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px 6px 12px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-.pcard-seal { position: absolute; top: 12px; right: 12px; width: 56px; height: 56px; object-fit: contain; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 11px rgba(0,0,0,0.28)); }
+/* Sello "100% Original": ahora en el pie de la tarjeta, uniforme en todos los productos */
+.pcard-original { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 13px; border-top: 1px solid rgba(0,0,0,0.07); }
+.pcard-original-img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; border-radius: 50%; filter: drop-shadow(0 3px 8px rgba(0,0,0,0.20)); }
+.pcard-original-txt { font-size: 10.5px; font-weight: 600; letter-spacing: 0.3px; color: var(--text-dim); line-height: 1.32; }
+.pcard-original-txt b { color: var(--gold-d); font-weight: 800; letter-spacing: 0.4px; }
 .pcard-body { padding: 22px 24px 12px; flex: 1; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
@@ -753,7 +757,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pcard-trust-txt { font-size: 9.5px; letter-spacing: 0.2px; }
   .pcard-foot { padding: 11px 13px; }
   .quick-buy { padding: 9px 12px; font-size: 10px; letter-spacing: 1px; }
-  .pcard-seal { width: 44px; height: 44px; top: 9px; right: 9px; }
+  .pcard-original { gap: 8px; margin-top: 12px; padding-top: 11px; }
+  .pcard-original-img { width: 34px; height: 34px; }
+  .pcard-original-txt { font-size: 10px; }
   .icon-btn { font-size: 16px; padding: 6px 7px; }
 }
 @media (max-width: 360px) {
@@ -1251,7 +1257,7 @@ const PayBadges = ({ className = "" }) => (
 
 /* ──────────────────────────────────────────────────────────────
    TARJETA DE PRODUCTO (única, reutilizable en todas las vistas)
-   - Sello "100% Original" arriba a la derecha de la imagen
+   - Sello "100% Original" en el pie de la tarjeta (uniforme en todas las vistas)
    - Botón "+ Agregar" a lo ancho en el pie
 ────────────────────────────────────────────────────────────── */
 function ProductCard({ p, className = "", onOpen, onAdd }) {
@@ -1259,7 +1265,6 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
     <div className={`pcard${className ? " " + className : ""}`} onClick={() => onOpen(p)}>
       <div className="pcard-img">
         {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-        <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
         {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
       </div>
       <div className="pcard-body">
@@ -1269,6 +1274,10 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
         <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
         <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
         {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
+        <div className="pcard-original">
+          <img className="pcard-original-img" src={selloOriginal} alt="100% Original" loading="lazy" />
+          <span className="pcard-original-txt">Producto <b>100% Original</b><br />Garantía de autenticidad</span>
+        </div>
       </div>
       <div className="pcard-foot">
         <button className="quick-buy" onClick={(e) => { e.stopPropagation(); onAdd(p, p.size || "", 1); }}>+ Agregar</button>
