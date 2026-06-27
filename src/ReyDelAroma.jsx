@@ -507,6 +507,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ── MEDIOS DE PAGO ── */
 .pay-section { padding: 34px 52px 4px; text-align: center; }
 .pay-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+/* Acceso discreto al panel de administración (solo la tuerca, el cliente no la nota) */
+.admin-gear { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 22px auto 0; padding: 0; background: none; border: none; border-radius: 50%; color: var(--text-muted); opacity: 0.28; font-size: 17px; line-height: 1; cursor: pointer; transition: opacity 0.25s, color 0.25s, transform 0.5s ease; }
+.admin-gear:hover { opacity: 0.9; color: var(--gold-d); transform: rotate(90deg); }
+.admin-gear:active { transform: rotate(90deg) scale(0.92); }
 .pay-badges { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
 .pay-chip { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.25s; }
 .pay-chip:hover { transform: translateY(-2px); }
@@ -2309,6 +2313,7 @@ export default function ReyDelAroma() {
       <div className="pay-section">
         <div className="pay-label">Medios de pago aceptados</div>
         <PayBadges />
+        <button className="admin-gear" onClick={() => { setView("admin"); setMenuOpen(false); window.scrollTo({ top: 0 }); }} aria-label="Administración" title="Administración">⚙</button>
       </div>
       <div className="footer-bot">
         <div className="footer-logo">REY DEL AROMA</div>
@@ -3419,7 +3424,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
-              <button className="nl nl-admin" onClick={() => { setView("admin"); setMenuOpen(false); }}>⚙️ Administración</button>
             </div>
           </>
         ) : (
