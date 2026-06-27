@@ -407,7 +407,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .bc-sep { color: rgba(0,0,0,0.18); font-size: 14px; }
 .bc-lnk { cursor: pointer; transition: color 0.2s; }
 .bc-lnk:hover { color: var(--gold); }
-.pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
+.pd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; }
+.pd-grid > * { min-width: 0; }
 .pd-main { width: 100%; aspect-ratio: 1/1; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; }
 /* Etiqueta colgante "100% Original" en la imagen de detalle */
@@ -427,7 +428,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 @keyframes pd-tag-sway { 0% { transform: rotate(6.5deg); } 100% { transform: rotate(9.5deg); } }
 .pd-info { padding-top: 8px; }
 .pd-badge { display: inline-block; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 6px 16px; text-transform: uppercase; margin-bottom: 22px; }
-.pd-name { font-family: var(--serif); font-size: 52px; font-weight: 600; line-height: 0.95; margin-bottom: 10px; letter-spacing: 0.5px; }
+.pd-name { font-family: var(--serif); font-size: 52px; font-weight: 600; line-height: 0.95; margin-bottom: 10px; letter-spacing: 0.5px; overflow-wrap: break-word; }
 .pd-name b { color: var(--gold-d); font-weight: 600; }
 .pd-sub { font-size: 12px; letter-spacing: 5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 24px; }
 .pd-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08); }
@@ -679,7 +680,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 }
 @media (max-width: 1024px) {
   .pgrid { grid-template-columns: repeat(4,1fr); }
-  .pd-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .pd-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
   .pd-name { font-size: 46px; }
   .footer-trust { grid-template-columns: repeat(2,1fr); }
   .sec-title { font-size: 36px; }
@@ -725,7 +726,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 
   .pd-wrap { padding: 22px 16px 56px; }
   .bc { margin-bottom: 24px; }
-  .pd-grid { grid-template-columns: 1fr; gap: 28px; }
+  .pd-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .pd-name { font-size: 40px; }
   .pd-price { font-size: 34px; }
   .feats { grid-template-columns: repeat(2,1fr); }
