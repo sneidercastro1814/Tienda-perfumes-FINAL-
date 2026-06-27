@@ -428,12 +428,13 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-chip { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; border: 1px solid var(--border); color: var(--text-dim); }
 .pd-chip.gold { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
 .pd-price { font-family: var(--serif); font-size: 40px; font-weight: 500; color: var(--gold-d); margin-bottom: 12px; letter-spacing: 0.5px; }
-.pd-reassure { display: flex; flex-direction: column; align-items: center; gap: 13px; margin: 2px 0 30px; padding-top: 18px; border-top: 1px solid rgba(0,0,0,0.07); }
-.pd-trust { display: flex; align-items: center; justify-content: center; gap: 10px; }
-.pd-stars { font-size: 23px; letter-spacing: 3px; line-height: 1; }
-.pd-trust-txt { font-size: 13px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.2px; }
-.pd-seals { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.pd-seal { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.pd-reassure { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 10px; margin: 2px 0 30px; padding-top: 18px; border-top: 1px solid rgba(0,0,0,0.07); overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+.pd-reassure::-webkit-scrollbar { display: none; }
+.pd-trust { display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.pd-stars { font-size: 14px; letter-spacing: 1px; line-height: 1; }
+.pd-trust-txt { font-size: 11.5px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.1px; white-space: nowrap; }
+.pd-seals { display: inline-flex; flex-wrap: nowrap; gap: 6px; flex-shrink: 0; }
+.pd-seal { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.1px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 9px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
 .pd-stock { display: inline-flex; align-items: center; gap: 7px; margin: -10px 0 26px; font-size: 13px; font-weight: 700; letter-spacing: 0.2px; color: #c0392b; background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.22); padding: 9px 16px; border-radius: 10px; }
 .pd-curr { font-size: 18px; opacity: 0.5; font-family: var(--sans); font-weight: 300; }
 .pd-promo { display: flex; align-items: center; gap: 12px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); padding: 14px 18px; margin-bottom: 26px; }
