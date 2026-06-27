@@ -361,7 +361,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-img { height: 340px; display: flex; align-items: center; justify-content: center; position: relative; background: #ffffff; overflow: hidden; }
 .pcard-real-img { width: 100%; height: 100%; object-fit: contain; padding: 24px; transition: transform 0.5s; }
 .pcard:hover .pcard-real-img { transform: scale(1.05); }
-.pcard-badge { position: absolute; top: 16px; left: 0; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px 6px 12px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.pcard-badge { position: absolute; top: 14px; left: 0; background: var(--gold); color: #000; font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; padding: 4px 9px 4px 8px; text-transform: uppercase; z-index: 2; box-shadow: 0 3px 9px rgba(0,0,0,0.12); }
 /* Sello "100% Original": esquina inferior derecha de la imagen del producto */
 .pcard-seal { position: absolute; bottom: 14px; right: 14px; width: 58px; height: 58px; object-fit: contain; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 11px rgba(0,0,0,0.22)); }
 .pcard-body { padding: 22px 24px 12px; flex: 1; }
