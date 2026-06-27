@@ -361,8 +361,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-img { height: 340px; display: flex; align-items: center; justify-content: center; position: relative; background: #ffffff; overflow: hidden; }
 .pcard-real-img { width: 100%; height: 100%; object-fit: contain; padding: 24px; transition: transform 0.5s; }
 .pcard:hover .pcard-real-img { transform: scale(1.05); }
-.pcard-badge { position: absolute; top: 16px; left: 0; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 14px 6px 12px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-.pcard-seal { position: absolute; top: 12px; right: 12px; width: 56px; height: 56px; object-fit: contain; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 11px rgba(0,0,0,0.28)); }
+.pcard-badge { position: absolute; top: 14px; left: 0; background: var(--gold); color: #000; font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; padding: 4px 9px 4px 8px; text-transform: uppercase; z-index: 2; box-shadow: 0 3px 9px rgba(0,0,0,0.12); }
+/* Sello "100% Original": esquina inferior derecha de la imagen del producto */
+.pcard-seal { position: absolute; bottom: 14px; right: 14px; width: 58px; height: 58px; object-fit: contain; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 11px rgba(0,0,0,0.22)); }
 .pcard-body { padding: 22px 24px 12px; flex: 1; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
@@ -407,7 +408,6 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .bc-lnk { cursor: pointer; transition: color 0.2s; }
 .bc-lnk:hover { color: var(--gold); }
 .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
-.pd-grid > * { min-width: 0; }
 .pd-main { width: 100%; aspect-ratio: 1/1; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; }
 /* Etiqueta colgante "100% Original" en la imagen de detalle */
@@ -418,22 +418,29 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-hangtag-in { font-size: 10px; font-weight: 800; letter-spacing: 0.7px; line-height: 1.18; color: var(--gold-l); text-transform: uppercase; }
 .pd-hangtag-in b { display: block; font-size: 15px; letter-spacing: 0; margin-bottom: 1px; }
 .pd-hangtag-stars { display: block; font-size: 8px; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; }
+/* Galería de miniaturas en la página de detalle (varias fotos por producto) */
+.pd-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.pd-thumb { width: 74px; height: 74px; flex: 0 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 9px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+.pd-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.pd-thumb:hover { border-color: var(--gold); transform: translateY(-2px); }
+.pd-thumb.act { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.35); }
 @keyframes pd-tag-sway { 0% { transform: rotate(6.5deg); } 100% { transform: rotate(9.5deg); } }
-.pd-info { padding-top: 8px; min-width: 0; max-width: 100%; }
+.pd-info { padding-top: 8px; }
 .pd-badge { display: inline-block; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 6px 16px; text-transform: uppercase; margin-bottom: 22px; }
-.pd-name { font-family: var(--serif); font-size: clamp(28px, 7.5vw, 52px); font-weight: 600; line-height: 1.02; margin-bottom: 10px; letter-spacing: 0.5px; max-width: 100%; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; }
+.pd-name { font-family: var(--serif); font-size: 52px; font-weight: 600; line-height: 0.95; margin-bottom: 10px; letter-spacing: 0.5px; }
 .pd-name b { color: var(--gold-d); font-weight: 600; }
 .pd-sub { font-size: 12px; letter-spacing: 5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 24px; }
 .pd-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.08); }
 .pd-chip { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; border: 1px solid var(--border); color: var(--text-dim); }
 .pd-chip.gold { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
-.pd-price { font-family: var(--serif); font-size: clamp(26px, 6vw, 40px); font-weight: 500; color: var(--gold-d); margin-bottom: 12px; letter-spacing: 0.5px; max-width: 100%; overflow-wrap: anywhere; }
-.pd-reassure { display: flex; flex-direction: column; align-items: center; gap: 13px; margin: 2px 0 30px; padding-top: 18px; border-top: 1px solid rgba(0,0,0,0.07); }
-.pd-trust { display: flex; align-items: center; justify-content: center; gap: 10px; }
-.pd-stars { font-size: 23px; letter-spacing: 3px; line-height: 1; }
-.pd-trust-txt { font-size: 13px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.2px; }
-.pd-seals { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.pd-seal { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.pd-price { font-family: var(--serif); font-size: 40px; font-weight: 500; color: var(--gold-d); margin-bottom: 12px; letter-spacing: 0.5px; }
+.pd-reassure { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 10px; margin: 2px 0 30px; padding-top: 18px; border-top: 1px solid rgba(0,0,0,0.07); overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+.pd-reassure::-webkit-scrollbar { display: none; }
+.pd-trust { display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.pd-stars { font-size: 14px; letter-spacing: 1px; line-height: 1; }
+.pd-trust-txt { font-size: 11.5px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.1px; white-space: nowrap; }
+.pd-seals { display: inline-flex; flex-wrap: nowrap; gap: 6px; flex-shrink: 0; }
+.pd-seal { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.1px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 9px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
 .pd-stock { display: inline-flex; align-items: center; gap: 7px; margin: -10px 0 26px; font-size: 13px; font-weight: 700; letter-spacing: 0.2px; color: #c0392b; background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.22); padding: 9px 16px; border-radius: 10px; }
 .pd-curr { font-size: 18px; opacity: 0.5; font-family: var(--sans); font-weight: 300; }
 .pd-promo { display: flex; align-items: center; gap: 12px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); padding: 14px 18px; margin-bottom: 26px; }
@@ -500,6 +507,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ── MEDIOS DE PAGO ── */
 .pay-section { padding: 34px 52px 4px; text-align: center; }
 .pay-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+/* Acceso discreto al panel de administración (solo la tuerca, el cliente no la nota) */
+.admin-gear { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 22px auto 0; padding: 0; background: none; border: none; border-radius: 50%; color: var(--text-muted); opacity: 0.28; font-size: 17px; line-height: 1; cursor: pointer; transition: opacity 0.25s, color 0.25s, transform 0.5s ease; }
+.admin-gear:hover { opacity: 0.9; color: var(--gold-d); transform: rotate(90deg); }
+.admin-gear:active { transform: rotate(90deg) scale(0.92); }
 .pay-badges { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
 .pay-chip { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.25s; }
 .pay-chip:hover { transform: translateY(-2px); }
@@ -546,6 +557,19 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .img-preview { position: relative; display: inline-block; }
 .img-preview img { max-width: 100%; max-height: 200px; border: 1px solid var(--border); object-fit: contain; background: #fff; }
 .img-preview-rm { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: #d64545; color: #fff; border: none; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+/* Galería en el panel de admin: varias fotos por producto */
+.multi-img { display: flex; flex-wrap: wrap; gap: 12px; }
+.multi-img-item { position: relative; width: 96px; height: 96px; border: 1px solid var(--border); border-radius: 9px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: visible; }
+.multi-img-item img { width: 100%; height: 100%; object-fit: contain; padding: 6px; border-radius: 9px; }
+.multi-img-rm { position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 50%; background: #d64545; color: #fff; border: none; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; z-index: 2; }
+.multi-img-cover { position: absolute; left: 4px; bottom: 4px; right: 4px; padding: 3px 0; border: none; border-radius: 6px; background: rgba(10,10,9,0.78); color: var(--gold-l); font-family: var(--sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.4px; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+.multi-img-item:hover .multi-img-cover { opacity: 1; }
+.multi-img-add { position: relative; width: 96px; height: 96px; border: 1px dashed rgba(201,168,76,0.45); border-radius: 9px; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; transition: border-color 0.25s, background 0.25s; }
+.multi-img-add:hover { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+.multi-img-add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.multi-img-add-ic { font-size: 24px; color: var(--gold-d); line-height: 1; }
+.multi-img-add-tx { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.4px; }
+.multi-img-hint { font-size: 12px; color: var(--text-muted); margin-top: 9px; letter-spacing: 0.2px; line-height: 1.4; }
 
 /* ── CARRITO ── */
 .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
@@ -656,6 +680,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 @media (max-width: 1024px) {
   .pgrid { grid-template-columns: repeat(4,1fr); }
   .pd-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .pd-name { font-size: 46px; }
   .footer-trust { grid-template-columns: repeat(2,1fr); }
   .sec-title { font-size: 36px; }
   .coll-title { font-size: 40px; }
@@ -701,6 +726,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-wrap { padding: 22px 16px 56px; }
   .bc { margin-bottom: 24px; }
   .pd-grid { grid-template-columns: 1fr; gap: 28px; }
+  .pd-name { font-size: 40px; }
+  .pd-price { font-size: 34px; }
   .feats { grid-template-columns: repeat(2,1fr); }
   .add-row { gap: 10px; }
   .add-btn { min-width: 0; }
@@ -730,6 +757,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 }
 @media (max-width: 480px) {
   .pgrid { grid-template-columns: repeat(2,1fr); }
+  .pd-name { font-size: 34px; }
   .coll-title { font-size: 28px; }
   .sec-title { font-size: 25px; }
   .hc-arrow { width: 32px; height: 32px; font-size: 18px; }
@@ -740,6 +768,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-hangtag::before { height: 74px; }
   .pd-hangtag-in { font-size: 9px; }
   .pd-hangtag-in b { font-size: 13px; }
+  .pd-gallery { gap: 8px; margin-top: 12px; }
+  .pd-thumb { width: 60px; height: 60px; padding: 5px; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
@@ -750,7 +780,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pcard-trust-txt { font-size: 9.5px; letter-spacing: 0.2px; }
   .pcard-foot { padding: 11px 13px; }
   .quick-buy { padding: 9px 12px; font-size: 10px; letter-spacing: 1px; }
-  .pcard-seal { width: 44px; height: 44px; top: 9px; right: 9px; }
+  .pcard-seal { width: 46px; height: 46px; bottom: 10px; right: 10px; }
   .icon-btn { font-size: 16px; padding: 6px 7px; }
 }
 @media (max-width: 360px) {
@@ -817,7 +847,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 
 /* ── ADDI (widget de cuotas) ── */
 .addi-box { width: 100%; }
-.pd-addi { margin: 0 0 26px; max-width: 100%; overflow: hidden; }
+.pd-addi { margin: 0 0 26px; }
 .co-addi { margin-top: 4px; }
 .co-addi-lead { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
 .co-addi-w { margin-bottom: 12px; }
@@ -1248,7 +1278,7 @@ const PayBadges = ({ className = "" }) => (
 
 /* ──────────────────────────────────────────────────────────────
    TARJETA DE PRODUCTO (única, reutilizable en todas las vistas)
-   - Sello "100% Original" arriba a la derecha de la imagen
+   - Sello "100% Original" en la esquina inferior derecha de la imagen
    - Botón "+ Agregar" a lo ancho en el pie
 ────────────────────────────────────────────────────────────── */
 function ProductCard({ p, className = "", onOpen, onAdd }) {
@@ -1256,8 +1286,8 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
     <div className={`pcard${className ? " " + className : ""}`} onClick={() => onOpen(p)}>
       <div className="pcard-img">
         {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-        <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
         {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+        <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
       </div>
       <div className="pcard-body">
         <div className="pcard-cat">{p.brand}</div>
@@ -1277,7 +1307,7 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
   category: "Hombre", collection: "Árabes", promo: false,
-  tag: "", description: "", image: "",
+  tag: "", description: "", image: "", images: [],
 };
 
 const FILTER_TABS = ["Todos", "Hombre", "Mujer", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
@@ -1388,6 +1418,39 @@ function fixCategory(c) {
   if (v === "para ella" || v === "mujer") return "Mujer";
   if (v === "unisex") return "Unisex";
   return c || "Hombre";
+}
+
+/* Comprime y redimensiona una imagen antes de guardarla como base64.
+   Evita saturar el almacenamiento del navegador cuando hay varias fotos por producto.
+   Devuelve una promesa con el data URL (JPEG) ya optimizado. */
+function compressImage(file, maxDim = 1100, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#ffffff"; // fondo blanco para PNG con transparencia
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        } catch (err) { reject(err); }
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 /* Catálogo inicial: usa el guardado en localStorage si existe, si no el del archivo.
@@ -1517,6 +1580,7 @@ export default function ReyDelAroma() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [qty, setQty] = useState(1);
   const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
+  const [galleryIdx, setGalleryIdx] = useState(0); // foto activa en la galería del detalle
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [catFilter, setCatFilter] = useState(initialCat || "Todos");
@@ -1596,7 +1660,12 @@ export default function ReyDelAroma() {
 
   /* guardar cambios del catálogo en localStorage */
   useEffect(() => {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(products)); } catch { /* ignore */ }
+    try { localStorage.setItem(LS_KEY, JSON.stringify(products)); }
+    catch (err) {
+      if (err && (err.name === "QuotaExceededError" || err.code === 22 || err.code === 1014)) {
+        showToast("Almacenamiento lleno: usa menos fotos o más livianas");
+      }
+    }
   }, [products]);
 
   /* guardar cupones en localStorage */
@@ -1819,6 +1888,7 @@ export default function ReyDelAroma() {
     setSelectedProduct(p);
     setQty(1);
     setSelSize(null);
+    setGalleryIdx(0);
     setView("product");
     window.scrollTo({ top: 0 });
   };
@@ -2079,7 +2149,7 @@ export default function ReyDelAroma() {
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "" });
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "", images: Array.isArray(p.images) ? p.images.filter(Boolean) : [] });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
@@ -2107,6 +2177,7 @@ export default function ReyDelAroma() {
       tag: form.tag || "",
       description: form.description.trim(),
       image: form.image || "",
+      images: Array.isArray(form.images) ? form.images.filter(Boolean) : [],
       img: form.img || "",
     };
     if (editingId) {
@@ -2123,11 +2194,34 @@ export default function ReyDelAroma() {
     const file = e.target.files[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) return showToast("Solo se permiten imágenes");
-    if (file.size > 4 * 1024 * 1024) return showToast("La imagen no debe superar 4MB");
-    const reader = new FileReader();
-    reader.onload = (ev) => setForm((f) => ({ ...f, image: ev.target.result, img: "" }));
-    reader.readAsDataURL(file);
+    if (file.size > 12 * 1024 * 1024) return showToast("La imagen no debe superar 12MB");
+    compressImage(file)
+      .then((dataUrl) => setForm((f) => ({ ...f, image: dataUrl, img: "" })))
+      .catch(() => showToast("No se pudo procesar la imagen"));
   };
+  // Galería: varias fotos adicionales por producto (se muestran como miniaturas en el detalle)
+  const handleGalleryUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    files.forEach((file) => {
+      if (!file.type.startsWith("image/")) { showToast("Solo se permiten imágenes"); return; }
+      if (file.size > 12 * 1024 * 1024) { showToast("Cada imagen debe ser menor a 12MB"); return; }
+      compressImage(file)
+        .then((dataUrl) => setForm((f) => ({ ...f, images: [...(Array.isArray(f.images) ? f.images : []), dataUrl] })))
+        .catch(() => showToast("No se pudo procesar una imagen"));
+    });
+    e.target.value = ""; // permite volver a subir el mismo archivo
+  };
+  const removeGalleryImage = (idx) => setForm((f) => ({ ...f, images: (Array.isArray(f.images) ? f.images : []).filter((_, i) => i !== idx) }));
+  const makeGalleryCover = (idx) => setForm((f) => {
+    const imgs = Array.isArray(f.images) ? [...f.images] : [];
+    const chosen = imgs[idx];
+    if (!chosen) return f;
+    // La portada actual pasa a la galería y la elegida se vuelve portada
+    const rest = imgs.filter((_, i) => i !== idx);
+    const nextImages = f.image ? [f.image, ...rest] : rest;
+    return { ...f, image: chosen, img: "", images: nextImages };
+  });
 
   /* ── CUPONES ── */
   const couponLabel = (c) => (c.type === "percent" ? `${c.value}% de descuento` : `${cop(c.value)} de descuento`);
@@ -2219,6 +2313,7 @@ export default function ReyDelAroma() {
       <div className="pay-section">
         <div className="pay-label">Medios de pago aceptados</div>
         <PayBadges />
+        <button className="admin-gear" onClick={() => { setView("admin"); setMenuOpen(false); window.scrollTo({ top: 0 }); }} aria-label="Administración" title="Administración">⚙</button>
       </div>
       <div className="footer-bot">
         <div className="footer-logo">REY DEL AROMA</div>
@@ -2560,6 +2655,9 @@ export default function ReyDelAroma() {
     const shownPrice = activeVar ? activeVar.price : p.price;
     const shownSize = activeVar ? activeVar.size : (p.size || "");
     const shownImg = activeVar && activeVar.img ? (imageForFile(activeVar.img) || p.image) : p.image;
+    const extraImgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+    const gallery = [shownImg, ...extraImgs.filter((u) => u && u !== shownImg)].filter(Boolean);
+    const mainImg = gallery[galleryIdx] || gallery[0] || shownImg;
     const aromas = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
     return (
       <div className="pd-wrap">
@@ -2573,12 +2671,21 @@ export default function ReyDelAroma() {
         <div className="pd-grid">
           <div>
             <div className="pd-main">
-              {shownImg ? <img src={shownImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
+              {mainImg ? <img src={mainImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
               <span className="pd-hangpin" aria-hidden="true" />
               <div className="pd-hangtag" aria-hidden="true">
                 <span className="pd-hangtag-in"><span className="pd-hangtag-stars">★★★</span><b>100%</b>Original</span>
               </div>
             </div>
+            {gallery.length > 1 && (
+              <div className="pd-gallery">
+                {gallery.map((src, i) => (
+                  <button key={i} type="button" className={`pd-thumb${i === galleryIdx ? " act" : ""}`} onClick={() => setGalleryIdx(i)} aria-label={`Ver foto ${i + 1}`}>
+                    <img src={src} alt={`${p.name} ${i + 1}`} loading="lazy" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="pd-info">
@@ -2609,7 +2716,7 @@ export default function ReyDelAroma() {
                 <div className="pd-sec-t">Presentación</div>
                 <div className="sizes-row">
                   {variants.map((v) => (
-                    <button key={v.size} className={`size-btn${activeVar.size === v.size ? " act" : ""}`} onClick={() => setSelSize(v.size)}>{v.size}</button>
+                    <button key={v.size} className={`size-btn${activeVar.size === v.size ? " act" : ""}`} onClick={() => { setSelSize(v.size); setGalleryIdx(0); }}>{v.size}</button>
                   ))}
                 </div>
               </>
@@ -2914,7 +3021,7 @@ export default function ReyDelAroma() {
               <label className="fchk"><input type="checkbox" checked={form.promo} onChange={(e) => setForm((f) => ({ ...f, promo: e.target.checked }))} /> Incluir en 2 × $300.000</label>
             </div>
             <div className="fg full">
-              <label className="fl">Imagen del producto</label>
+              <label className="fl">Imagen principal (portada)</label>
               {form.image ? (
                 <div className="img-preview">
                   <img src={form.image} alt="Vista previa" />
@@ -2925,9 +3032,27 @@ export default function ReyDelAroma() {
                   <input type="file" accept="image/*" onChange={handleImageUpload} />
                   <div className="img-upload-icon">📷</div>
                   <div className="img-upload-text">Haz clic o arrastra una imagen</div>
-                  <div className="img-upload-text" style={{ marginTop: 4, fontSize: 12, opacity: 0.6 }}>JPG, PNG, WebP · Máx 4MB</div>
+                  <div className="img-upload-text" style={{ marginTop: 4, fontSize: 12, opacity: 0.6 }}>JPG, PNG, WebP · se optimiza sola</div>
                 </div>
               )}
+            </div>
+            <div className="fg full">
+              <label className="fl">Más fotos del producto (galería)</label>
+              <div className="multi-img">
+                {(form.images || []).map((src, i) => (
+                  <div className="multi-img-item" key={i}>
+                    <img src={src} alt={`Foto ${i + 1}`} />
+                    <button type="button" className="multi-img-rm" onClick={() => removeGalleryImage(i)} aria-label="Quitar foto">✕</button>
+                    <button type="button" className="multi-img-cover" onClick={() => makeGalleryCover(i)} title="Usar como portada">★ Portada</button>
+                  </div>
+                ))}
+                <label className="multi-img-add">
+                  <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} />
+                  <span className="multi-img-add-ic">＋</span>
+                  <span className="multi-img-add-tx">Agregar fotos</span>
+                </label>
+              </div>
+              <div className="multi-img-hint">Se muestran como miniaturas en la página del producto, junto a la portada. Puedes subir varias a la vez (se optimizan automáticamente). JPG, PNG, WebP.</div>
             </div>
             <div className="fg full"><label className="fl">Descripción</label><textarea className="fta" placeholder="Descripción de la fragancia (opcional)" value={form.description} onChange={setF("description")} /></div>
           </div>
@@ -3299,7 +3424,6 @@ export default function ReyDelAroma() {
               <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
               <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
               <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
-              <button className="nl nl-admin" onClick={() => { setView("admin"); setMenuOpen(false); }}>⚙️ Administración</button>
             </div>
           </>
         ) : (
