@@ -373,6 +373,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-cat { font-size: 10px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .pcard-name { font-family: var(--serif); font-size: 25px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.4px; line-height: 1.12; transition: color 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 50px; }
 .pcard:hover .pcard-name { color: var(--gold-d); }
+.pcard-fav { display: inline-flex; align-items: center; gap: 6px; margin: 3px 0 11px; padding: 5px 13px 5px 11px; border-radius: 999px; background: linear-gradient(135deg, var(--gold-l), var(--gold)); color: #2a2103; font-family: var(--sans); font-size: 10.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; line-height: 1; box-shadow: 0 2px 9px rgba(201,168,76,0.32); }
+.pcard-fav .crown { font-size: 12.5px; line-height: 1; }
 .pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; min-height: 11px; }
 .pcard-aroma { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 11px; border-radius: 999px; }
 .pcard-price { font-family: var(--serif); font-size: 25px; font-weight: 500; color: var(--gold-d); }
@@ -780,6 +782,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
+  .pcard-fav { font-size: 9px; padding: 4px 10px; margin: 2px 0 9px; letter-spacing: 0.6px; gap: 5px; }
+  .pcard-fav .crown { font-size: 11px; }
   .pcard-sub { margin-bottom: 10px; letter-spacing: 1.5px; }
   .pcard-price { font-size: 19px; }
   .pcard-trust { gap: 5px; margin-top: 9px; }
@@ -1283,6 +1287,11 @@ const PayBadges = ({ className = "" }) => (
   </div>
 );
 
+/* Etiqueta "👑 Favorito del Rey": se muestra SOLO en los perfumes más caros.
+   Cualquier perfume con precio MAYOR O IGUAL a este valor lleva la etiqueta.
+   Sube el número para marcar menos (p. ej. 500000 → 9, 650000 → 4) o bájalo para marcar más. */
+const FAVORITE_MIN_PRICE = 450000;
+
 /* ──────────────────────────────────────────────────────────────
    TARJETA DE PRODUCTO (única, reutilizable en todas las vistas)
    - Sello "100% Original" en la esquina inferior derecha de la imagen
@@ -1299,6 +1308,9 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
       <div className="pcard-body">
         <div className="pcard-cat">{p.brand}</div>
         <div className="pcard-name">{p.name}</div>
+        {p.price >= FAVORITE_MIN_PRICE && (
+          <div className="pcard-fav"><span className="crown">👑</span> Favorito del Rey</div>
+        )}
         <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
         <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
         <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
