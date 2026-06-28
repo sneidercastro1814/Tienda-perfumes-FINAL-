@@ -861,8 +861,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-addi { margin: 0 0 26px; }
 .co-addi { margin-top: 4px; }
 .co-addi-lead { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
-.co-addi-w { margin-bottom: 12px; }
-.co-addi-note { font-size: 11.5px; color: var(--text-muted); letter-spacing: 0.3px; text-align: center; }
+.co-addi-w { margin-bottom: 0; }
+.co-addi-note { font-size: 12px; color: var(--text-muted); letter-spacing: 0.2px; line-height: 1.5; text-align: center; margin-top: 12px; }
+.co-addi-w-wrap { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease; }
+.co-addi-w-wrap.open { max-height: 340px; opacity: 1; margin-top: 16px; }
 
 /* ── RESULTADO DE PAGO ── */
 .pay-result-wrap { padding: 70px 24px 110px; background: var(--bg); display: flex; justify-content: center; }
@@ -1639,6 +1641,8 @@ export default function ReyDelAroma() {
   const [tokenInput, setTokenInput] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
   const sentRefs = useRef(new Set());     // evita enviar el mismo pedido dos veces
   const addiSentRef = useRef(false);      // un solo registro de pedido por checkout con Addi
+  const addiBoxRef = useRef(null);        // contenedor del widget de Addi (para dispararlo desde el botón dorado)
+  const [addiOpen, setAddiOpen] = useState(false); // respaldo: muestra el widget si no se puede abrir solo
 
   /* ── ENVÍO + CUPONES ── */
   const [coupons, setCoupons] = useState(loadCoupons);
@@ -2158,6 +2162,38 @@ export default function ReyDelAroma() {
     if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío para registrar tu pedido"); return; }
     addiSentRef.current = true;
     sendOrder(buildOrderPayload(newReference()));
+  };
+
+  /* Botón dorado "Pagar con Addi": registra el pedido y dispara el flujo de Addi.
+     Si el widget expone un botón en el DOM (light o shadow) lo activamos en el
+     mismo gesto del usuario (evita el bloqueo de pop-ups). Si viene dentro de un
+     iframe y no se puede activar solo, mostramos el widget para tocarlo. */
+  const triggerAddi = () => {
+    if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío"); return; }
+    captureAddiOrder();
+
+    const root = addiBoxRef.current;
+    const SEL = "button, a, [role='button']";
+    const findClickable = (node) => {
+      if (!node) return null;
+      const direct = node.querySelector && node.querySelector(SEL);
+      if (direct) return direct;
+      const all = (node.querySelectorAll && node.querySelectorAll("*")) || [];
+      for (const el of all) {
+        if (el.shadowRoot) {
+          const inner = el.shadowRoot.querySelector(SEL);
+          if (inner) return inner;
+        }
+      }
+      return null;
+    };
+
+    const btn = findClickable(root);
+    if (btn) {
+      btn.click();           // mismo gesto del usuario → sin bloqueo de pop-ups
+    } else {
+      setAddiOpen(true);     // respaldo: el widget queda visible para continuar
+    }
   };
 
   /* ── ADMIN ── */
@@ -2965,10 +3001,15 @@ export default function ReyDelAroma() {
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
             {payMethod === "addi" && PAYMENTS.addi.enabled ? (
-              <div className="co-addi" onClickCapture={captureAddiOrder}>
-                <p className="co-addi-lead">Solicita tu cupo en minutos, 100% en línea. Al aprobarte, Addi paga tu compra y tú la difieres a cuotas.</p>
-                <AddiWidget price={total} className="co-addi-w" />
-                <p className="co-addi-note">Toca el botón de Addi para conocer tus cuotas y continuar.</p>
+              <div className="co-addi" ref={addiBoxRef}>
+                <button className="co-pay-btn" type="button" onClick={triggerAddi} disabled={placing}>
+                  Pagar con Addi
+                </button>
+                <p className="co-addi-note">Solicita tu cupo en minutos y difiere tu compra en cuotas. 100% en línea, sin tarjeta.</p>
+                <div className={`co-addi-w-wrap${addiOpen ? " open" : ""}`} onClickCapture={captureAddiOrder}>
+                  <AddiWidget price={total} className="co-addi-w" />
+                </div>
+                <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
               </div>
             ) : (
               <>
