@@ -353,15 +353,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .sec-title span { color: var(--gold); font-style: italic; }
 
 /* Banner promocional 2 × $300.000 (solo en la página de la promo) */
-.promo-hero { margin: -18px 0 44px; }
-.promo-hero-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.promo-hero-item { display: flex; align-items: flex-start; gap: 13px; padding: 18px 20px; border-radius: 14px; border: 1px solid var(--border); background: linear-gradient(135deg, rgba(201,168,76,0.11), rgba(201,168,76,0.035)); }
-.promo-hero-emoji { font-size: 24px; line-height: 1.15; flex-shrink: 0; }
-.promo-hero-item p { margin: 0; font-family: var(--sans); font-size: 15px; line-height: 1.5; color: var(--text-dim); }
-.promo-hero-item p b { color: var(--text); font-weight: 700; }
-.promo-hero-item p b.gold { color: var(--gold-d); }
-.promo-hero-note { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 12px 18px; border-radius: 11px; border: 1px dashed var(--border-h); background: var(--surface); font-family: var(--sans); font-size: 13.5px; font-weight: 600; letter-spacing: 0.2px; color: var(--text-dim); }
-.promo-hero-note .chk { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%; background: var(--gold); color: #fff; font-size: 12px; font-weight: 800; }
+.promo-hero-text { max-width: 820px; margin: -16px auto 40px; text-align: center; font-family: var(--sans); font-size: 16.5px; line-height: 1.7; color: var(--text-dim); }
+.promo-hero-text b { color: var(--text); font-weight: 700; }
+.promo-hero-text b.gold { color: var(--gold-d); }
 .sec-cnt { font-size: 12px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; }
 .sec-tools { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .pgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(201,168,76,0.08); max-width: 1180px; margin: 0 auto; }
@@ -729,11 +723,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .products-wrap { padding: 32px 16px 56px; }
   .pgrid { grid-template-columns: repeat(2,1fr); }
   .sec-title { font-size: 31px; }
-  .promo-hero { margin: -8px 0 32px; }
-  .promo-hero-row { grid-template-columns: 1fr; gap: 11px; }
-  .promo-hero-item { padding: 15px 16px; gap: 11px; }
-  .promo-hero-item p { font-size: 14px; }
-  .promo-hero-note { font-size: 12.5px; padding: 11px 15px; }
+  .promo-hero-text { font-size: 14.5px; line-height: 1.6; margin: -6px auto 30px; padding: 0 4px; }
   .pcard-img { height: 220px; }
   .pcard-body { padding: 16px 16px 8px; }
   .pcard-name { font-size: 20px; min-height: 42px; }
@@ -2502,22 +2492,9 @@ export default function ReyDelAroma() {
           </div>
 
           {catFilter === "2 × $300.000" && (
-            <div className="promo-hero">
-              <div className="promo-hero-row">
-                <div className="promo-hero-item">
-                  <span className="promo-hero-emoji">🔥</span>
-                  <p><b>Llévate 2 perfumes por solo $300.000.</b> Combina cualquier perfume de la promoción.</p>
-                </div>
-                <div className="promo-hero-item">
-                  <span className="promo-hero-emoji">👑</span>
-                  <p>Los <b>Favoritos del Rey</b> incluyen <b className="gold">$40.000 de descuento</b>.</p>
-                </div>
-              </div>
-              <div className="promo-hero-note">
-                <span className="chk">✓</span>
-                El descuento se aplica automáticamente al agregar 2 perfumes al carrito.
-              </div>
-            </div>
+            <p className="promo-hero-text">
+              🔥 <b>Llévate 2 perfumes por solo $300.000.</b> Combina cualquier perfume de la promoción. 👑 Los <b>Favoritos del Rey</b> incluyen <b className="gold">$40.000 de descuento</b>. El descuento se aplica automáticamente al agregar 2 perfumes al carrito.
+            </p>
           )}
 
           <div className="pgrid">
