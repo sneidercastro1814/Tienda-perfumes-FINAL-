@@ -547,6 +547,41 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .abtn-e:hover { background: rgba(201,168,76,0.08); }
 .abtn-d { color: #d64545; border-color: rgba(214,69,69,0.3); background: none; }
 .abtn-d:hover { background: rgba(214,69,69,0.08); }
+/* Switch Visible / Oculto en la tabla del admin */
+.avis { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 999px; border: 1px solid; cursor: pointer; font-family: var(--sans); transition: all 0.2s; white-space: nowrap; }
+.avis .avis-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.avis.on { color: #1f9d55; border-color: rgba(31,157,85,0.4); background: rgba(31,157,85,0.09); }
+.avis.on:hover { background: rgba(31,157,85,0.17); }
+.avis.off { color: #9a9a9a; border-color: rgba(0,0,0,0.16); background: rgba(0,0,0,0.03); }
+.avis.off:hover { background: rgba(0,0,0,0.07); }
+.atbl tr.is-hidden td { opacity: 0.5; }
+.atbl tr.is-hidden td .athumb { filter: grayscale(1); }
+.atbl tr.is-hidden td .avis { opacity: 1; }
+/* Productos más vendidos (stock de ventas) en el panel de admin */
+.vt-prod-head { font-size: 13px; color: var(--text-muted); margin: -6px 0 16px; }
+.vt-prod-head b { color: var(--gold-d); }
+.vt-prod-list { display: flex; flex-direction: column; }
+.vt-prod { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 9px; }
+.vt-prod.top { border-color: var(--border-h); box-shadow: 0 8px 22px -16px rgba(201,168,76,0.45); }
+.vt-prod-rank { flex: 0 0 auto; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 14px; font-weight: 700; color: var(--text-muted); background: var(--bg3); border: 1px solid var(--border); }
+.vt-prod.top .vt-prod-rank { color: #2a2103; background: linear-gradient(135deg, var(--gold-l), var(--gold)); border-color: var(--gold); }
+.vt-prod-img { flex: 0 0 auto; width: 42px; height: 52px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 6px; }
+.vt-prod-img.ph { display: flex; align-items: center; justify-content: center; font-size: 21px; }
+.vt-prod-main { flex: 1; min-width: 0; }
+.vt-prod-n { font-family: var(--serif); font-size: 16.5px; font-weight: 600; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vt-prod-b { font-size: 11.5px; color: var(--text-muted); letter-spacing: 0.4px; margin-top: 2px; }
+.vt-prod-bar-wrap { margin-top: 8px; height: 6px; border-radius: 999px; background: rgba(0,0,0,0.07); overflow: hidden; }
+.vt-prod-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold-l), var(--gold-d)); transition: width 0.5s cubic-bezier(.22,.61,.36,1); }
+.vt-prod-r { flex: 0 0 auto; text-align: right; min-width: 88px; }
+.vt-prod-q { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--gold-d); line-height: 1; }
+.vt-prod-ql { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); margin-top: 3px; }
+.vt-prod-rev { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+@media (max-width: 640px) {
+  .vt-prod { gap: 10px; padding: 11px 12px; }
+  .vt-prod-img { display: none; }
+  .vt-prod-bar-wrap { display: none; }
+  .vt-prod-r { min-width: 66px; }
+}
 .form-g { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .fg { display: flex; flex-direction: column; gap: 8px; }
 .fg.full { grid-column: 1/-1; }
@@ -1040,7 +1075,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 @keyframes vtpulse { 0%{ box-shadow: 0 0 0 0 rgba(31,168,85,0.5); } 70%{ box-shadow: 0 0 0 8px rgba(31,168,85,0); } 100%{ box-shadow: 0 0 0 0 rgba(31,168,85,0); } }
 .vt-refresh { background: none; border: 1px solid var(--border); color: var(--gold-d); font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 9px 16px; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
 .vt-refresh:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
-.vt-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 26px; }
+.vt-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 16px; margin-bottom: 26px; }
 .vt-kpi { background: linear-gradient(165deg, var(--bg2), var(--bg)); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
 .vt-kpi.hot { border-color: var(--border-h); box-shadow: 0 10px 30px -16px rgba(201,168,76,0.5); }
 .vt-kpi-l { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
@@ -1289,10 +1324,16 @@ const PayBadges = ({ className = "" }) => (
   </div>
 );
 
-/* Etiqueta "👑 Favorito del Rey": se muestra SOLO en los perfumes más caros.
-   Cualquier perfume con precio MAYOR O IGUAL a este valor lleva la etiqueta.
-   Sube el número para marcar menos (p. ej. 500000 → 9, 650000 → 4) o bájalo para marcar más. */
+/* Etiqueta "👑 Favorito del Rey".
+   Ahora la controla el ADMIN con una casilla al crear/editar cada producto:
+     - casilla marcada    → siempre lleva la corona (favorite: true)
+     - casilla desmarcada → nunca la lleva          (favorite: false)
+   Los productos viejos que aún no tienen el campo definido usan el precio como
+   respaldo (así no se pierden las coronas que ya se veían). Al editarlos, tu
+   casilla queda guardada y manda de ahí en adelante. */
 const FAVORITE_MIN_PRICE = 450000;
+const isKingFavorite = (p) =>
+  !!p && (p.favorite === true || (p.favorite === undefined && Number(p.price) >= FAVORITE_MIN_PRICE));
 
 /* ──────────────────────────────────────────────────────────────
    TARJETA DE PRODUCTO (única, reutilizable en todas las vistas)
@@ -1310,7 +1351,7 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
       <div className="pcard-body">
         <div className="pcard-cat">{p.brand}</div>
         <div className="pcard-name">{p.name}</div>
-        {p.price >= FAVORITE_MIN_PRICE && (
+        {isKingFavorite(p) && (
           <div className="pcard-fav"><span className="crown">👑</span> Favorito del Rey</div>
         )}
         <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
@@ -1327,7 +1368,7 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
 
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
-  category: "Hombre", collection: "Árabes", promo: false,
+  category: "Hombre", collection: "Árabes", promo: false, favorite: false,
   tag: "", description: "", image: "", images: [],
 };
 
@@ -1598,6 +1639,10 @@ export default function ReyDelAroma() {
     : "store"
   ));
   const [products, setProducts] = useState(loadInitialProducts);
+  /* Catálogo que ve el CLIENTE. Cuando el admin oculta un producto (hidden: true)
+     con el switch "Visible/Oculto", desaparece de la tienda pero NO se borra.
+     El panel de admin sigue trabajando con `products` completo. */
+  const shopProducts = useMemo(() => products.filter((p) => !p.hidden), [products]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [qty, setQty] = useState(1);
   const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
@@ -1662,10 +1707,10 @@ export default function ReyDelAroma() {
   const [fCat, setFCat] = useState("Todos");
   // Límites de precio (mín/máx reales del catálogo, redondeados a 10.000)
   const priceBounds = useMemo(() => {
-    const ps = products.map((p) => Number(p.price)).filter((n) => Number.isFinite(n) && n > 0);
+    const ps = shopProducts.map((p) => Number(p.price)).filter((n) => Number.isFinite(n) && n > 0);
     if (!ps.length) return { min: 0, max: 1000000 };
     return { min: Math.floor(Math.min(...ps) / 10000) * 10000, max: Math.ceil(Math.max(...ps) / 10000) * 10000 };
-  }, [products]);
+  }, [shopProducts]);
   const [priceLo, setPriceLo] = useState(priceBounds.min);
   const [priceHi, setPriceHi] = useState(priceBounds.max);
   // Al cargar (o si cambia el catálogo) ajustamos el slider a los límites reales
@@ -1941,11 +1986,11 @@ export default function ReyDelAroma() {
   const cartFinalTotal = Math.max(0, cartTotal - cartPromoDiscount - cartCouponDisc);
   const q = search.trim().toLowerCase();
   const matched = (q
-    ? products.filter((p) =>
+    ? shopProducts.filter((p) =>
         [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, p.tag]
           .filter(Boolean).join(" ").toLowerCase().includes(q)
       )
-    : products.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter))
+    : shopProducts.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter))
   ).filter((p) => inPriceRange(p.price, priceFilter));
   const filtered = sortProducts(matched, sortBy);
 
@@ -1956,12 +2001,12 @@ export default function ReyDelAroma() {
      El admin sigue viendo la lista completa para poder etiquetar; esto es solo para los filtros del cliente. */
   const aromaCounts = useMemo(() => {
     const m = {};
-    for (const p of products) {
+    for (const p of shopProducts) {
       const tags = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
       for (const t of tags) if (t) m[t] = (m[t] || 0) + 1;
     }
     return m;
-  }, [products]);
+  }, [shopProducts]);
   const availableAromas = [
     ...aromaList.filter((a) => aromaCounts[a] > 0),
     ...Object.keys(aromaCounts).filter((a) => aromaCounts[a] > 0 && !aromaList.includes(a)),
@@ -1969,7 +2014,7 @@ export default function ReyDelAroma() {
 
   /* ── FILTRADO DEL PANEL (Aroma · Sexo · Precio · Categoría), combinables ── */
   // Categorías disponibles: las colecciones reales + la promo + destacados
-  const collectionOpts = Array.from(new Set([...collectionList, ...products.map((p) => p.collection)].filter(Boolean)));
+  const collectionOpts = Array.from(new Set([...collectionList, ...shopProducts.map((p) => p.collection)].filter(Boolean)));
   const catOptions = [...collectionOpts, "2 × $300.000", "Destacados"];
   const fSexMatch = (p) =>
     fSex === "Todos" ? true
@@ -1989,7 +2034,7 @@ export default function ReyDelAroma() {
   const fPriceMatch = (p) => p.price >= priceLo && p.price <= priceHi;
   const priceTouched = priceLo > priceBounds.min || priceHi < priceBounds.max;
   const panelResults = sortProducts(
-    products.filter((p) => fSexMatch(p) && fCatMatch(p) && fAromaMatch(p) && fPriceMatch(p)),
+    shopProducts.filter((p) => fSexMatch(p) && fCatMatch(p) && fAromaMatch(p) && fPriceMatch(p)),
     "recomendado"
   );
   const activeFilterCount = (fAroma !== "Todos" ? 1 : 0) + (fSex !== "Todos" ? 1 : 0) + (fCat !== "Todos" ? 1 : 0) + (priceTouched ? 1 : 0);
@@ -2204,13 +2249,19 @@ export default function ReyDelAroma() {
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "", images: Array.isArray(p.images) ? p.images.filter(Boolean) : [] });
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, favorite: isKingFavorite(p), tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "", images: Array.isArray(p.images) ? p.images.filter(Boolean) : [] });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
     if (!confirm("¿Eliminar este producto?")) return;
     setProducts((prev) => prev.filter((p) => p.id !== id));
     showToast("Producto eliminado");
+  };
+  // Ocultar / mostrar un producto en la tienda. No lo borra: solo deja de verlo el cliente.
+  const toggleVisible = (id) => {
+    const wasHidden = !!products.find((p) => p.id === id)?.hidden;
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, hidden: !p.hidden } : p)));
+    showToast(wasHidden ? "Producto visible en la tienda" : "Producto oculto para el cliente");
   };
   const resetCatalog = () => {
     if (!confirm("¿Restaurar el catálogo original con los 45 productos? Se perderán tus cambios.")) return;
@@ -2229,6 +2280,7 @@ export default function ReyDelAroma() {
       category: form.category,
       collection: form.collection,
       promo: form.promo ? PROMO_LABEL : "",
+      favorite: !!form.favorite,
       tag: form.tag || "",
       description: form.description.trim(),
       image: form.image || "",
@@ -2236,7 +2288,9 @@ export default function ReyDelAroma() {
       img: form.img || "",
     };
     if (editingId) {
-      setProducts((prev) => prev.map((p) => (p.id === editingId ? { ...data, id: editingId } : p)));
+      // Fusionamos con el producto existente para NO perder campos que no están
+      // en el formulario (hidden, slug, tags, fullName…).
+      setProducts((prev) => prev.map((p) => (p.id === editingId ? { ...p, ...data, id: editingId } : p)));
       showToast("Producto actualizado");
     } else {
       setProducts((prev) => [{ ...data, id: Date.now() }, ...prev]);
@@ -2346,7 +2400,7 @@ export default function ReyDelAroma() {
   const homeRows = [
     { id: "row-promo", title: "2 × $300.000", filter: "2 × $300.000" },
     { id: "row-disenador", title: "Diseñador", filter: "Diseñador" },
-  ].map((r) => ({ ...r, list: products.filter((p) => matchFilter(p, r.filter)) }));
+  ].map((r) => ({ ...r, list: shopProducts.filter((p) => matchFilter(p, r.filter)) }));
 
   /* ── FOOTER ── */
   const Footer = () => (
@@ -3087,6 +3141,10 @@ export default function ReyDelAroma() {
               <label className="fl">Promoción</label>
               <label className="fchk"><input type="checkbox" checked={form.promo} onChange={(e) => setForm((f) => ({ ...f, promo: e.target.checked }))} /> Incluir en 2 × $300.000</label>
             </div>
+            <div className="fg">
+              <label className="fl">Etiqueta destacada</label>
+              <label className="fchk"><input type="checkbox" checked={form.favorite} onChange={(e) => setForm((f) => ({ ...f, favorite: e.target.checked }))} /> 👑 Marcar como Favorito del Rey</label>
+            </div>
             <div className="fg full">
               <label className="fl">Imagen principal (portada)</label>
               {form.image ? (
@@ -3262,6 +3320,25 @@ export default function ReyDelAroma() {
       const allCount = orders.length;
       const avg = allCount ? Math.round(allTotal / allCount) : 0;
 
+      /* ── STOCK DE VENTAS: unidades vendidas por producto (suma de todos los pedidos) ── */
+      const soldMap = {};
+      orders.forEach((o) => (o.items || []).forEach((it) => {
+        const nm = (it.name || "").trim();
+        const key = `${nm.toLowerCase()}|${(it.brand || "").trim().toLowerCase()}`;
+        if (!soldMap[key]) soldMap[key] = { name: nm || "Producto", brand: it.brand || "", qty: 0, revenue: 0 };
+        const qty = Number(it.qty) || 0;
+        soldMap[key].qty += qty;
+        soldMap[key].revenue += (Number(it.price) || 0) * qty;
+      }));
+      const prodByName = {};
+      products.forEach((p) => { prodByName[(p.name || "").trim().toLowerCase()] = p; });
+      const soldList = Object.values(soldMap)
+        .map((s) => ({ ...s, img: prodByName[s.name.trim().toLowerCase()]?.image || "" }))
+        .sort((a, b) => b.qty - a.qty || b.revenue - a.revenue);
+      const unitsSold = soldList.reduce((n, s) => n + s.qty, 0);
+      const productRevenue = soldList.reduce((n, s) => n + s.revenue, 0);
+      const maxSold = Math.max(1, ...soldList.map((s) => s.qty));
+
       const last7 = [...Array(7)].map((_, i) => {
         const d = new Date(); d.setDate(d.getDate() - (6 - i));
         const k = fmtDay(d.toISOString());
@@ -3334,6 +3411,11 @@ export default function ReyDelAroma() {
                   <div className="vt-kpi-v">{cop(avg)}</div>
                   <div className="vt-kpi-s">por pedido</div>
                 </div>
+                <div className="vt-kpi">
+                  <div className="vt-kpi-l">Unidades vendidas</div>
+                  <div className="vt-kpi-v"><span>{unitsSold}</span></div>
+                  <div className="vt-kpi-s">perfumes en total</div>
+                </div>
               </div>
 
               <div className="vt-sec-t">Últimos <span>7 días</span></div>
@@ -3348,6 +3430,29 @@ export default function ReyDelAroma() {
                   </div>
                 ))}
               </div>
+
+              <div className="vt-sec-t" style={{ marginTop: 30 }}>Productos <span>más vendidos</span></div>
+              <div className="vt-prod-head">Cuántas unidades se han vendido de cada perfume · {soldList.length} {soldList.length === 1 ? "producto" : "productos"} con ventas · <b>{unitsSold}</b> unidades · <b>{cop(productRevenue)}</b></div>
+              {soldList.length > 0 ? (
+                <div className="vt-prod-list">
+                  {soldList.map((s, i) => (
+                    <div className={`vt-prod${i < 3 ? " top" : ""}`} key={s.name + s.brand + i}>
+                      <div className="vt-prod-rank">{i + 1}</div>
+                      {s.img ? <img className="vt-prod-img" src={s.img} alt={s.name} /> : <div className="vt-prod-img ph">🧴</div>}
+                      <div className="vt-prod-main">
+                        <div className="vt-prod-n">{s.name}</div>
+                        <div className="vt-prod-b">{s.brand || "Rey del Aroma"}</div>
+                        <div className="vt-prod-bar-wrap"><div className="vt-prod-bar" style={{ width: `${Math.round((s.qty / maxSold) * 100)}%` }} /></div>
+                      </div>
+                      <div className="vt-prod-r">
+                        <div className="vt-prod-q">{s.qty}</div>
+                        <div className="vt-prod-ql">{s.qty === 1 ? "unidad" : "uds. vendidas"}</div>
+                        <div className="vt-prod-rev">{cop(s.revenue)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : <div className="vt-empty"><div className="emoji">📦</div><p>Aún no hay ventas por producto. Cuando un cliente compre, aquí verás el ranking de perfumes más vendidos.</p></div>}
 
               <div className="vt-sec-t">Ventas por <span>día</span></div>
               {daysSorted.length > 0 ? daysSorted.map(([k, v]) => (
@@ -3399,6 +3504,7 @@ export default function ReyDelAroma() {
       );
     }
 
+    const hiddenCount = products.filter((p) => p.hidden).length;
     return (
       <div className="admin-wrap">
         <div className="admin-hdr">
@@ -3412,20 +3518,25 @@ export default function ReyDelAroma() {
             <button className="btn-g" onClick={startAdd}>+ Agregar</button>
           </div>
         </div>
-        <div className="admin-info"><b>{products.length}</b> productos en catálogo · Los cambios se guardan automáticamente en este navegador (localStorage).</div>
+        <div className="admin-info"><b>{products.length}</b> productos en catálogo{hiddenCount > 0 ? <> · <b>{hiddenCount}</b> {hiddenCount === 1 ? "oculto" : "ocultos"}</> : ""} · Los cambios se guardan automáticamente en este navegador (localStorage).</div>
         <table className="atbl">
           <thead>
-            <tr><th></th><th>Producto</th><th>Precio</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Acciones</th></tr>
+            <tr><th></th><th>Producto</th><th>Precio</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Estado</th><th>Acciones</th></tr>
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} className={p.hidden ? "is-hidden" : ""}>
                 <td>{p.image ? <img className="athumb" src={p.image} alt={p.name} /> : <div className="athumb" />}</td>
-                <td><div className="atn">{p.name}</div><div className="ats">{p.brand}{p.subtitle ? ` · ${p.subtitle}` : ""}</div></td>
+                <td><div className="atn">{isKingFavorite(p) && <span title="Favorito del Rey">👑 </span>}{p.name}</div><div className="ats">{p.brand}{p.subtitle ? ` · ${p.subtitle}` : ""}</div></td>
                 <td className="atp">{cop(p.price)}</td>
                 <td className="atc">{p.category}</td>
                 <td className="atc">{p.collection}</td>
                 <td>{p.promo ? <span style={{ background: "rgba(201,168,76,.12)", color: "var(--gold-d)", fontSize: 11, padding: "4px 8px", letterSpacing: 1, fontWeight: 700, whiteSpace: "nowrap" }}>2×300K</span> : <span style={{ color: "#bbb" }}>—</span>}</td>
+                <td>
+                  <button className={`avis ${p.hidden ? "off" : "on"}`} onClick={() => toggleVisible(p.id)} title={p.hidden ? "Oculto — clic para mostrar en la tienda" : "Visible — clic para ocultar"}>
+                    <span className="avis-dot" />{p.hidden ? "Oculto" : "Visible"}
+                  </button>
+                </td>
                 <td style={{ whiteSpace: "nowrap" }}>
                   <button className="abtn abtn-e" onClick={() => startEdit(p)}>Editar</button>
                   <button className="abtn abtn-d" onClick={() => deleteProduct(p.id)}>Eliminar</button>
