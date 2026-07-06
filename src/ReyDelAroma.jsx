@@ -25,6 +25,8 @@ const LS_COLLECTIONS = "rda-collections-v1"; // ← Colecciones que crea el admi
 const LS_AROMAS = "rda-aromas-v1";           // ← Tipos de aroma que crea el admin
 const LS_ORDERS = "rda-orders-v1";           // ← Respaldo local de pedidos (por si falla la red)
 const LS_ADMIN_TOKEN = "rda-admin-token";    // ← Token del panel de Ventas (se guarda en este navegador)
+const LS_CART = "rda-cart-v1";               // ← Carrito del cliente (sobrevive al recargar la página)
+const LS_NAV = "rda-nav-v1";                 // ← Página abierta (para no perderla al recargar) — solo esta pestaña
 
 const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
@@ -376,7 +378,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pcard-fav { display: inline-flex; align-items: center; gap: 6px; margin: 3px 0 11px; padding: 5px 13px 5px 11px; border-radius: 999px; background: linear-gradient(135deg, var(--gold-l), var(--gold)); color: #2a2103; font-family: var(--sans); font-size: 10.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; line-height: 1; box-shadow: 0 2px 9px rgba(201,168,76,0.32); }
 .pcard-fav .crown { font-size: 12.5px; line-height: 1; }
 .pcard-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; min-height: 11px; }
-.pcard-aroma { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 11px; border-radius: 999px; }
+.pcard-aromas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.pcard-aroma { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--gold-d); background: rgba(201,168,76,0.10); border: 1px solid var(--border); padding: 4px 11px; border-radius: 999px; }
+.pcard-aroma-more { color: var(--text-muted); background: transparent; }
 .pcard-price { font-family: var(--serif); font-size: 25px; font-weight: 500; color: var(--gold-d); }
 .pcard-curr { font-size: 13px; opacity: 0.5; font-family: var(--sans); font-weight: 300; letter-spacing: 1px; }
 .pcard-trust { display: flex; align-items: center; gap: 7px; margin-top: 11px; flex-wrap: wrap; }
@@ -613,6 +617,17 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .multi-img-add-ic { font-size: 24px; color: var(--gold-d); line-height: 1; }
 .multi-img-add-tx { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.4px; }
 .multi-img-hint { font-size: 12px; color: var(--text-muted); margin-top: 9px; letter-spacing: 0.2px; line-height: 1.4; }
+
+/* Selección de VARIOS aromas por producto (panel de admin) */
+.fl-soft { font-weight: 400; color: var(--text-muted); letter-spacing: 0.2px; }
+.aroma-pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.aroma-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text-dim); font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0.2px; cursor: pointer; transition: border-color 0.2s, background 0.2s, color 0.2s; }
+.aroma-chip:hover { border-color: var(--gold); }
+.aroma-chip.on { border-color: var(--gold); background: rgba(201,168,76,0.14); color: var(--gold-d); }
+.aroma-chip.on::before { content: '✓'; font-weight: 800; }
+.aroma-pick-empty { font-size: 13px; color: var(--text-muted); }
+.aroma-pick-hint { font-size: 12px; color: var(--text-muted); margin-top: 9px; letter-spacing: 0.2px; line-height: 1.4; }
+.aroma-pick-hint b { color: var(--gold-d); }
 
 /* ── CARRITO ── */
 .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
@@ -1341,11 +1356,15 @@ const isKingFavorite = (p) =>
    - Botón "+ Agregar" a lo ancho en el pie
 ────────────────────────────────────────────────────────────── */
 function ProductCard({ p, className = "", onOpen, onAdd }) {
+  // Imagen de la tarjeta: portada; si no hay, la primera foto de la galería.
+  const cardImg = p.image || (Array.isArray(p.images) && p.images.find(Boolean)) || "";
+  // Aromas del perfume (puede tener varios). Mostramos hasta 3 para no saturar la tarjeta.
+  const aromas = (Array.isArray(p.tags) && p.tags.length) ? p.tags.filter(Boolean) : (p.tag ? [p.tag] : []);
   return (
     <div className={`pcard${className ? " " + className : ""}`} onClick={() => onOpen(p)}>
       <div className="pcard-img">
         {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-        {p.image ? <img src={p.image} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+        {cardImg ? <img src={cardImg} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
         <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
       </div>
       <div className="pcard-body">
@@ -1357,10 +1376,17 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
         <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
         <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
         <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-        {p.tag && <div className="pcard-aroma">{FAMILY_META[p.tag]?.emoji || "✨"} {p.tag}</div>}
+        {aromas.length > 0 && (
+          <div className="pcard-aromas">
+            {aromas.slice(0, 3).map((a) => (
+              <span key={a} className="pcard-aroma">{FAMILY_META[a]?.emoji || "✨"} {a}</span>
+            ))}
+            {aromas.length > 3 && <span className="pcard-aroma pcard-aroma-more">+{aromas.length - 3}</span>}
+          </div>
+        )}
       </div>
       <div className="pcard-foot">
-        <button className="quick-buy" onClick={(e) => { e.stopPropagation(); onAdd(p, p.size || "", 1); }}>+ Agregar</button>
+        <button className="quick-buy" onClick={(e) => { e.stopPropagation(); onAdd({ ...p, image: cardImg }, p.size || "", 1); }}>+ Agregar</button>
       </div>
     </div>
   );
@@ -1369,7 +1395,7 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
 const EMPTY_FORM = {
   name: "", brand: "", subtitle: "", size: "", price: "",
   category: "Hombre", collection: "Árabes", promo: false, favorite: false,
-  tag: "", description: "", image: "", images: [],
+  tag: "", tags: [], description: "", image: "", images: [],
 };
 
 const FILTER_TABS = ["Todos", "Hombre", "Mujer", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
@@ -1416,8 +1442,8 @@ function sortProducts(arr, mode) {
   switch (mode) {
     case "price-asc":  return a.sort((x, y) => x.price - y.price);
     case "price-desc": return a.sort((x, y) => y.price - x.price);
-    case "name-asc":   return a.sort((x, y) => x.name.localeCompare(y.name, "es"));
-    case "name-desc":  return a.sort((x, y) => y.name.localeCompare(x.name, "es"));
+    case "name-asc":   return a.sort((x, y) => (x.name || "").localeCompare(y.name || "", "es"));
+    case "name-desc":  return a.sort((x, y) => (y.name || "").localeCompare(x.name || "", "es"));
     default:           return a; // recomendado = orden original del catálogo
   }
 }
@@ -1573,6 +1599,44 @@ function loadAromas() {
   return FAMILIES;
 }
 
+/* Carrito guardado: sobrevive al recargar / cerrar y volver a abrir la página.
+   Re-resuelve la imagen de cada producto por su nombre de archivo, para que la
+   miniatura no se rompa entre despliegues (las URLs con hash cambian en cada build). */
+function loadCart() {
+  try {
+    const saved = localStorage.getItem(LS_CART);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .filter((i) => i && i.id != null)
+          .map((i) => ({
+            ...i,
+            qty: Math.max(1, Number(i.qty) || 1),
+            image: (i.img && imageForFile(i.img)) || i.image || "",
+          }));
+      }
+    }
+  } catch { /* ignore */ }
+  return [];
+}
+
+/* Página que el cliente estaba viendo antes de recargar (solo en esta pestaña,
+   por eso usa sessionStorage). Así un F5 no lo devuelve al inicio. Devuelve
+   { view, product } o null; re-resuelve la imagen del producto por su archivo. */
+function loadNav() {
+  try {
+    const saved = sessionStorage.getItem(LS_NAV);
+    if (!saved) return null;
+    const parsed = JSON.parse(saved);
+    if (!parsed || typeof parsed.view !== "string") return null;
+    const fixImg = (o) => (o ? { ...o, image: (o.img && imageForFile(o.img)) || o.image || "" } : o);
+    const product = parsed.product ? fixImg(parsed.product) : null;
+    const checkoutItems = Array.isArray(parsed.checkoutItems) ? parsed.checkoutItems.map(fixImg) : [];
+    return { view: parsed.view, product, checkoutItems };
+  } catch { return null; }
+}
+
 /* ¿El usuario está volviendo de Wompi? (?wompi=1&id=<txId> o ?env=...) */
 function readWompiReturn() {
   try {
@@ -1631,23 +1695,32 @@ function readSearchParam() {
 export default function ReyDelAroma() {
   const initialCat = readCategoryParam(); // si la URL trae ?categoria=… abrimos esa página directamente
   const initialSearch = readSearchParam(); // si la URL trae ?busqueda=… abrimos la página de resultados
-  const [view, setView] = useState(() => (
-    readWompiReturn().fromWompi ? "pago-resultado"
-    : readSistecreditoReturn().fromSiste ? "pago-resultado"
-    : initialSearch ? "search"
-    : initialCat ? "category"
-    : "store"
-  ));
+  const savedNav = loadNav(); // página que el cliente estaba viendo antes de recargar (solo esta pestaña)
+  const [view, setView] = useState(() => {
+    // 1) La URL manda (retorno de pago o enlace compartido de categoría/búsqueda)
+    if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste) return "pago-resultado";
+    if (initialSearch) return "search";
+    if (initialCat) return "category";
+    // 2) Si no, restauramos la última página abierta (para que un F5 no devuelva al inicio)
+    if (savedNav && savedNav.view && savedNav.view !== "pago-resultado") {
+      if (savedNav.view === "product") return savedNav.product ? "product" : "store";
+      return savedNav.view;
+    }
+    // 3) Por defecto, la tienda
+    return "store";
+  });
   const [products, setProducts] = useState(loadInitialProducts);
   /* Catálogo que ve el CLIENTE. Cuando el admin oculta un producto (hidden: true)
      con el switch "Visible/Oculto", desaparece de la tienda pero NO se borra.
      El panel de admin sigue trabajando con `products` completo. */
   const shopProducts = useMemo(() => products.filter((p) => !p.hidden), [products]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(
+    savedNav && savedNav.view === "product" ? (savedNav.product || null) : null
+  );
   const [qty, setQty] = useState(1);
   const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
   const [galleryIdx, setGalleryIdx] = useState(0); // foto activa en la galería del detalle
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(loadCart); // ← carrito persistente (sobrevive al recargar)
   const [cartOpen, setCartOpen] = useState(false);
   const [catFilter, setCatFilter] = useState(initialCat || "Todos");
   const [sortBy, setSortBy] = useState("recomendado"); // ordenamiento elegido por el cliente
@@ -1671,7 +1744,9 @@ export default function ReyDelAroma() {
   const [newsletterDone, setNewsletterDone] = useState(false);
 
   /* ── CHECKOUT / PAGO ── */
-  const [checkoutItems, setCheckoutItems] = useState([]);
+  const [checkoutItems, setCheckoutItems] = useState(
+    savedNav && savedNav.view === "checkout" && Array.isArray(savedNav.checkoutItems) ? savedNav.checkoutItems : []
+  );
   const [payMethod, setPayMethod] = useState("wompi");
   const [coForm, setCoForm] = useState({ name: "", cedula: "", phone: "", email: "", city: "", cityCustom: "", address: "" });
   const [placing, setPlacing] = useState(false);
@@ -1755,6 +1830,31 @@ export default function ReyDelAroma() {
     try { localStorage.setItem(LS_AROMAS, JSON.stringify(aromaList)); } catch { /* ignore */ }
   }, [aromaList]);
 
+  /* Guardar el CARRITO en localStorage: así, si el cliente recarga o cierra y
+     vuelve a abrir la página, sus productos siguen ahí. */
+  useEffect(() => {
+    try { localStorage.setItem(LS_CART, JSON.stringify(cart)); }
+    catch (err) {
+      if (err && (err.name === "QuotaExceededError" || err.code === 22 || err.code === 1014)) {
+        showToast("Almacenamiento lleno: no se pudo guardar todo el carrito");
+      }
+    }
+  }, [cart]);
+
+  /* Recordar la PÁGINA abierta (solo en esta pestaña) para que un F5 no devuelva
+     al inicio. No guardamos la pantalla de resultado de pago: esa depende de la URL. */
+  useEffect(() => {
+    try {
+      if (view === "pago-resultado") { sessionStorage.removeItem(LS_NAV); return; }
+      const payload = {
+        view,
+        product: view === "product" ? selectedProduct : null,
+        checkoutItems: view === "checkout" ? checkoutItems : [],
+      };
+      sessionStorage.setItem(LS_NAV, JSON.stringify(payload));
+    } catch { /* ignore */ }
+  }, [view, selectedProduct, checkoutItems]);
+
   useEffect(() => { const t = requestAnimationFrame(() => setAppReady(true)); return () => cancelAnimationFrame(t); }, []);
 
   /* ── RETORNO DESDE WOMPI ──
@@ -1781,7 +1881,8 @@ export default function ReyDelAroma() {
           amount: (t.amount_in_cents || 0) / 100,
           method: t.payment_method_type || "",
         });
-        try { localStorage.removeItem("rda-cart-v1"); } catch { /* ignore */ }
+        // Compra completada → vaciar el carrito. Si fue rechazada, lo dejamos para reintentar.
+        if (t.status === "APPROVED" || t.status === "PENDING") setCart([]);
       })
       .catch(() => setPayResult({ loading: false, status: "ERROR", txId: id }));
   }, []);
@@ -1801,7 +1902,8 @@ export default function ReyDelAroma() {
       else if (PEND.includes(status)) s = "PENDING";
       else if (status) s = "DECLINED";
       setPayResult({ loading: false, status: s, txId: id, reference });
-      try { localStorage.removeItem("rda-cart-v1"); } catch { /* ignore */ }
+      // Compra completada → vaciar el carrito. Si fue rechazada, lo dejamos para reintentar.
+      if (s === "APPROVED" || s === "PENDING") setCart([]);
     };
 
     if (!id) { finish(""); return; }
@@ -1987,10 +2089,15 @@ export default function ReyDelAroma() {
   const q = search.trim().toLowerCase();
   const matched = (q
     ? shopProducts.filter((p) =>
-        [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, p.tag]
+        [p.name, p.fullName, p.brand, p.collection, p.category, p.subtitle, p.tag, ...(Array.isArray(p.tags) ? p.tags : [])]
           .filter(Boolean).join(" ").toLowerCase().includes(q)
       )
-    : shopProducts.filter((p) => matchFilter(p, catFilter) && (tagFilter === "Todos" || p.tag === tagFilter))
+    : shopProducts.filter((p) => {
+        if (!matchFilter(p, catFilter)) return false;
+        if (tagFilter === "Todos") return true;
+        const ts = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
+        return ts.includes(tagFilter);
+      })
   ).filter((p) => inPriceRange(p.price, priceFilter));
   const filtered = sortProducts(matched, sortBy);
 
@@ -2249,7 +2356,8 @@ export default function ReyDelAroma() {
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, favorite: isKingFavorite(p), tag: p.tag || "", description: p.description || "", image: p.image || "", img: p.img || "", images: Array.isArray(p.images) ? p.images.filter(Boolean) : [] });
+    const editTags = (Array.isArray(p.tags) && p.tags.length) ? p.tags.filter(Boolean) : (p.tag ? [p.tag] : []);
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, favorite: isKingFavorite(p), tag: editTags[0] || "", tags: editTags, description: p.description || "", image: p.image || "", img: p.img || "", images: Array.isArray(p.images) ? p.images.filter(Boolean) : [] });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
@@ -2271,6 +2379,11 @@ export default function ReyDelAroma() {
   };
   const saveProduct = () => {
     if (!form.name.trim() || !form.price) return showToast("Nombre y precio son obligatorios");
+    const galleryImgs = Array.isArray(form.images) ? form.images.filter(Boolean) : [];
+    const aromaTags = Array.isArray(form.tags) ? form.tags.filter(Boolean) : [];
+    // Si no hay portada pero sí fotos de galería, usamos la primera como portada
+    // (así la tarjeta del catálogo nunca queda sin imagen).
+    const cover = form.image || galleryImgs[0] || "";
     const data = {
       name: form.name.trim(),
       brand: form.brand.trim() || "Rey del Aroma",
@@ -2281,11 +2394,12 @@ export default function ReyDelAroma() {
       collection: form.collection,
       promo: form.promo ? PROMO_LABEL : "",
       favorite: !!form.favorite,
-      tag: form.tag || "",
+      tag: aromaTags[0] || form.tag || "",  // aroma principal (compatibilidad con vistas antiguas)
+      tags: aromaTags,                       // todos los aromas del perfume
       description: form.description.trim(),
-      image: form.image || "",
-      images: Array.isArray(form.images) ? form.images.filter(Boolean) : [],
-      img: form.img || "",
+      image: cover,
+      images: galleryImgs,
+      img: cover === form.image ? (form.img || "") : "", // la portada base64 no corresponde a un archivo
     };
     if (editingId) {
       // Fusionamos con el producto existente para NO perder campos que no están
@@ -2299,6 +2413,13 @@ export default function ReyDelAroma() {
     setAdminView("list");
   };
   const setF = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  // Aromas: un mismo perfume puede tener VARIOS. Marca o desmarca cada uno.
+  // Mantenemos `tag` = primer aroma para las vistas que aún usan un solo aroma.
+  const toggleAroma = (name) => setForm((f) => {
+    const cur = Array.isArray(f.tags) ? f.tags : (f.tag ? [f.tag] : []);
+    const next = cur.includes(name) ? cur.filter((t) => t !== name) : [...cur, name];
+    return { ...f, tags: next, tag: next[0] || "" };
+  });
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -2764,8 +2885,8 @@ export default function ReyDelAroma() {
   const ProductDetailView = () => {
     if (!selectedProduct) return null;
     const p = selectedProduct;
-    const words = p.name.split(" ");
-    const last = words.pop();
+    const words = (p.name || "").split(" ").filter(Boolean);
+    const last = words.pop() || "";
     const variants = Array.isArray(p.variants) && p.variants.length ? p.variants : null;
     const activeVar = variants ? (variants.find((v) => v.size === selSize) || variants[0]) : null;
     const shownPrice = activeVar ? activeVar.price : p.price;
@@ -3128,14 +3249,32 @@ export default function ReyDelAroma() {
                 ))}
               </select>
             </div>
-            <div className="fg">
-              <label className="fl">Tipo de aroma</label>
-              <select className="fsel" value={form.tag} onChange={setF("tag")}>
-                <option value="">— Sin etiqueta —</option>
-                {aromaList.map((fam) => (
-                  <option key={fam} value={fam}>{FAMILY_META[fam]?.emoji || "✨"} {fam}</option>
-                ))}
-              </select>
+            <div className="fg full">
+              <label className="fl">Tipos de aroma <span className="fl-soft">(puedes elegir varios)</span></label>
+              <div className="aroma-pick">
+                {aromaList.map((fam) => {
+                  const on = Array.isArray(form.tags) && form.tags.includes(fam);
+                  return (
+                    <button
+                      type="button"
+                      key={fam}
+                      className={`aroma-chip${on ? " on" : ""}`}
+                      onClick={() => toggleAroma(fam)}
+                      aria-pressed={on}
+                    >
+                      {FAMILY_META[fam]?.emoji || "✨"} {fam}
+                    </button>
+                  );
+                })}
+                {aromaList.length === 0 && (
+                  <span className="aroma-pick-empty">Aún no hay tipos de aroma. Créalos en “Aromas y colecciones”.</span>
+                )}
+              </div>
+              {Array.isArray(form.tags) && form.tags.length > 0 && (
+                <div className="aroma-pick-hint">
+                  Seleccionados: <b>{form.tags.join(" · ")}</b>. El primero se usa como aroma principal en la tarjeta.
+                </div>
+              )}
             </div>
             <div className="fg">
               <label className="fl">Promoción</label>
