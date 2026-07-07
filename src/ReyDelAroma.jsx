@@ -1858,11 +1858,12 @@ export default function ReyDelAroma() {
     } catch { /* ignore */ }
   }, [view, selectedProduct, checkoutItems]);
 
-  /* ── BOTÓN "ATRÁS" DEL NAVEGADOR → volver al INICIO (no salir del sitio) ──
+  /* ── BOTÓN "ATRÁS" DEL NAVEGADOR (incluido el del celular) → SIEMPRE al INICIO ──
      La tienda es UNA sola página con vistas internas (producto, categoría,
      checkout, admin…). El navegador por sí solo no conoce esas vistas: al pulsar
-     "atrás" sacaba al cliente de la página. Con estos refs leemos el estado más
-     reciente dentro del listener (sin ellos el listener quedaría "congelado"). */
+     "atrás" sacaba al cliente de la página. Aquí "atrapamos" el botón atrás y lo
+     convertimos en un "ir al inicio": nunca abandona el sitio. Los refs nos dejan
+     leer el estado más reciente dentro del listener (sin ellos quedaría congelado). */
   const viewRef = useRef(view);
   const menuOpenRef = useRef(menuOpen);
   const cartOpenRef = useRef(cartOpen);
@@ -1875,11 +1876,26 @@ export default function ReyDelAroma() {
   }, [view, menuOpen, cartOpen, filtersOpen]);
 
   useEffect(() => {
-    // Sembramos una entrada en el historial para "atrapar" el primer "atrás".
+    // Sembramos una entrada en el historial y la volvemos a sembrar en CADA "atrás".
+    // Así el botón atrás del navegador (celular incluido) siempre lleva al inicio
+    // y NUNCA saca al cliente de la página.
     const armarTrampa = () => {
       try { window.history.pushState({ rda: 1 }, ""); } catch { /* ignore */ }
     };
     armarTrampa();
+
+    const irAlInicio = () => {
+      setView("store");
+      setSelectedProduct(null);
+      setCatFilter("Todos");
+      setSearch("");
+      setSearchOpen(false);
+      setCartOpen(false);
+      setMenuOpen(false);
+      setFiltersOpen(false);
+      try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
+      window.scrollTo({ top: 0 });
+    };
 
     const alRetroceder = () => {
       // 1) Si hay un panel abierto (menú, carrito o filtros), "atrás" solo lo cierra.
@@ -1890,19 +1906,11 @@ export default function ReyDelAroma() {
         armarTrampa();
         return;
       }
-      // 2) Si NO estamos en el inicio, "atrás" lleva al INICIO (no abandona el sitio).
-      if (viewRef.current !== "store") {
-        setView("store");
-        setSelectedProduct(null);
-        setCatFilter("Todos");
-        setSearch("");
-        setSearchOpen(false);
-        try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
-        window.scrollTo({ top: 0 });
-        armarTrampa(); // rearmamos la trampa para el siguiente "atrás"
-        return;
-      }
-      // 3) Ya en el inicio y sin paneles → dejamos que el navegador salga del sitio.
+      // 2) Si estamos en cualquier otra vista, "atrás" lleva al INICIO.
+      //    Si ya estamos en el inicio, no cambia nada visible pero igual re-armamos
+      //    la trampa → "atrás" nunca abandona la página.
+      if (viewRef.current !== "store") irAlInicio();
+      armarTrampa();
     };
 
     window.addEventListener("popstate", alRetroceder);
