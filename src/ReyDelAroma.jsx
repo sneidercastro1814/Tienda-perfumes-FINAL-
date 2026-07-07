@@ -1855,6 +1855,57 @@ export default function ReyDelAroma() {
     } catch { /* ignore */ }
   }, [view, selectedProduct, checkoutItems]);
 
+  /* ── BOTÓN "ATRÁS" DEL NAVEGADOR → volver al INICIO (no salir del sitio) ──
+     La tienda es UNA sola página con vistas internas (producto, categoría,
+     checkout, admin…). El navegador por sí solo no conoce esas vistas: al pulsar
+     "atrás" sacaba al cliente de la página. Con estos refs leemos el estado más
+     reciente dentro del listener (sin ellos el listener quedaría "congelado"). */
+  const viewRef = useRef(view);
+  const menuOpenRef = useRef(menuOpen);
+  const cartOpenRef = useRef(cartOpen);
+  const filtersOpenRef = useRef(filtersOpen);
+  useEffect(() => {
+    viewRef.current = view;
+    menuOpenRef.current = menuOpen;
+    cartOpenRef.current = cartOpen;
+    filtersOpenRef.current = filtersOpen;
+  }, [view, menuOpen, cartOpen, filtersOpen]);
+
+  useEffect(() => {
+    // Sembramos una entrada en el historial para "atrapar" el primer "atrás".
+    const armarTrampa = () => {
+      try { window.history.pushState({ rda: 1 }, ""); } catch { /* ignore */ }
+    };
+    armarTrampa();
+
+    const alRetroceder = () => {
+      // 1) Si hay un panel abierto (menú, carrito o filtros), "atrás" solo lo cierra.
+      if (menuOpenRef.current || cartOpenRef.current || filtersOpenRef.current) {
+        setMenuOpen(false);
+        setCartOpen(false);
+        setFiltersOpen(false);
+        armarTrampa();
+        return;
+      }
+      // 2) Si NO estamos en el inicio, "atrás" lleva al INICIO (no abandona el sitio).
+      if (viewRef.current !== "store") {
+        setView("store");
+        setSelectedProduct(null);
+        setCatFilter("Todos");
+        setSearch("");
+        setSearchOpen(false);
+        try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
+        window.scrollTo({ top: 0 });
+        armarTrampa(); // rearmamos la trampa para el siguiente "atrás"
+        return;
+      }
+      // 3) Ya en el inicio y sin paneles → dejamos que el navegador salga del sitio.
+    };
+
+    window.addEventListener("popstate", alRetroceder);
+    return () => window.removeEventListener("popstate", alRetroceder);
+  }, []);
+
   useEffect(() => { const t = requestAnimationFrame(() => setAppReady(true)); return () => cancelAnimationFrame(t); }, []);
 
   /* ── RETORNO DESDE WOMPI ──
@@ -2425,22 +2476,37 @@ export default function ReyDelAroma() {
     if (!file) return;
     if (!file.type.startsWith("image/")) return showToast("Solo se permiten imágenes");
     if (file.size > 12 * 1024 * 1024) return showToast("La imagen no debe superar 12MB");
-    compressImage(file)
+    compressImage(file, 1000, 0.78)
       .then((dataUrl) => setForm((f) => ({ ...f, image: dataUrl, img: "" })))
-      .catch(() => showToast("No se pudo procesar la imagen"));
+      .catch(() => showToast("No se pudo procesar la imagen (formato no compatible)"));
   };
-  // Galería: varias fotos adicionales por producto (se muestran como miniaturas en el detalle)
+  // Galería: varias fotos adicionales por producto (se muestran como miniaturas en el detalle).
+  // Se procesan TODAS las fotos elegidas y se agregan JUNTAS en una sola operación,
+  // así nunca se pierde ninguna aunque el cliente suba 2, 3 o más a la vez.
   const handleGalleryUpload = (e) => {
     const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-    files.forEach((file) => {
-      if (!file.type.startsWith("image/")) { showToast("Solo se permiten imágenes"); return; }
-      if (file.size > 12 * 1024 * 1024) { showToast("Cada imagen debe ser menor a 12MB"); return; }
-      compressImage(file)
-        .then((dataUrl) => setForm((f) => ({ ...f, images: [...(Array.isArray(f.images) ? f.images : []), dataUrl] })))
-        .catch(() => showToast("No se pudo procesar una imagen"));
-    });
     e.target.value = ""; // permite volver a subir el mismo archivo
+    if (!files.length) return;
+
+    // Filtramos lo que no es imagen o pesa demasiado, avisando cuántos se omiten.
+    const validas = files.filter((f) => f.type.startsWith("image/") && f.size <= 12 * 1024 * 1024);
+    const omitidas = files.length - validas.length;
+    if (omitidas > 0) showToast(omitidas === 1 ? "Se omitió 1 archivo (no es imagen o supera 12MB)" : `Se omitieron ${omitidas} archivos (no son imágenes o superan 12MB)`);
+    if (!validas.length) return;
+
+    showToast(validas.length === 1 ? "Procesando la foto…" : `Procesando ${validas.length} fotos…`);
+    // Comprimimos todas en paralelo; las que fallen quedan en null y se descartan.
+    Promise.all(validas.map((file) => compressImage(file, 820, 0.7).catch(() => null)))
+      .then((resultados) => {
+        const nuevas = resultados.filter(Boolean);
+        const fallidas = resultados.length - nuevas.length;
+        if (nuevas.length) {
+          // Una sola actualización de estado con TODAS las fotos nuevas → no se pierde ninguna.
+          setForm((f) => ({ ...f, images: [...(Array.isArray(f.images) ? f.images : []), ...nuevas] }));
+          showToast(nuevas.length === 1 ? "1 foto agregada a la galería" : `${nuevas.length} fotos agregadas a la galería`);
+        }
+        if (fallidas) showToast(fallidas === 1 ? "No se pudo procesar 1 foto (formato no compatible)" : `No se pudieron procesar ${fallidas} fotos (formato no compatible)`);
+      });
   };
   const removeGalleryImage = (idx) => setForm((f) => ({ ...f, images: (Array.isArray(f.images) ? f.images : []).filter((_, i) => i !== idx) }));
   const makeGalleryCover = (idx) => setForm((f) => {
