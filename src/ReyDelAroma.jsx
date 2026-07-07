@@ -430,8 +430,10 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-hangtag-in { font-size: 10px; font-weight: 800; letter-spacing: 0.7px; line-height: 1.18; color: var(--gold-l); text-transform: uppercase; }
 .pd-hangtag-in b { display: block; font-size: 15px; letter-spacing: 0; margin-bottom: 1px; }
 .pd-hangtag-stars { display: block; font-size: 8px; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; }
-/* Galería de miniaturas en la página de detalle (varias fotos por producto) */
-.pd-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+/* Galería de detalle: columna de miniaturas a la IZQUIERDA + foto grande a la derecha */
+.pd-media { display: flex; gap: 14px; align-items: flex-start; }
+.pd-media > .pd-main { flex: 1 1 0; min-width: 0; width: auto; }
+.pd-gallery { display: flex; flex-direction: column; gap: 10px; flex: 0 0 auto; }
 .pd-thumb { width: 74px; height: 74px; flex: 0 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 9px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
 .pd-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .pd-thumb:hover { border-color: var(--gold); transform: translateY(-2px); }
@@ -827,8 +829,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-hangtag::before { height: 74px; }
   .pd-hangtag-in { font-size: 9px; }
   .pd-hangtag-in b { font-size: 13px; }
-  .pd-gallery { gap: 8px; margin-top: 12px; }
-  .pd-thumb { width: 60px; height: 60px; padding: 5px; }
+  .pd-media { gap: 10px; }
+  .pd-gallery { gap: 8px; }
+  .pd-thumb { width: 58px; height: 58px; padding: 5px; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
@@ -2973,22 +2976,24 @@ export default function ReyDelAroma() {
         </div>
         <div className="pd-grid">
           <div>
-            <div className="pd-main">
-              {mainImg ? <img src={mainImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
-              <span className="pd-hangpin" aria-hidden="true" />
-              <div className="pd-hangtag" aria-hidden="true">
-                <span className="pd-hangtag-in"><span className="pd-hangtag-stars">★★★</span><b>100%</b>Original</span>
+            <div className="pd-media">
+              {gallery.length > 1 && (
+                <div className="pd-gallery">
+                  {gallery.map((src, i) => (
+                    <button key={i} type="button" className={`pd-thumb${i === galleryIdx ? " act" : ""}`} onClick={() => setGalleryIdx(i)} aria-label={`Ver foto ${i + 1}`}>
+                      <img src={src} alt={`${p.name} ${i + 1}`} loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="pd-main">
+                {mainImg ? <img src={mainImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
+                <span className="pd-hangpin" aria-hidden="true" />
+                <div className="pd-hangtag" aria-hidden="true">
+                  <span className="pd-hangtag-in"><span className="pd-hangtag-stars">★★★</span><b>100%</b>Original</span>
+                </div>
               </div>
             </div>
-            {gallery.length > 1 && (
-              <div className="pd-gallery">
-                {gallery.map((src, i) => (
-                  <button key={i} type="button" className={`pd-thumb${i === galleryIdx ? " act" : ""}`} onClick={() => setGalleryIdx(i)} aria-label={`Ver foto ${i + 1}`}>
-                    <img src={src} alt={`${p.name} ${i + 1}`} loading="lazy" />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           <div className="pd-info">
