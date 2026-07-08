@@ -787,6 +787,13 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-wrap { padding: 22px 16px 56px; }
   .bc { margin-bottom: 24px; }
   .pd-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  /* Galería en móvil: foto grande arriba y TODAS las miniaturas en una fila
+     debajo (se acomodan en varias líneas si son muchas). Antes iban en una
+     columna estrecha a la izquierda que en el celular quedaba apretada. */
+  .pd-media { flex-direction: column; gap: 12px; align-items: stretch; }
+  .pd-media > .pd-main { order: 1; width: 100%; flex: 0 0 auto; }
+  .pd-media > .pd-gallery { order: 2; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .pd-thumb { width: 66px; height: 66px; }
   .pd-name { font-size: 40px; }
   .pd-price { font-size: 34px; }
   .feats { grid-template-columns: repeat(2,1fr); }
