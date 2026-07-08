@@ -919,6 +919,26 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .co-addi-w-wrap { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease; }
 .co-addi-w-wrap.open { max-height: 340px; opacity: 1; margin-top: 16px; }
 
+/* ── PASO ADDI (formulario oculto → solo el widget) ── */
+.addi-step { max-width: 560px; margin: 0 auto; animation: catFade 0.4s ease; }
+.addi-step-back { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; padding: 10px 18px; border-radius: 999px; cursor: pointer; margin-bottom: 22px; transition: all 0.2s; }
+.addi-step-back:hover { border-color: var(--gold); color: var(--gold-d); }
+.addi-step-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 40px 34px; text-align: center; box-shadow: 0 24px 60px -32px rgba(0,0,0,0.3); }
+.addi-step-logo { height: 32px; margin-bottom: 20px; }
+.addi-step-title { font-family: var(--serif); font-size: 26px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.2; }
+.addi-step-sub { font-size: 14px; color: var(--text-dim); line-height: 1.6; max-width: 430px; margin: 0 auto 26px; }
+.addi-step-sub b { color: var(--gold-d); }
+.addi-step-data { display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px; margin-bottom: 24px; text-align: left; }
+.addi-step-drow { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 2px; font-size: 13.5px; color: var(--text-muted); border-bottom: 1px solid rgba(0,0,0,0.06); }
+.addi-step-drow:last-child { border-bottom: none; }
+.addi-step-drow b { color: var(--text); font-weight: 700; }
+.addi-step-drow.total b { color: var(--gold-d); font-size: 19px; font-family: var(--serif); }
+.addi-step-widget { position: relative; background: var(--bg); border: 1.5px solid var(--gold); border-radius: 14px; padding: 24px 20px; margin-bottom: 18px; box-shadow: 0 0 0 4px rgba(201,168,76,0.08); }
+.addi-step-widget::before { content: "👇 Toca aquí"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #1a1407; font-family: var(--sans); font-size: 11px; font-weight: 800; letter-spacing: 0.5px; padding: 4px 14px; border-radius: 999px; white-space: nowrap; box-shadow: 0 4px 12px rgba(201,168,76,0.35); }
+.addi-step-cta { font-size: 13.5px; color: var(--gold-d); background: rgba(201,168,76,0.1); border-radius: 10px; padding: 13px 16px; line-height: 1.55; margin-bottom: 16px; }
+.addi-step-cta b { color: var(--gold-d); }
+@media (max-width: 768px) { .addi-step-card { padding: 30px 20px; } .addi-step-title { font-size: 22px; } .addi-step-widget { padding: 22px 14px; } }
+
 /* ── RESULTADO DE PAGO ── */
 .pay-result-wrap { padding: 70px 24px 110px; background: var(--bg); display: flex; justify-content: center; }
 .pay-result { max-width: 520px; width: 100%; text-align: center; background: var(--bg2); border: 1px solid var(--border); padding: 48px 36px; }
@@ -1765,7 +1785,7 @@ export default function ReyDelAroma() {
   const sentRefs = useRef(new Set());     // evita enviar el mismo pedido dos veces
   const addiSentRef = useRef(false);      // un solo registro de pedido por checkout con Addi
   const addiBoxRef = useRef(null);        // contenedor del widget de Addi (para dispararlo desde el botón dorado)
-  const [addiOpen, setAddiOpen] = useState(false); // respaldo: muestra el widget si no se puede abrir solo
+  const [addiStep, setAddiStep] = useState(false); // paso Addi: oculta el formulario y muestra solo el widget
 
   /* ── ENVÍO + CUPONES ── */
   const [coupons, setCoupons] = useState(loadCoupons);
@@ -2244,6 +2264,7 @@ export default function ReyDelAroma() {
     if (!items || !items.length) return;
     setCheckoutItems(items);
     addiSentRef.current = false;
+    setAddiStep(false);
     setCartOpen(false);
     setMenuOpen(false);
     const first = ["wompi", "addi", "sistecredito"].find((m) => PAYMENTS[m]?.enabled);
@@ -2378,26 +2399,30 @@ export default function ReyDelAroma() {
     sendOrder(buildOrderPayload(newReference()));
   };
 
-  /* Botón dorado "Pagar con Addi": registra el pedido y ACTIVA el mismo enlace
-     "Pide un cupo" del widget oficial de Addi (el que sí funciona en la ficha
+  /* Botón dorado "Pagar con Addi": registra el pedido, OCULTA el formulario y
+     muestra un paso dedicado con SOLO el widget de Addi, y ACTIVA el mismo
+     enlace "Pide un cupo" del widget oficial (el que sí funciona en la ficha
      de producto), llevando al cliente al portal de Addi.
 
      El widget de Addi es un web component (Stencil) y su enlace vive dentro de
-     su shadow DOM. Aquí buscamos ese enlace SOLO dentro del contenedor del
-     widget (nunca en todo el bloque, para no clicar el propio botón dorado),
-     atravesando el shadow DOM a cualquier profundidad, y lo activamos. */
+     su shadow DOM. Buscamos ese enlace SOLO dentro del contenedor del widget
+     del paso Addi (.addi-step-widget), nunca en todo el panel (ahí también
+     está el botón "Volver"), atravesando el shadow DOM a cualquier profundidad. */
   const triggerAddi = () => {
     if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío"); return; }
     captureAddiOrder();
 
-    // Mostramos el widget: debe estar visible para poder activar su enlace.
-    setAddiOpen(true);
+    // Ocultamos el formulario y mostramos el paso Addi (solo el widget).
+    setAddiStep(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // OJO: buscamos únicamente dentro del contenedor del widget (.co-addi-w-wrap).
-    // Si buscáramos en addiBoxRef (todo el bloque .co-addi) encontraríamos el
-    // propio botón dorado y se haría clic a sí mismo en bucle.
-    const box = addiBoxRef.current;
-    const getWrap = () => (box ? box.querySelector(".co-addi-w-wrap") : null);
+    // OJO: leemos el ref FRESCO en cada intento. Al tocar el botón, el panel
+    // .addi-step aún no está montado; tras el re-render, addiBoxRef apunta a él.
+    // Buscamos solo dentro de .addi-step-widget para no clicar el botón "Volver".
+    const getWrap = () => {
+      const box = addiBoxRef.current;
+      return box ? box.querySelector(".addi-step-widget") : null;
+    };
 
     const SEL = "button, a, [role='button']";
 
@@ -2462,9 +2487,9 @@ export default function ReyDelAroma() {
         deepFindText(wrap) ||
         (wrap && (wrap.querySelector("addi-product-widget") || wrap.querySelector("addi-widget")));
       if (target && realClick(target)) return;       // ✔ enlace de Addi activado
-      if (tries < 12) setTimeout(attempt, 160);       // si aún no pinta, reintenta
+      if (tries < 22) setTimeout(attempt, 170);       // si aún no pinta, reintenta (~3.7s)
     };
-    setTimeout(attempt, 140);
+    setTimeout(attempt, 180);
   };
 
   /* ── ADMIN ── */
@@ -3210,11 +3235,40 @@ export default function ReyDelAroma() {
     return (
       <div className="co-wrap">
         <div className="bc">
-          <span className="bc-lnk" onClick={() => setView("store")}>Inicio</span>
+          <span className="bc-lnk" onClick={() => { setAddiStep(false); setView("store"); }}>Inicio</span>
           <span className="bc-sep">›</span>
-          <span className="cur">Finalizar compra</span>
+          {addiStep ? (
+            <>
+              <span className="bc-lnk" onClick={() => setAddiStep(false)}>Finalizar compra</span>
+              <span className="bc-sep">›</span>
+              <span className="cur">Pagar con Addi</span>
+            </>
+          ) : (
+            <span className="cur">Finalizar compra</span>
+          )}
         </div>
 
+        {addiStep ? (
+          /* ── PASO ADDI: formulario oculto, solo el widget ── */
+          <div className="addi-step" ref={addiBoxRef}>
+            <button className="addi-step-back" type="button" onClick={() => setAddiStep(false)}>← Volver a mis datos</button>
+            <div className="addi-step-card">
+              <img className="addi-step-logo" src={logoAddi} alt="Addi" />
+              <h2 className="addi-step-title">Solicita tu cupo con Addi</h2>
+              <p className="addi-step-sub">Tus datos ya quedaron registrados. Toca <b>“Pide un cupo”</b> en el recuadro de abajo para continuar con Addi.</p>
+              <div className="addi-step-data">
+                <div className="addi-step-drow"><span>Cliente</span><b>{coForm.name || "—"}</b></div>
+                <div className="addi-step-drow"><span>Ciudad</span><b>{coForm.city === SHIPPING.otherLabel ? (coForm.cityCustom.trim() || "Otra ciudad") : (coForm.city || "—")}</b></div>
+                <div className="addi-step-drow total"><span>Total a pagar</span><b>{cop(total)}</b></div>
+              </div>
+              <div className="addi-step-widget">
+                <AddiWidget price={total} className="co-addi-w" />
+              </div>
+              <div className="addi-step-cta">Toca <b>“Pide un cupo”</b> y valida con tu cédula y WhatsApp en minutos. Sin tarjeta, 100% en línea.</div>
+              <div className="co-secure">🔒 Pago seguro · Addi asume el crédito y tú recibes tu pedido</div>
+            </div>
+          </div>
+        ) : (
         <div className="co-grid">
           {/* IZQUIERDA — datos + método de pago */}
           <div className="co-main">
@@ -3312,14 +3366,11 @@ export default function ReyDelAroma() {
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
             {payMethod === "addi" && PAYMENTS.addi.enabled ? (
-              <div className="co-addi" ref={addiBoxRef}>
+              <div className="co-addi">
                 <button className="co-pay-btn" type="button" onClick={triggerAddi} disabled={placing}>
                   Pagar con Addi
                 </button>
                 <p className="co-addi-note">Solicita tu cupo en minutos y difiere tu compra en cuotas. 100% en línea, sin tarjeta.</p>
-                <div className={`co-addi-w-wrap${addiOpen ? " open" : ""}`} onClickCapture={captureAddiOrder}>
-                  <AddiWidget price={total} className="co-addi-w" />
-                </div>
                 <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
               </div>
             ) : (
@@ -3333,6 +3384,7 @@ export default function ReyDelAroma() {
             <a className="co-help" href={waLink("Hola Rey del Aroma 👑, tengo una duda con mi compra.")} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbenos</a>
           </aside>
         </div>
+        )}
       </div>
     );
   };
