@@ -787,13 +787,6 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-wrap { padding: 22px 16px 56px; }
   .bc { margin-bottom: 24px; }
   .pd-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  /* Galería en móvil: foto grande arriba y TODAS las miniaturas en una fila
-     debajo (se acomodan en varias líneas si son muchas). Antes iban en una
-     columna estrecha a la izquierda que en el celular quedaba apretada. */
-  .pd-media { flex-direction: column; gap: 12px; align-items: stretch; }
-  .pd-media > .pd-main { order: 1; width: 100%; flex: 0 0 auto; }
-  .pd-media > .pd-gallery { order: 2; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
-  .pd-thumb { width: 66px; height: 66px; }
   .pd-name { font-size: 40px; }
   .pd-price { font-size: 34px; }
   .feats { grid-template-columns: repeat(2,1fr); }
@@ -2385,36 +2378,93 @@ export default function ReyDelAroma() {
     sendOrder(buildOrderPayload(newReference()));
   };
 
-  /* Botón dorado "Pagar con Addi": registra el pedido y dispara el flujo de Addi.
-     Si el widget expone un botón en el DOM (light o shadow) lo activamos en el
-     mismo gesto del usuario (evita el bloqueo de pop-ups). Si viene dentro de un
-     iframe y no se puede activar solo, mostramos el widget para tocarlo. */
+  /* Botón dorado "Pagar con Addi": registra el pedido y ACTIVA el mismo enlace
+     "Pide un cupo" del widget oficial de Addi (el que sí funciona en la ficha
+     de producto), llevando al cliente al portal de Addi.
+
+     El widget de Addi es un web component (Stencil) y su enlace vive dentro de
+     su shadow DOM. Aquí buscamos ese enlace SOLO dentro del contenedor del
+     widget (nunca en todo el bloque, para no clicar el propio botón dorado),
+     atravesando el shadow DOM a cualquier profundidad, y lo activamos. */
   const triggerAddi = () => {
     if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío"); return; }
     captureAddiOrder();
 
-    const root = addiBoxRef.current;
+    // Mostramos el widget: debe estar visible para poder activar su enlace.
+    setAddiOpen(true);
+
+    // OJO: buscamos únicamente dentro del contenedor del widget (.co-addi-w-wrap).
+    // Si buscáramos en addiBoxRef (todo el bloque .co-addi) encontraríamos el
+    // propio botón dorado y se haría clic a sí mismo en bucle.
+    const box = addiBoxRef.current;
+    const getWrap = () => (box ? box.querySelector(".co-addi-w-wrap") : null);
+
     const SEL = "button, a, [role='button']";
-    const findClickable = (node) => {
-      if (!node) return null;
-      const direct = node.querySelector && node.querySelector(SEL);
-      if (direct) return direct;
-      const all = (node.querySelectorAll && node.querySelectorAll("*")) || [];
-      for (const el of all) {
-        if (el.shadowRoot) {
-          const inner = el.shadowRoot.querySelector(SEL);
-          if (inner) return inner;
-        }
+
+    // Búsqueda profunda que atraviesa hijos normales y shadow roots abiertos.
+    const deepFind = (node, depth = 0) => {
+      if (!node || depth > 10) return null;
+      if (node.nodeType === 1 && node.matches && node.matches(SEL)) return node;
+      const kids = node.children ? Array.from(node.children) : [];
+      for (const el of kids) {
+        const hit = deepFind(el, depth + 1);
+        if (hit) return hit;
+      }
+      if (node.shadowRoot) {
+        const hit = deepFind(node.shadowRoot, depth + 1);
+        if (hit) return hit;
       }
       return null;
     };
 
-    const btn = findClickable(root);
-    if (btn) {
-      btn.click();           // mismo gesto del usuario → sin bloqueo de pop-ups
-    } else {
-      setAddiOpen(true);     // respaldo: el widget queda visible para continuar
-    }
+    // Respaldo por texto: por si el enlace no es <a>/<button> sino un <span>
+    // clicable ("Pide un cupo" / "Solicita tu cupo").
+    const deepFindText = (node, depth = 0) => {
+      if (!node || depth > 10) return null;
+      const kids = node.children ? Array.from(node.children) : [];
+      for (const el of kids) {
+        const hit = deepFindText(el, depth + 1);
+        if (hit) return hit;
+      }
+      if (node.shadowRoot) {
+        const hit = deepFindText(node.shadowRoot, depth + 1);
+        if (hit) return hit;
+      }
+      if (node.nodeType === 1) {
+        const t = (node.textContent || "").trim().toLowerCase();
+        const leaf = !node.children || node.children.length <= 2;
+        if (leaf && t.length < 40 && /(cupo|solicita|pide)/.test(t)) return node;
+      }
+      return null;
+    };
+
+    // Clic "real": secuencia de eventos para máxima compatibilidad con el widget.
+    const realClick = (el) => {
+      if (!el) return false;
+      try {
+        ["pointerdown", "pointerup", "click"].forEach((t) =>
+          el.dispatchEvent(new MouseEvent(t, { bubbles: true, cancelable: true, view: window }))
+        );
+        return true;
+      } catch {
+        try { el.click(); return true; } catch { return false; }
+      }
+    };
+
+    // El widget puede tardar en pintar su enlace la primera vez que se hace
+    // visible → reintentamos con pequeños intervalos (~2s de margen total).
+    let tries = 0;
+    const attempt = () => {
+      tries += 1;
+      const wrap = getWrap();
+      const target =
+        deepFind(wrap) ||
+        deepFindText(wrap) ||
+        (wrap && (wrap.querySelector("addi-product-widget") || wrap.querySelector("addi-widget")));
+      if (target && realClick(target)) return;       // ✔ enlace de Addi activado
+      if (tries < 12) setTimeout(attempt, 160);       // si aún no pinta, reintenta
+    };
+    setTimeout(attempt, 140);
   };
 
   /* ── ADMIN ── */
