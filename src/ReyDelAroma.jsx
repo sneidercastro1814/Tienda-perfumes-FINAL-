@@ -877,16 +877,20 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .co-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .co-form .fg.full { grid-column: 1/-1; }
 
-.pay-methods { display: flex; flex-direction: column; gap: 12px; }
-.pay-card { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; text-align: left; background: var(--bg2); border: 1px solid rgba(0,0,0,0.1); padding: 18px 20px; cursor: pointer; transition: all 0.25s; font-family: var(--sans); }
-.pay-card:hover { border-color: var(--border-h); background: #f6f6f2; }
-.pay-card.act { border-color: var(--gold); background: rgba(201,168,76,0.06); box-shadow: inset 0 0 0 1px var(--gold); }
-.pay-card-logo { height: 32px; width: auto; display: block; border-radius: 6px; }
-.pay-desc { font-size: 13px; color: var(--text-dim); letter-spacing: 0.3px; }
-.pay-badge { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); border: 1px solid var(--border); padding: 5px 10px; border-radius: 3px; white-space: nowrap; }
-.pay-check { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #000; font-size: 13px; font-weight: 700; display: none; align-items: center; justify-content: center; }
-.pay-card.act .pay-check { display: flex; }
-.pay-card.act .pay-badge { visibility: hidden; }
+/* ── MÉTODOS DE PAGO estilo lista con selección (radio) ── */
+.pay-radios { display: flex; flex-direction: column; gap: 12px; }
+.pay-radio { border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; background: var(--bg2); overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+.pay-radio:hover { border-color: var(--border-h); }
+.pay-radio.act { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); background: rgba(201,168,76,0.05); }
+.pay-radio-head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; width: 100%; text-align: left; background: none; border: none; padding: 16px 18px; cursor: pointer; font-family: var(--sans); }
+.pay-radio-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c6c6be; flex-shrink: 0; position: relative; transition: border-color 0.2s; }
+.pay-radio.act .pay-radio-dot { border-color: var(--gold); }
+.pay-radio.act .pay-radio-dot::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--gold); }
+.pay-radio-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pay-radio-name { font-size: 14.5px; font-weight: 700; color: var(--text); letter-spacing: 0.2px; }
+.pay-radio-desc { font-size: 12.5px; color: var(--text-dim); letter-spacing: 0.2px; }
+.pay-radio-logo { height: 30px; width: auto; max-width: 96px; object-fit: contain; display: block; }
+.pay-radio-body { padding: 13px 18px 16px 54px; font-size: 13px; color: var(--text-muted); line-height: 1.55; letter-spacing: 0.2px; border-top: 1px solid rgba(0,0,0,0.06); background: rgba(0,0,0,0.02); }
 
 .co-summary { background: var(--bg2); border: 1px solid var(--border); padding: 28px 26px; position: sticky; top: 92px; }
 .co-sum-t { font-family: var(--serif); font-size: 28px; font-weight: 400; margin-bottom: 18px; letter-spacing: 0.5px; }
@@ -904,6 +908,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .co-pay-btn { width: 100%; min-height: 58px; padding: 17px 18px; background: var(--gold); color: #000; border: none; font-size: 13px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; cursor: pointer; transition: all 0.3s; line-height: 1.4; }
 .co-pay-btn:hover { background: var(--gold-l); box-shadow: 0 12px 34px rgba(201,168,76,0.35); transform: translateY(-2px); }
 .co-pay-btn:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
+.co-pay-sub { font-size: 12.5px; color: var(--text-dim); text-align: center; letter-spacing: 0.2px; line-height: 1.5; margin-top: 12px; }
+.co-pay-sub b { color: var(--gold-d); }
 .co-secure { font-size: 12px; color: var(--text-muted); text-align: center; letter-spacing: 1px; margin-top: 16px; }
 .co-help { display: block; text-align: center; margin-top: 14px; font-size: 12px; letter-spacing: 1.5px; color: var(--text-muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
 .co-help:hover { color: var(--gold); }
@@ -967,8 +973,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .co-wrap { padding: 24px 16px 64px; }
   .co-title { font-size: 34px; }
   .co-form { grid-template-columns: 1fr; }
-  .pay-card { padding: 15px 14px; gap: 12px; grid-template-columns: auto 1fr; }
-  .pay-badge { display: none; }
+  .pay-radio-head { padding: 14px 14px; gap: 11px; }
+  .pay-radio-logo { height: 26px; max-width: 76px; }
+  .pay-radio-body { padding: 12px 14px 14px 47px; }
   .co-summary { padding: 22px 18px; }
 }
 
@@ -3217,9 +3224,9 @@ export default function ReyDelAroma() {
     const { subtotal, couponDisc, promoUnits, promoDiscount, shipping, total } = computeTotals();
     const freeLeft = SHIPPING.bogotaFreeFrom - subtotal;
     const methods = [
-      { id: "wompi", name: "Wompi", logo: logoWompi, desc: "Tarjeta · PSE · Nequi · Bancolombia", badge: "Pago inmediato" },
-      { id: "addi", name: "Addi", logo: logoAddi, desc: "Paga a cuotas, sin tarjeta", badge: "A cuotas" },
-      { id: "sistecredito", name: "Sistecrédito", logo: logoSistecredito, desc: "Crédito en cuotas fijas", badge: "A crédito" },
+      { id: "wompi", name: "Wompi", logo: logoWompi, desc: "Tarjeta · PSE · Nequi · Bancolombia", hint: "Al realizar tu pedido te llevaremos a la pasarela segura de Wompi para completar el pago con tarjeta, PSE, Nequi o Bancolombia." },
+      { id: "addi", name: "Addi", logo: logoAddi, desc: "Paga a cuotas, sin tarjeta", hint: "Al realizar tu pedido solicitas tu cupo con Addi y difieres tu compra en cuotas. 100% en línea, sin tarjeta." },
+      { id: "sistecredito", name: "Sistecrédito", logo: logoSistecredito, desc: "Crédito en cuotas fijas", hint: "Al realizar tu pedido te redirigimos a Sistecrédito para pagar con tu cupo en cuotas fijas." },
     ].filter((m) => PAYMENTS[m.id]?.enabled);
     const activeName = methods.find((m) => m.id === payMethod)?.name || "";
 
@@ -3291,14 +3298,19 @@ export default function ReyDelAroma() {
             </div>
 
             <div className="co-sec-t" style={{ marginTop: 30 }}>¿Cómo quieres pagar?</div>
-            <div className="pay-methods">
+            <div className="pay-radios">
               {methods.map((m) => (
-                <button key={m.id} type="button" className={`pay-card${payMethod === m.id ? " act" : ""}`} onClick={() => setPayMethod(m.id)}>
-                  <img className="pay-card-logo" src={m.logo} alt={m.name} />
-                  <span className="pay-desc">{m.desc}</span>
-                  <span className="pay-badge">{m.badge}</span>
-                  <span className="pay-check">✓</span>
-                </button>
+                <div key={m.id} className={`pay-radio${payMethod === m.id ? " act" : ""}`}>
+                  <button type="button" className="pay-radio-head" onClick={() => setPayMethod(m.id)} aria-pressed={payMethod === m.id}>
+                    <span className="pay-radio-dot" aria-hidden="true"></span>
+                    <span className="pay-radio-info">
+                      <span className="pay-radio-name">{m.name}</span>
+                      <span className="pay-radio-desc">{m.desc}</span>
+                    </span>
+                    <img className="pay-radio-logo" src={m.logo} alt={m.name} />
+                  </button>
+                  {payMethod === m.id && <div className="pay-radio-body">{m.hint}</div>}
+                </div>
               ))}
             </div>
           </div>
@@ -3356,22 +3368,16 @@ export default function ReyDelAroma() {
               )}
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
-            {payMethod === "addi" && PAYMENTS.addi.enabled ? (
-              <div className="co-addi">
-                <button className="co-pay-btn" type="button" onClick={triggerAddi} disabled={placing}>
-                  Pagar con Addi
-                </button>
-                <p className="co-addi-note">Solicita tu cupo en minutos y difiere tu compra en cuotas. 100% en línea, sin tarjeta.</p>
-                <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
-              </div>
-            ) : (
-              <>
-                <button className="co-pay-btn" onClick={placeOrder} disabled={placing}>
-                  {placing ? "Redirigiendo a la pasarela…" : `Pagar con ${activeName}`}
-                </button>
-                <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
-              </>
-            )}
+            <button
+              className="co-pay-btn"
+              type="button"
+              onClick={() => (payMethod === "addi" && PAYMENTS.addi?.enabled ? triggerAddi() : placeOrder())}
+              disabled={placing}
+            >
+              {placing ? "Redirigiendo a la pasarela…" : "Realizar pedido ✓"}
+            </button>
+            <p className="co-pay-sub">Se abrirá {activeName ? <b>{activeName}</b> : "el método de pago"} para completar tu compra.</p>
+            <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
             <a className="co-help" href={waLink("Hola Rey del Aroma 👑, tengo una duda con mi compra.")} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbenos</a>
           </aside>
         </div>
