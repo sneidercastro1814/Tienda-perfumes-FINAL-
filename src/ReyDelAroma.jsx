@@ -19,6 +19,7 @@ import selloOriginal from "./assets/sello-original.png";
    ════════════════════════════════════════════════════════════════ */
 const WHATSAPP = "573189917571";          // ← Tu número de WhatsApp (con 57)
 const ADMIN_PASSWORD = "admin123";         // ← Cambia tu contraseña de admin
+const ADMIN_PANEL_KEY = "acceso-rey";      // ← Palabra secreta del enlace privado del panel: reydelaroma.com/?panel=acceso-rey (cámbiala)
 const LS_KEY = "rda-catalog-v3";
 const LS_COUPONS = "rda-coupons-v1";       // ← Cupones guardados (los crea el admin)
 const LS_COLLECTIONS = "rda-collections-v1"; // ← Colecciones que crea el admin
@@ -521,10 +522,8 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ── MEDIOS DE PAGO ── */
 .pay-section { padding: 34px 52px 4px; text-align: center; }
 .pay-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
-/* Acceso discreto al panel de administración (solo la tuerca, el cliente no la nota) */
-.admin-gear { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 22px auto 0; padding: 0; background: none; border: none; border-radius: 50%; color: var(--text-muted); opacity: 0.28; font-size: 17px; line-height: 1; cursor: pointer; transition: opacity 0.25s, color 0.25s, transform 0.5s ease; }
-.admin-gear:hover { opacity: 0.9; color: var(--gold-d); transform: rotate(90deg); }
-.admin-gear:active { transform: rotate(90deg) scale(0.92); }
+/* El panel de administración ya no aparece en la página: se entra por el enlace
+   privado  reydelaroma.com/?panel=<clave>  (ver ADMIN_PANEL_KEY arriba). */
 .pay-badges { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
 .pay-chip { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.25s; }
 .pay-chip:hover { transform: translateY(-2px); }
@@ -1673,6 +1672,16 @@ function readAddiReturn() {
   }
 }
 
+/* ¿La URL trae la palabra secreta del panel?  (?panel=<clave>)
+   Este es el "enlace aparte" del administrador. La página ya NO muestra ninguna
+   tuerca, así que los visitantes normales nunca ven el panel; solo quien tenga
+   este enlace (y luego la contraseña) puede entrar. */
+function readAdminParam() {
+  try {
+    return new URLSearchParams(window.location.search).get("panel") === ADMIN_PANEL_KEY;
+  } catch { return false; }
+}
+
 /* Lee ?categoria=<slug> de la URL y devuelve el nombre de la categoría (o null).
    Es lo que permite que una pestaña nueva se abra ya mostrando esa categoría. */
 function readCategoryParam() {
@@ -1710,6 +1719,7 @@ export default function ReyDelAroma() {
   const [view, setView] = useState(() => {
     // 1) La URL manda (retorno de pago o enlace compartido de categoría/búsqueda)
     if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste || readAddiReturn().fromAddi) return "pago-resultado";
+    if (readAdminParam()) return "admin";   // ← enlace privado del panel (reydelaroma.com/?panel=…)
     if (initialSearch) return "search";
     if (initialCat) return "category";
     // 2) Si no, restauramos la última página abierta (para que un F5 no devuelva al inicio)
@@ -1991,6 +2001,14 @@ export default function ReyDelAroma() {
     try { ref = (JSON.parse(localStorage.getItem("rda-last-order") || "{}").reference) || ""; } catch { /* ignore */ }
     setPayResult({ loading: false, status: "PENDING", method: "addi", reference: ref });
     setCart([]);
+  }, []);
+
+  /* ── ENTRADA POR EL ENLACE PRIVADO DEL PANEL ──
+     Si abrió con ?panel=<clave>, ya mostramos el panel (arriba). Aquí limpiamos
+     la URL para que la palabra secreta no quede a la vista ni en el historial. */
+  useEffect(() => {
+    if (!readAdminParam()) return;
+    try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
   }, []);
 
   /* auto-avance del carrusel (cada banner con su propia duración) */
@@ -2632,7 +2650,6 @@ export default function ReyDelAroma() {
       <div className="pay-section">
         <div className="pay-label">Medios de pago aceptados</div>
         <PayBadges />
-        <button className="admin-gear" onClick={() => { setView("admin"); setMenuOpen(false); window.scrollTo({ top: 0 }); }} aria-label="Administración" title="Administración">⚙</button>
       </div>
       <div className="footer-bot">
         <div className="footer-logo">REY DEL AROMA</div>
