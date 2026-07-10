@@ -925,17 +925,6 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .co-addi-w-wrap { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease; }
 .co-addi-w-wrap.open { max-height: 340px; opacity: 1; margin-top: 16px; }
 
-/* ── ADDI: lanzador oculto + respaldo visible ──
-   Oculto pero PRESENTE en el viewport (opacity 0 + click-through) para que el
-   web component pinte su enlace aunque use carga diferida por visibilidad, y
-   así poder auto-clicarlo. .show lo revela como respaldo para tocarlo. */
-.addi-launch { position: fixed; left: 0; top: 0; width: 360px; max-width: 96vw; opacity: 0; z-index: -1; }
-.addi-launch, .addi-launch * { pointer-events: none; }
-.addi-launch.show { position: static; width: auto; max-width: none; opacity: 1; z-index: auto; margin-top: 16px; padding: 20px 18px; background: var(--bg); border: 1.5px solid var(--gold); border-radius: 14px; box-shadow: 0 0 0 4px rgba(201,168,76,0.08); animation: catFade 0.35s ease; }
-.addi-launch.show, .addi-launch.show * { pointer-events: auto; }
-.addi-launch-note { font-size: 13.5px; color: var(--gold-d); font-weight: 700; text-align: center; line-height: 1.5; margin-bottom: 14px; }
-.addi-launch-note b { color: var(--gold-d); }
-
 /* ── RESULTADO DE PAGO ── */
 .pay-result-wrap { padding: 70px 24px 110px; background: var(--bg); display: flex; justify-content: center; }
 .pay-result { max-width: 520px; width: 100%; text-align: center; background: var(--bg2); border: 1px solid var(--border); padding: 48px 36px; }
@@ -1674,6 +1663,16 @@ function readSistecreditoReturn() {
   }
 }
 
+/* ¿El usuario está volviendo de Addi? Al terminar en el portal de Addi, este
+   redirige a  redirectionUrl:  ?addi=1  (el crédito se confirma luego por Addi). */
+function readAddiReturn() {
+  try {
+    return { fromAddi: new URLSearchParams(window.location.search).get("addi") === "1" };
+  } catch {
+    return { fromAddi: false };
+  }
+}
+
 /* Lee ?categoria=<slug> de la URL y devuelve el nombre de la categoría (o null).
    Es lo que permite que una pestaña nueva se abra ya mostrando esa categoría. */
 function readCategoryParam() {
@@ -1710,7 +1709,7 @@ export default function ReyDelAroma() {
   const savedNav = loadNav(); // página que el cliente estaba viendo antes de recargar (solo esta pestaña)
   const [view, setView] = useState(() => {
     // 1) La URL manda (retorno de pago o enlace compartido de categoría/búsqueda)
-    if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste) return "pago-resultado";
+    if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste || readAddiReturn().fromAddi) return "pago-resultado";
     if (initialSearch) return "search";
     if (initialCat) return "category";
     // 2) Si no, restauramos la última página abierta (para que un F5 no devuelva al inicio)
@@ -1762,7 +1761,7 @@ export default function ReyDelAroma() {
   const [payMethod, setPayMethod] = useState("wompi");
   const [coForm, setCoForm] = useState({ name: "", cedula: "", phone: "", email: "", city: "", cityCustom: "", address: "" });
   const [placing, setPlacing] = useState(false);
-  const [payResult, setPayResult] = useState(() => (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste ? { loading: true } : null)); // resultado tras volver de Wompi o Sistecrédito
+  const [payResult, setPayResult] = useState(() => (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste || readAddiReturn().fromAddi ? { loading: true } : null)); // resultado tras volver de Wompi, Sistecrédito o Addi
 
   /* ── VENTAS (panel admin en tiempo real) ── */
   const [orders, setOrders] = useState([]);
@@ -1772,10 +1771,6 @@ export default function ReyDelAroma() {
   const [adminToken, setAdminToken] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
   const [tokenInput, setTokenInput] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
   const sentRefs = useRef(new Set());     // evita enviar el mismo pedido dos veces
-  const addiSentRef = useRef(false);      // un solo registro de pedido por checkout con Addi
-  const addiBoxRef = useRef(null);        // contenedor del widget de Addi (para dispararlo desde el botón dorado)
-  const [addiGo, setAddiGo] = useState(false);        // "Conectando con Addi…" tras tocar Realizar pedido
-  const [addiFallback, setAddiFallback] = useState(false); // respaldo: muestra el widget para tocarlo si el auto-clic falla
 
   /* ── ENVÍO + CUPONES ── */
   const [coupons, setCoupons] = useState(loadCoupons);
@@ -1983,6 +1978,19 @@ export default function ReyDelAroma() {
       .then((r) => r.json())
       .then((d) => finish(d.status || "", d.reference || ""))
       .catch(() => finish(""));
+  }, []);
+
+  /* ── RETORNO DESDE ADDI ──
+     Addi confirma el crédito de forma asíncrona (y por su webhook), así que al
+     volver mostramos un resultado "en proceso" amable. Limpiamos la URL y, como
+     el cliente ya completó el flujo, vaciamos el carrito. */
+  useEffect(() => {
+    if (!readAddiReturn().fromAddi) return;
+    window.history.replaceState({}, "", window.location.pathname);
+    let ref = "";
+    try { ref = (JSON.parse(localStorage.getItem("rda-last-order") || "{}").reference) || ""; } catch { /* ignore */ }
+    setPayResult({ loading: false, status: "PENDING", method: "addi", reference: ref });
+    setCart([]);
   }, []);
 
   /* auto-avance del carrusel (cada banner con su propia duración) */
@@ -2253,9 +2261,6 @@ export default function ReyDelAroma() {
   const goCheckout = (items) => {
     if (!items || !items.length) return;
     setCheckoutItems(items);
-    addiSentRef.current = false;
-    setAddiGo(false);
-    setAddiFallback(false);
     setCartOpen(false);
     setMenuOpen(false);
     const first = ["wompi", "addi", "sistecredito"].find((m) => PAYMENTS[m]?.enabled);
@@ -2378,89 +2383,43 @@ export default function ReyDelAroma() {
       }
       return;
     }
-    setPlacing(false);
-    // Addi se gestiona con el widget en el resumen (registro de pedido al tocar el widget).
-  };
-
-  /* Registro del pedido cuando el cliente paga con Addi (al tocar el widget) */
-  const captureAddiOrder = () => {
-    if (addiSentRef.current) return;
-    if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío para registrar tu pedido"); return; }
-    addiSentRef.current = true;
-    sendOrder(buildOrderPayload(newReference()));
-  };
-
-  /* Botón "Realizar pedido" con Addi: registra el pedido y abre el checkout de
-     Addi DIRECTO (sin paso intermedio), igual que Wompi/Sistecrédito.
-
-     El widget de Addi es un web component (Stencil) y su enlace "Pide un cupo"
-     vive dentro de su shadow DOM. Montamos el widget OCULTO (addiBoxRef) y
-     clicamos ese enlace por el cliente. Si el widget no alcanza a pintar su
-     enlace, mostramos el widget como respaldo para tocarlo manualmente. */
-  const triggerAddi = () => {
-    if (!isCheckoutFormValid()) { showToast("Completa tus datos de envío"); return; }
-    captureAddiOrder();
-    setAddiFallback(false);
-    setAddiGo(true);   // el botón pasa a "Conectando con Addi…"
-    showToast("Conectando con Addi…");
-
-    const SEL = "button, a, [role='button']";
-    // Búsqueda profunda que atraviesa hijos normales y shadow roots abiertos.
-    const deepFind = (node, depth = 0) => {
-      if (!node || depth > 10) return null;
-      if (node.nodeType === 1 && node.matches && node.matches(SEL)) return node;
-      const kids = node.children ? Array.from(node.children) : [];
-      for (const el of kids) { const hit = deepFind(el, depth + 1); if (hit) return hit; }
-      if (node.shadowRoot) { const hit = deepFind(node.shadowRoot, depth + 1); if (hit) return hit; }
-      return null;
-    };
-    // Respaldo por texto: por si el enlace no es <a>/<button> sino un <span>.
-    const deepFindText = (node, depth = 0) => {
-      if (!node || depth > 10) return null;
-      const kids = node.children ? Array.from(node.children) : [];
-      for (const el of kids) { const hit = deepFindText(el, depth + 1); if (hit) return hit; }
-      if (node.shadowRoot) { const hit = deepFindText(node.shadowRoot, depth + 1); if (hit) return hit; }
-      if (node.nodeType === 1) {
-        const t = (node.textContent || "").trim().toLowerCase();
-        const leaf = !node.children || node.children.length <= 2;
-        if (leaf && t.length < 40 && /(cupo|solicita|pide)/.test(t)) return node;
-      }
-      return null;
-    };
-    const realClick = (el) => {
-      if (!el) return false;
+    if (payMethod === "addi") {
       try {
-        ["pointerdown", "pointerup", "click"].forEach((t) =>
-          el.dispatchEvent(new MouseEvent(t, { bubbles: true, cancelable: true, view: window }))
-        );
-        return true;
-      } catch { try { el.click(); return true; } catch { return false; } }
-    };
-
-    // El widget puede tardar en pintar su enlace → reintentamos (~4.5s de margen).
-    let tries = 0;
-    const attempt = () => {
-      tries += 1;
-      const wrap = addiBoxRef.current;
-      const target =
-        deepFind(wrap) ||
-        deepFindText(wrap) ||
-        (wrap && (wrap.querySelector("addi-product-widget") || wrap.querySelector("addi-widget")));
-      if (target && realClick(target)) {
-        // Addi abierto (redirección o modal). Liberamos el botón por si el
-        // cliente cierra Addi y vuelve a la tienda.
-        setTimeout(() => setAddiGo(false), 3500);
-        return;
+        showToast("Conectando con Addi…");
+        const res = await fetch("/api/addi-create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reference,
+            amount: total,
+            shipping,
+            items: checkoutItems.map((it) => ({
+              name: it.name, brand: it.brand || "", size: it.size || "",
+              qty: it.qty, price: it.price, image: it.image || "",
+            })),
+            customer: {
+              name: coForm.name.trim(),
+              cedula: coForm.cedula.trim(),
+              phone: coForm.phone.trim(),
+              email: coForm.email.trim(),
+              city: order.customer.city,
+              address: coForm.address.trim(),
+            },
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok || !data.redirectUrl) {
+          throw new Error(data.error || "No se pudo iniciar el pago con Addi.");
+        }
+        window.location.href = data.redirectUrl;   // → checkout de Addi (directo, como Wompi/Sistecrédito)
+      } catch (e) {
+        setPlacing(false);
+        showToast(e.message || "No se pudo iniciar el pago con Addi.");
       }
-      if (tries < 26) { setTimeout(attempt, 170); return; }
-      // Si el widget no pintó su enlace a tiempo, mostramos el respaldo para
-      // tocarlo manualmente (nunca dejamos al cliente sin salida).
-      setAddiGo(false);
-      setAddiFallback(true);
-      showToast("Toca “Pide un cupo” para continuar con Addi");
-      setTimeout(() => { const w = addiBoxRef.current; if (w) w.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60);
-    };
-    setTimeout(attempt, 140);
+      return;
+    }
+
+    setPlacing(false);
   };
 
   /* ── ADMIN ── */
@@ -3245,7 +3204,7 @@ export default function ReyDelAroma() {
             <div className="pay-radios">
               {methods.map((m) => (
                 <div key={m.id} className={`pay-radio${payMethod === m.id ? " act" : ""}`}>
-                  <button type="button" className="pay-radio-head" onClick={() => { setPayMethod(m.id); setAddiFallback(false); setAddiGo(false); }} aria-pressed={payMethod === m.id}>
+                  <button type="button" className="pay-radio-head" onClick={() => setPayMethod(m.id)} aria-pressed={payMethod === m.id}>
                     <span className="pay-radio-dot" aria-hidden="true"></span>
                     <span className="pay-radio-info">
                       <span className="pay-radio-name">{m.name}</span>
@@ -3312,27 +3271,11 @@ export default function ReyDelAroma() {
               )}
             </div>
             <div className="co-total-row"><span>Total a pagar</span><span className="co-total">{cop(total)}</span></div>
-            <button
-              className="co-pay-btn"
-              type="button"
-              onClick={() => (payMethod === "addi" && PAYMENTS.addi?.enabled ? triggerAddi() : placeOrder())}
-              disabled={placing || addiGo}
-            >
-              {placing ? "Redirigiendo a la pasarela…" : addiGo ? "Conectando con Addi…" : "Realizar pedido ✓"}
+            <button className="co-pay-btn" type="button" onClick={placeOrder} disabled={placing}>
+              {placing ? "Redirigiendo a la pasarela…" : "Realizar pedido ✓"}
             </button>
             <p className="co-pay-sub">Se abrirá {activeName ? <b>{activeName}</b> : "el método de pago"} para completar tu compra.</p>
             <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
-
-            {/* Widget de Addi montado OCULTO (1×1 px, invisible) para dispararlo
-                directo al tocar "Realizar pedido". Si el auto-clic no logra
-                abrir Addi, .show lo muestra como respaldo para tocarlo. */}
-            {payMethod === "addi" && PAYMENTS.addi?.enabled && (
-              <div className={`addi-launch${addiFallback ? " show" : ""}`} ref={addiBoxRef} aria-hidden={!addiFallback}>
-                {addiFallback && <p className="addi-launch-note">Toca <b>“Pide un cupo”</b> para continuar con Addi 👇</p>}
-                <AddiWidget price={total} className="co-addi-w" />
-              </div>
-            )}
-
             <a className="co-help" href={waLink("Hola Rey del Aroma 👑, tengo una duda con mi compra.")} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbenos</a>
           </aside>
         </div>
