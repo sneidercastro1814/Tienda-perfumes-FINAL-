@@ -1381,8 +1381,6 @@ const isKingFavorite = (p) =>
 function ProductCard({ p, className = "", onOpen, onAdd }) {
   // Imagen de la tarjeta: portada; si no hay, la primera foto de la galería.
   const cardImg = p.image || (Array.isArray(p.images) && p.images.find(Boolean)) || "";
-  // Aromas del perfume (puede tener varios). Mostramos hasta 3 para no saturar la tarjeta.
-  const aromas = (Array.isArray(p.tags) && p.tags.length) ? p.tags.filter(Boolean) : (p.tag ? [p.tag] : []);
   return (
     <div className={`pcard${className ? " " + className : ""}`} onClick={() => onOpen(p)}>
       <div className="pcard-img">
@@ -1399,14 +1397,7 @@ function ProductCard({ p, className = "", onOpen, onAdd }) {
         <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
         <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
         <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-        {aromas.length > 0 && (
-          <div className="pcard-aromas">
-            {aromas.slice(0, 3).map((a) => (
-              <span key={a} className="pcard-aroma">{FAMILY_META[a]?.emoji || "✨"} {a}</span>
-            ))}
-            {aromas.length > 3 && <span className="pcard-aroma pcard-aroma-more">+{aromas.length - 3}</span>}
-          </div>
-        )}
+        {/* Los aromas ya NO se muestran en la tarjeta; solo aparecen al abrir el producto (Notas de aroma). */}
       </div>
       <div className="pcard-foot">
         <button className="quick-buy" onClick={(e) => { e.stopPropagation(); onAdd({ ...p, image: cardImg }, p.size || "", 1); }}>+ Agregar</button>
