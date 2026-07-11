@@ -168,12 +168,17 @@ async function buildWompiUrl({ amount, reference, email, phone, fullName }) {
   return `https://checkout.wompi.co/p/?${p.toString()}`;
 }
 
-/* Componente del widget de Addi (cuotas). Carga el bundle oficial una vez
-   y renderiza el web component <addi-widget>. Se re-monta al cambiar el
-   precio gracias a la "key". */
+/* Componente del widget de Addi (cuotas).
+   - Si hay ally-slug configurado (VITE_ADDI_SLUG), carga el bundle oficial y
+     renderiza el web component <addi-widget> con las cuotas REALES de Addi.
+   - Si no hay slug, muestra un estimado propio con el mismo estilo de la
+     tienda para que el bloque NUNCA quede vacío. Se re-monta al cambiar el
+     precio gracias a la "key". */
 function AddiWidget({ price, className }) {
+  const hasWidget = ADDI.enabled && !!ADDI.slug;
+
   useEffect(() => {
-    if (!ADDI.enabled || !ADDI.slug) return;
+    if (!hasWidget) return;
     const SRC = "https://s3.amazonaws.com/widgets.addi.com/bundle.min.js";
     if (!document.querySelector(`script[src="${SRC}"]`)) {
       const s = document.createElement("script");
@@ -181,12 +186,30 @@ function AddiWidget({ price, className }) {
       s.async = true;
       document.body.appendChild(s);
     }
-  }, []);
-  if (!ADDI.enabled || !ADDI.slug || !price) return null;
+  }, [hasWidget]);
+
   const cleanPrice = Math.round(Number(price) || 0);
+  if (!cleanPrice) return null;
+
+  // Estimado de referencia: 4 cuotas quincenales (redondeadas a $100).
+  const CUOTAS = 4;
+  const perCuota = Math.round(cleanPrice / CUOTAS / 100) * 100;
+
   return (
     <div className={`addi-box ${className || ""}`}>
-      <addi-widget key={cleanPrice} price={String(cleanPrice)} ally-slug={ADDI.slug}></addi-widget>
+      {hasWidget ? (
+        <addi-widget key={cleanPrice} price={String(cleanPrice)} ally-slug={ADDI.slug}></addi-widget>
+      ) : (
+        <div className="addi-fallback">
+          <img src={logoAddi} alt="Addi" className="addi-fb-logo" />
+          <div className="addi-fb-txt">
+            <span className="addi-fb-t">
+              Págalo en <b>{CUOTAS} cuotas</b> de <b>{cop(perCuota)}</b>
+            </span>
+            <span className="addi-fb-s">Con Addi · Sin tarjeta de crédito · Sujeto a aprobación</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -917,6 +940,13 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ── ADDI (widget de cuotas) ── */
 .addi-box { width: 100%; }
 .pd-addi { margin: 0 0 26px; }
+.addi-fallback { display: flex; align-items: center; gap: 14px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); padding: 13px 18px; }
+.addi-fb-logo { height: 26px; width: auto; flex-shrink: 0; object-fit: contain; }
+.addi-fb-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.addi-fb-t { font-size: 14px; color: var(--text); letter-spacing: 0.2px; line-height: 1.3; }
+.addi-fb-t b { color: var(--gold-d); font-weight: 700; }
+.addi-fb-s { font-size: 11px; color: var(--text-muted); letter-spacing: 0.3px; }
+@media (max-width: 768px) { .addi-fb-t { font-size: 13px; } .addi-fb-logo { height: 22px; } .addi-fallback { padding: 12px 15px; gap: 11px; } }
 .co-addi { margin-top: 4px; }
 .co-addi-lead { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
 .co-addi-w { margin-bottom: 0; }
