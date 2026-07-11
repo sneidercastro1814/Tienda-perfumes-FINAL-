@@ -633,16 +633,19 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 /* ── CARRITO ── */
 .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; backdrop-filter: blur(6px); overscroll-behavior: none; touch-action: none; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 400px; background: var(--bg2); border-left: 1px solid var(--border); z-index: 201; display: flex; flex-direction: column; animation: slideIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+.cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 400px; background: var(--bg2); border-left: 1px solid var(--border); z-index: 201; display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; animation: slideIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-.cart-hdr { padding: 24px 28px; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; background: var(--bg3); }
+.cart-hdr { padding: 24px 28px; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; background: var(--bg3); position: sticky; top: 0; z-index: 3; flex-shrink: 0; }
 .cart-title { font-family: var(--serif); font-size: 28px; font-weight: 400; letter-spacing: 1px; }
 .cart-x { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; line-height: 1; transition: color 0.2s; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; }
 .cart-x:hover { color: var(--text); }
-.cart-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 8px 16px; }
+.cart-body { flex: 1 0 auto; padding: 8px 16px; }
 .ci { display: flex; gap: 16px; padding: 18px 8px; border-bottom: 1px solid rgba(0,0,0,0.07); }
 .ci-img { width: 62px; height: 78px; background: #fff; border: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .ci-real-img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+.ci-clickable { cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+.ci-img.ci-clickable:hover { border-color: var(--gold); }
+.ci-name.ci-clickable:hover { color: var(--gold-d); }
 .ci-info { flex: 1; }
 .ci-name { font-family: var(--serif); font-size: 18px; margin-bottom: 5px; line-height: 1.1; }
 .ci-sz { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
@@ -655,7 +658,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .ci-qn { min-width: 30px; text-align: center; font-size: 13px; font-weight: 600; color: var(--text); font-family: var(--sans); }
 .ci-rm { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 15px; line-height: 1; transition: color 0.2s; align-self: flex-start; padding: 4px; }
 .ci-rm:hover { color: #d64545; }
-.cart-foot { padding: 22px 28px; border-top: 1px solid rgba(0,0,0,0.08); background: var(--bg3); }
+.cart-foot { padding: 22px 28px; border-top: 1px solid rgba(0,0,0,0.08); background: var(--bg3); flex-shrink: 0; }
 .cart-tr { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(0,0,0,0.08); }
 .cart-tl { font-size: 12px; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
 .cart-ta { font-family: var(--serif); font-size: 31px; font-weight: 500; color: var(--gold-d); }
@@ -2159,6 +2162,13 @@ export default function ReyDelAroma() {
     setGalleryIdx(0);
     setView("product");
     window.scrollTo({ top: 0 });
+  };
+
+  // Desde el carrito: al tocar la foto o el nombre, abre esa ficha de producto.
+  const goToProduct = (item) => {
+    const prod = products.find((p) => p.id === item.id) || item;
+    setCartOpen(false);
+    openProduct(prod);
   };
 
   const addToCart = (p, size, q) => {
@@ -4025,9 +4035,9 @@ export default function ReyDelAroma() {
                 <div className="empty-cart"><div className="empty-icon">🛒</div><p style={{ fontSize: 15, letterSpacing: 1 }}>Tu carrito está vacío</p></div>
               ) : cart.map((item, i) => (
                 <div key={i} className="ci">
-                  <div className="ci-img">{item.image ? <img src={item.image} alt={item.name} className="ci-real-img" /> : <NoImg />}</div>
+                  <div className="ci-img ci-clickable" onClick={() => goToProduct(item)} title={`Ver ${item.name}`}>{item.image ? <img src={item.image} alt={item.name} className="ci-real-img" /> : <NoImg />}</div>
                   <div className="ci-info">
-                    <div className="ci-name">{item.name}</div>
+                    <div className="ci-name ci-clickable" onClick={() => goToProduct(item)} title={`Ver ${item.name}`}>{item.name}</div>
                     <div className="ci-sz">{item.brand}{item.size ? ` · ${item.size}` : ""}</div>
                     <div className="ci-row">
                       <div className="ci-qty">
