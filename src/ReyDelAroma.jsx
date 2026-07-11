@@ -117,8 +117,13 @@ const WOMPI_API =
   WOMPI.env === "test" ? "https://sandbox.wompi.co/v1" : "https://production.wompi.co/v1";
 
 const ADDI = {
-  enabled: String(ENV.VITE_ADDI_ENABLED ?? "true") === "true",
-  slug: ENV.VITE_ADDI_SLUG || "",
+  // ── Widget de cuotas (el letrero azul en la ficha) ──
+  // Valores FIJOS a propósito: así el badge de Addi sale SIEMPRE, sin depender
+  // de ninguna variable de Vercel (que se puede borrar, quedar mal escrita o sin
+  // redeploy). El ally-slug NO es secreto: ya aparece en el HTML de tu página.
+  // Si algún día cambias de slug o quieres apagar el widget, edita estas 2 líneas.
+  enabled: true,
+  slug: "reydelaroma-ecommerce",
 };
 
 const SISTECREDITO = {
