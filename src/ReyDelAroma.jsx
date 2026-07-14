@@ -3471,9 +3471,16 @@ export default function ReyDelAroma() {
               <div className="fg"><label className="fl">Ciudad *</label>
                 <select className="fsel" value={coForm.city} onChange={setCo("city")}>
                   <option value="">Selecciona tu ciudad…</option>
-                  {SHIPPING_CITIES.map((c) => (
-                    <option key={c.name} value={c.name}>{c.name} · envío {cop(c.cost)}</option>
-                  ))}
+                  {SHIPPING_CITIES.map((c) => {
+                    // El costo REAL según lo que lleva en el carrito: si ya pasó los
+                    // $250.000 y es Bogotá, aquí debe decir GRATIS (no $8.000).
+                    const real = shippingCost(c.name, subtotal);
+                    return (
+                      <option key={c.name} value={c.name}>
+                        {c.name} · envío {real === 0 ? "GRATIS 🎉" : cop(real)}
+                      </option>
+                    );
+                  })}
                   <option value={SHIPPING.otherLabel}>{SHIPPING.otherLabel} · envío {cop(SHIPPING.otherCost)}</option>
                 </select>
               </div>
