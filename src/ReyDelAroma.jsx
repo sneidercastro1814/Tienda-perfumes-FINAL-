@@ -20,12 +20,17 @@ import selloOriginal from "./assets/sello-original.png";
 const WHATSAPP = "573189917571";          // ← Tu número de WhatsApp (con 57)
 const ADMIN_PASSWORD = "admin123";         // ← Cambia tu contraseña de admin
 const ADMIN_PANEL_KEY = "acceso-rey";      // ← Palabra secreta del enlace privado del panel: reydelaroma.com/?panel=acceso-rey (cámbiala)
+/* ⚠️ IMPORTANTE — DÓNDE VIVE EL CATÁLOGO
+   Estas claves de localStorage son solo un RESPALDO local (para que la tienda
+   abra al instante y siga funcionando sin internet). La VERDAD del catálogo
+   —productos, precios y cupones— vive en la NUBE: api/catalog.js (Vercel Blob).
+   Por eso ahora un precio que cambias en el PC SÍ se ve en el celular. */
 const LS_KEY = "rda-catalog-v3";
 const LS_COUPONS = "rda-coupons-v1";       // ← Cupones guardados (los crea el admin)
 const LS_COLLECTIONS = "rda-collections-v1"; // ← Colecciones que crea el admin
 const LS_AROMAS = "rda-aromas-v1";           // ← Tipos de aroma que crea el admin
 const LS_ORDERS = "rda-orders-v1";           // ← Respaldo local de pedidos (por si falla la red)
-const LS_ADMIN_TOKEN = "rda-admin-token";    // ← Token del panel de Ventas (se guarda en este navegador)
+const LS_ADMIN_TOKEN = "rda-admin-token";    // ← Clave de publicación (ADMIN_TOKEN). Se guarda en este navegador
 const LS_CART = "rda-cart-v1";               // ← Carrito del cliente (sobrevive al recargar la página)
 const LS_NAV = "rda-nav-v1";                 // ← Página abierta (para no perderla al recargar) — solo esta pestaña
 
@@ -1075,6 +1080,23 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .co-free { color: #1c7c3e; font-weight: 700; letter-spacing: 0.5px; }
 .co-ship-hint { font-size: 11.5px; color: var(--gold-d); background: rgba(201,168,76,0.1); border-radius: 5px; padding: 8px 11px; margin-top: 2px; line-height: 1.4; }
 
+.co-coupon-lbl { display: block; margin-bottom: 7px; font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 0.4px; color: var(--text-dim); }
+
+/* ── PANEL ADMIN: CATÁLOGO EN LA NUBE (sincroniza PC ↔ celular) ── */
+.sync-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 22px; }
+.sync-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.sync-t { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--sans); font-size: 15px; font-weight: 800; letter-spacing: 0.3px; color: var(--text); }
+.sync-b { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; padding: 4px 11px; border-radius: 999px; background: rgba(150,150,150,0.16); color: #888; }
+.sync-b.ok { background: rgba(28,124,62,0.14); color: #1c7c3e; }
+.sync-b.warn { background: rgba(201,168,76,0.20); color: #8a6010; }
+.sync-b.err { background: rgba(192,57,43,0.12); color: #c0392b; }
+.sync-msg { margin-top: 12px; font-family: var(--sans); font-size: 13px; line-height: 1.65; color: var(--text-dim); }
+.sync-msg b { color: var(--text); }
+.sync-key { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.sync-key .co-coupon-row { margin-top: 7px; }
+.sync-help { margin-top: 10px; font-size: 12px; line-height: 1.6; color: var(--text-muted); }
+.sync-help code { background: var(--bg3); padding: 2px 6px; border-radius: 4px; font-size: 11.5px; }
+
 /* ── PANEL ADMIN: CREAR CUPONES ── */
 .coupon-create { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 14px; align-items: end; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 22px; margin-bottom: 28px; }
 .coupon-add-btn { background: linear-gradient(135deg, var(--gold-l), var(--gold)); color: #1a1208; border: none; border-radius: 7px; padding: 13px 22px; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; white-space: nowrap; height: fit-content; }
@@ -1154,6 +1176,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .sr-img { width: 40px; height: 40px; }
   .coupon-create { grid-template-columns: 1fr; gap: 12px; padding: 18px; }
   .coupon-add-btn { width: 100%; }
+  .sync-card { padding: 18px; }
+  .sync-head { flex-direction: column; align-items: stretch; }
+  .sync-head .btn-g { justify-content: center; }
 }
 
 /* ── PÁGINA DE CATEGORÍA (pestañas independientes) ── */
@@ -1549,26 +1574,52 @@ function compressImage(file, maxDim = 1100, quality = 0.82) {
   });
 }
 
+/* Deja un catálogo listo para pintarse en pantalla:
+   · re-resuelve la foto original por su nombre de archivo (las URLs con hash
+     cambian en cada build, así la imagen nunca se rompe);
+   · corrige la categoría;
+   · recupera la familia olfativa por slug si no viniera.
+   Sirve igual para el catálogo del navegador que para el que llega de la nube. */
+function hydrateProducts(list) {
+  return list.map((p) => ({
+    ...p,
+    category: fixCategory(p.category),
+    image: (p.img && imageForFile(p.img)) || p.image || "",
+    tag: p.tag || TAG_BY_SLUG[p.slug] || "",
+  }));
+}
+
 /* Catálogo inicial: usa el guardado en localStorage si existe, si no el del archivo.
-   Se ejecuta una sola vez como estado inicial (evita un parpadeo del catálogo). */
+   Se ejecuta una sola vez como estado inicial (evita un parpadeo del catálogo).
+   Enseguida, al abrir la app, se pide el catálogo REAL a la nube (pullCatalog). */
 function loadInitialProducts() {
   try {
     const saved = localStorage.getItem(LS_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length) {
-        // re-resolver imágenes originales por nombre de archivo (robusto entre builds)
-        // y re-aplicar la familia olfativa (tag) por slug si el catálogo guardado aún no la tiene
-        return parsed.map((p) => ({
-          ...p,
-          category: fixCategory(p.category),
-          image: (p.img && imageForFile(p.img)) || p.image || "",
-          tag: p.tag || TAG_BY_SLUG[p.slug] || "",
-        }));
-      }
+      if (Array.isArray(parsed) && parsed.length) return hydrateProducts(parsed);
     }
   } catch { /* ignore */ }
   return PRODUCTS;
+}
+
+/* ¿Es una foto en base64 (recién subida por el admin, aún no está en la nube)? */
+const isDataUrl = (s) => typeof s === "string" && s.startsWith("data:image");
+
+/* Prepara el catálogo para subirlo: si la portada viene de una foto del proyecto
+   (p.img), NO subimos la URL del build —cada dispositivo la resuelve solo—.
+   Solo viajan las fotos que subió el admin (ya convertidas a URL del Blob). */
+function toCloudProducts(list) {
+  return list.map((p) => ({
+    ...p,
+    image: p.img && imageForFile(p.img) ? "" : (p.image || ""),
+  }));
+}
+
+/* Huella del catálogo: si no cambió nada, no volvemos a publicar. */
+function catalogPrint(products, coupons, collections, aromas) {
+  try { return JSON.stringify({ products, coupons, collections, aromas }); }
+  catch { return String(Math.random()); }
 }
 
 /* Cupones guardados (los crea el admin). Estado inicial perezoso desde localStorage. */
@@ -1755,6 +1806,7 @@ export default function ReyDelAroma() {
   const [sortBy, setSortBy] = useState("recomendado"); // ordenamiento elegido por el cliente
   const [priceFilter, setPriceFilter] = useState("all"); // filtro por rango de precio
   const [toast, setToast] = useState(null);
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2800); };
   const [adminAuth, setAdminAuth] = useState(false);
   const [adminPw, setAdminPw] = useState("");
   const [adminView, setAdminView] = useState("list");
@@ -1792,8 +1844,25 @@ export default function ReyDelAroma() {
 
   /* ── ENVÍO + CUPONES ── */
   const [coupons, setCoupons] = useState(loadCoupons);
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [couponForm, setCouponForm] = useState({ code: "", type: "percent", value: "" });
+  const [appliedCoupon, setAppliedCoupon] = useState(null);   // el que el CLIENTE aplicó en el checkout
+  const [couponForm, setCouponForm] = useState({ code: "", type: "percent", value: "" }); // formulario del admin
+  const [couponInput, setCouponInput] = useState("");         // lo que el CLIENTE escribe en el checkout
+
+  /* Compra terminada → vaciamos el carrito Y liberamos el cupón, para que el
+     siguiente pedido no arrastre el descuento del pedido anterior. */
+  const clearCartAfterOrder = () => { setCart([]); setAppliedCoupon(null); setCouponInput(""); };
+
+  /* ── CATÁLOGO EN LA NUBE (lo que hace que el celular vea tus precios) ──
+     cloudState:  loading  → preguntando a /api/catalog
+                  ready    → hay catálogo publicado y lo estamos usando
+                  empty    → la nube está lista pero el admin no ha publicado aún
+                  off      → falta configurar el Blob Store o ADMIN_TOKEN en Vercel
+                  error    → no hubo conexión */
+  const [cloudState, setCloudState] = useState("loading");
+  const [cloudMsg, setCloudMsg] = useState("");
+  const [cloudAt, setCloudAt] = useState(null);      // fecha de la última publicación
+  const [publishing, setPublishing] = useState(false);
+  const publishedRef = useRef("");                   // huella de lo último publicado
 
   /* ── COLECCIONES Y TIPOS DE AROMA (los crea/edita el admin) ── */
   const [collectionList, setCollectionList] = useState(loadCollections);
@@ -1842,11 +1911,181 @@ export default function ReyDelAroma() {
     try { localStorage.setItem(LS_COUPONS, JSON.stringify(coupons)); } catch { /* ignore */ }
   }, [coupons]);
 
-  /* El cupón activo se aplica AUTOMÁTICAMENTE al pedido (el cliente no escribe ningún código).
-     Si hay varios activos, se usa el más reciente. Si no hay ninguno activo, no se aplica nada. */
+  /* El cupón lo escribe el CLIENTE en el checkout (ver applyCouponCode).
+     Aquí solo vigilamos el cupón que ya aplicó: si desde el panel lo desactivas,
+     lo borras o le cambias el valor, se actualiza o se retira solo del pedido. */
   useEffect(() => {
-    setAppliedCoupon(coupons.find((c) => c.active) || null);
+    if (!appliedCoupon) return;
+    const found = coupons.find(
+      (c) => c.id === appliedCoupon.id ||
+             String(c.code || "").trim().toUpperCase() === String(appliedCoupon.code || "").trim().toUpperCase()
+    );
+    if (!found || !found.active) { setAppliedCoupon(null); return; }
+    if (found.type !== appliedCoupon.type || Number(found.value) !== Number(appliedCoupon.value)) setAppliedCoupon(found);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coupons]);
+
+  /* ════════════════════════════════════════════════════════════════
+     CATÁLOGO EN LA NUBE — el arreglo del problema
+     "cambio el precio en el PC y en el celular no se ve"
+
+     Antes, cada navegador guardaba su propio catálogo en localStorage.
+     El celular del cliente tenía el suyo (vacío) → mostraba los precios
+     viejos del archivo. Ahora TODOS los dispositivos leen el mismo
+     catálogo de /api/catalog, y el admin lo publica desde su panel.
+     ════════════════════════════════════════════════════════════════ */
+
+  /* Trae el catálogo publicado (productos, precios, cupones, colecciones y aromas). */
+  const pullCatalog = async ({ quiet = false } = {}) => {
+    if (!quiet) setCloudState("loading");
+    try {
+      const res = await fetch("/api/catalog", { cache: "no-store" });
+      const data = await res.json();
+
+      if (data && data.ok && data.catalog && Array.isArray(data.catalog.products) && data.catalog.products.length) {
+        const c = data.catalog;
+        const prods = hydrateProducts(c.products);
+        const cps = Array.isArray(c.coupons) ? c.coupons : [];
+        const cols = Array.isArray(c.collections) && c.collections.length ? c.collections : COLLECTIONS;
+        const aros = Array.isArray(c.aromas) && c.aromas.length ? c.aromas : FAMILIES;
+
+        setProducts(prods);
+        setCoupons(cps);
+        setCollectionList(cols);
+        setAromaList(aros);
+
+        publishedRef.current = catalogPrint(prods, cps, cols, aros);
+        setCloudAt(c.updatedAt || null);
+        setCloudMsg("");
+        setCloudState("ready");
+        return;
+      }
+
+      // La nube responde, pero el admin todavía no ha publicado nada.
+      if (data && data.reason === "EMPTY") { setCloudMsg(""); setCloudState("empty"); return; }
+
+      // Falta configurar el Blob Store / ADMIN_TOKEN en Vercel.
+      setCloudMsg((data && data.error) || "El catálogo en la nube no está configurado.");
+      setCloudState("off");
+    } catch {
+      setCloudMsg("No hubo conexión con el catálogo en la nube.");
+      setCloudState("error");
+    }
+  };
+
+  /* Al abrir la tienda (en CUALQUIER dispositivo) pedimos el catálogo real. */
+  useEffect(() => {
+    pullCatalog();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* Si el cliente deja la pestaña y vuelve, refrescamos el catálogo: así ve tus
+     precios nuevos sin tener que recargar. (Al admin no se lo tocamos: sus
+     cambios locales mandan hasta que se publiquen.) */
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      if (adminAuth) return;
+      pullCatalog({ quiet: true });
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminAuth]);
+
+  /* Publica el catálogo para que lo vean TODOS los dispositivos.
+     Las fotos que aún estén en base64 se suben primero al Blob y en el catálogo
+     queda solo su URL: así el celular del cliente carga rápido y el catálogo
+     nunca llena el almacenamiento del navegador. */
+  const publishCatalog = async ({ silent = false } = {}) => {
+    if (publishing) return false;
+    if (!products.length) { showToast("No hay productos que publicar"); return false; }
+    if (!adminToken) {
+      setCloudMsg("Falta la clave de publicación (ADMIN_TOKEN).");
+      setCloudState("off");
+      if (!silent) showToast("Primero guarda tu clave de publicación");
+      return false;
+    }
+
+    setPublishing(true);
+    try {
+      /* 1) Subir a la nube las fotos que estén en base64 (las nuevas y las viejas). */
+      const subidas = new Map();
+      const subirFoto = async (foto) => {
+        if (!isDataUrl(foto)) return foto || "";
+        if (subidas.has(foto)) return subidas.get(foto);
+        const r = await fetch("/api/upload-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+          body: JSON.stringify({ dataUrl: foto }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok || !d.ok || !d.url) throw new Error(d.error || "No se pudo subir una foto.");
+        subidas.set(foto, d.url);
+        return d.url;
+      };
+
+      const pendientes = products.reduce(
+        (n, p) => n + (isDataUrl(p.image) ? 1 : 0) + (Array.isArray(p.images) ? p.images.filter(isDataUrl).length : 0),
+        0
+      );
+      if (pendientes && !silent) showToast(`Subiendo ${pendientes} ${pendientes === 1 ? "foto" : "fotos"} a la nube…`);
+
+      const conUrls = [];
+      for (const p of products) {
+        const image = await subirFoto(p.image);
+        const images = [];
+        for (const g of (Array.isArray(p.images) ? p.images : [])) images.push(await subirFoto(g));
+        conUrls.push({ ...p, image, images: images.filter(Boolean) });
+      }
+
+      /* 2) Publicar el catálogo (ya liviano, sin base64). */
+      const payload = {
+        products: toCloudProducts(conUrls),
+        coupons,
+        collections: collectionList,
+        aromas: aromaList,
+      };
+      const res = await fetch("/api/catalog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error || "No se pudo publicar el catálogo.");
+
+      /* 3) Dejar este navegador igualito a lo que quedó publicado. */
+      const finales = hydrateProducts(payload.products);
+      setProducts(finales);
+      publishedRef.current = catalogPrint(finales, coupons, collectionList, aromaList);
+      setCloudAt(data.updatedAt || new Date().toISOString());
+      setCloudMsg("");
+      setCloudState("ready");
+      if (!silent) showToast("✅ Publicado — ya se ve en todos los celulares");
+      return true;
+    } catch (err) {
+      setCloudMsg(err.message || "No se pudo publicar el catálogo.");
+      setCloudState("error");
+      showToast(err.message || "No se pudo publicar el catálogo");
+      return false;
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  /* PUBLICACIÓN AUTOMÁTICA: cuando el admin cambia un precio, crea un cupón,
+     oculta un producto… se publica solo 1,5 s después. Así no se te olvida.
+     (La PRIMERA publicación sí es manual, con el botón: es la red de seguridad
+     para no pisar tu catálogo bueno desde un dispositivo que no lo tenga.) */
+  useEffect(() => {
+    if (!adminAuth || cloudState !== "ready" || publishing) return;
+    const t = setTimeout(() => {
+      if (catalogPrint(products, coupons, collectionList, aromaList) === publishedRef.current) return;
+      publishCatalog({ silent: true });
+    }, 1500);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, coupons, collectionList, aromaList, adminAuth, cloudState]);
 
   /* guardar colecciones y tipos de aroma en localStorage */
   useEffect(() => {
@@ -1967,7 +2206,7 @@ export default function ReyDelAroma() {
           method: t.payment_method_type || "",
         });
         // Compra completada → vaciar el carrito. Si fue rechazada, lo dejamos para reintentar.
-        if (t.status === "APPROVED" || t.status === "PENDING") setCart([]);
+        if (t.status === "APPROVED" || t.status === "PENDING") clearCartAfterOrder();
       })
       .catch(() => setPayResult({ loading: false, status: "ERROR", txId: id }));
   }, []);
@@ -1988,7 +2227,7 @@ export default function ReyDelAroma() {
       else if (status) s = "DECLINED";
       setPayResult({ loading: false, status: s, txId: id, reference });
       // Compra completada → vaciar el carrito. Si fue rechazada, lo dejamos para reintentar.
-      if (s === "APPROVED" || s === "PENDING") setCart([]);
+      if (s === "APPROVED" || s === "PENDING") clearCartAfterOrder();
     };
 
     if (!id) { finish(""); return; }
@@ -2008,7 +2247,7 @@ export default function ReyDelAroma() {
     let ref = "";
     try { ref = (JSON.parse(localStorage.getItem("rda-last-order") || "{}").reference) || ""; } catch { /* ignore */ }
     setPayResult({ loading: false, status: "PENDING", method: "addi", reference: ref });
-    setCart([]);
+    clearCartAfterOrder();
   }, []);
 
   /* ── ENTRADA POR EL ENLACE PRIVADO DEL PANEL ──
@@ -2088,8 +2327,6 @@ export default function ReyDelAroma() {
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, adminAuth, adminView, adminToken]);
-
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2800); };
 
   /* Suscripción al boletín — formulario al final de la página (sin ventana emergente) */
   const submitNewsletter = () => {
@@ -2577,6 +2814,23 @@ export default function ReyDelAroma() {
 
   /* ── CUPONES ── */
   const couponLabel = (c) => (c.type === "percent" ? `${c.value}% de descuento` : `${cop(c.value)} de descuento`);
+
+  /* EL CLIENTE escribe su código en el checkout y lo aplica aquí.
+     Los cupones vienen de la nube, así que sirve el que creaste en el panel
+     desde tu PC aunque el cliente esté comprando desde el celular. */
+  const applyCouponCode = () => {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return showToast("Escribe el código de tu cupón");
+    const found = coupons.find((c) => String(c.code || "").trim().toUpperCase() === code);
+    if (!found) return showToast("Ese cupón no existe o ya venció");
+    if (!found.active) return showToast("Ese cupón ya no está disponible");
+    if (appliedCoupon && appliedCoupon.id === found.id) return showToast("Ese cupón ya está aplicado");
+    setAppliedCoupon(found);
+    setCouponInput("");
+    showToast(`🎟️ Cupón ${found.code} aplicado — ${couponLabel(found)}`);
+  };
+  const removeAppliedCoupon = () => { setAppliedCoupon(null); showToast("Cupón retirado"); };
+
   const addCoupon = () => {
     const code = couponForm.code.trim().toUpperCase();
     const value = parseInt(String(couponForm.value).replace(/[^\d]/g, "")) || 0;
@@ -3280,16 +3534,36 @@ export default function ReyDelAroma() {
                 <div className="co-ship-hint">Agrega 1 perfume más de la sección <b>2 × $300.000</b> y llévate los 2 por $300.000 🎉</div>
               </div>
             )}
-            {appliedCoupon && (
-              <div className="co-coupon">
+            {/* ── CUPÓN DE DESCUENTO ──
+                El cliente escribe el código que le diste (el que creaste en el
+                panel → Cupones) y lo aplica. El descuento baja del total al instante. */}
+            <div className="co-coupon">
+              {appliedCoupon ? (
                 <div className="co-coupon-on">
                   <div className="co-coupon-on-info">
                     <span className="co-coupon-tag">🎟️ {appliedCoupon.code}</span>
-                    <span className="co-coupon-desc">{couponLabel(appliedCoupon)} · aplicado automáticamente</span>
+                    <span className="co-coupon-desc">{couponLabel(appliedCoupon)} · aplicado ✓</span>
                   </div>
+                  <button type="button" className="co-coupon-rm" onClick={removeAppliedCoupon}>Quitar</button>
                 </div>
-              </div>
-            )}
+              ) : (
+                <>
+                  <label className="co-coupon-lbl">¿Tienes un cupón de descuento?</label>
+                  <div className="co-coupon-row">
+                    <input
+                      className="co-coupon-input"
+                      placeholder="Escribe tu código"
+                      value={couponInput}
+                      autoComplete="off"
+                      autoCapitalize="characters"
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyCouponCode(); } }}
+                    />
+                    <button type="button" className="co-coupon-btn" onClick={applyCouponCode}>Aplicar</button>
+                  </div>
+                </>
+              )}
+            </div>
             <div className="co-breakdown">
               <div className="co-brow"><span>Subtotal</span><span>{cop(subtotal)}</span></div>
               {promoDiscount > 0 && <div className="co-brow disc"><span>Promo 2 × $300.000 ({promoUnits} {promoUnits === 1 ? "perfume" : "perfumes"})</span><span>−{cop(promoDiscount)}</span></div>}
@@ -3310,6 +3584,85 @@ export default function ReyDelAroma() {
             <div className="co-secure">🔒 Pago seguro · Envío gratis en Bogotá desde {cop(SHIPPING.bogotaFreeFrom)}</div>
             <a className="co-help" href={waLink("Hola Rey del Aroma 👑, tengo una duda con mi compra.")} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbenos</a>
           </aside>
+        </div>
+      </div>
+    );
+  };
+
+  /* Guarda la clave de publicación (ADMIN_TOKEN) en este navegador. */
+  const saveAdminToken = () => {
+    const v = tokenInput.trim();
+    setAdminToken(v);
+    try { localStorage.setItem(LS_ADMIN_TOKEN, v); } catch { /* ignore */ }
+    showToast(v ? "Clave guardada" : "Clave borrada");
+  };
+
+  /* ── TARJETA "CATÁLOGO EN LA NUBE" (panel admin) ──
+     Aquí ves de un vistazo si tus precios YA se están viendo en los celulares
+     de tus clientes, y desde aquí publicas. */
+  const cloudCard = () => {
+    const badge = {
+      loading: { cls: "sync-b",      txt: "Conectando…" },
+      ready:   { cls: "sync-b ok",   txt: "Publicado" },
+      empty:   { cls: "sync-b warn", txt: "Sin publicar" },
+      off:     { cls: "sync-b err",  txt: "Sin configurar" },
+      error:   { cls: "sync-b err",  txt: "Error" },
+    }[cloudState] || { cls: "sync-b", txt: "—" };
+
+    return (
+      <div className="sync-card">
+        <div className="sync-head">
+          <div className="sync-t">
+            ☁️ Catálogo en la nube
+            <span className={badge.cls}>{publishing ? "Publicando…" : badge.txt}</span>
+          </div>
+          <button className="btn-g" onClick={() => publishCatalog()} disabled={publishing}>
+            {publishing ? "Publicando…" : "Publicar cambios"}
+          </button>
+        </div>
+
+        <div className="sync-msg">
+          {cloudState === "loading" && <>Consultando el catálogo publicado…</>}
+          {cloudState === "ready" && (
+            <>
+              Tus precios, productos y cupones se ven en <b>todos los celulares y computadores</b>.
+              Cada cambio que hagas se publica solo.
+              {cloudAt ? <> Última publicación: <b>{new Date(cloudAt).toLocaleString("es-CO")}</b>.</> : null}
+            </>
+          )}
+          {cloudState === "empty" && (
+            <>
+              La nube ya está conectada, pero <b>todavía no has publicado</b>. Pulsa
+              <b> Publicar cambios</b> una sola vez: desde ese momento tus clientes verán
+              estos precios en el celular, y los cambios siguientes se publicarán solos.
+            </>
+          )}
+          {(cloudState === "off" || cloudState === "error") && (
+            <>
+              <b>⚠️ Tus cambios NO se están viendo en el celular.</b> {cloudMsg}
+              <div className="sync-help">
+                En Vercel: <b>Storage</b> → Create Database → <code>Blob</code> (crea la variable
+                <code>BLOB_READ_WRITE_TOKEN</code>) y <b>Settings → Environment Variables</b> → agrega
+                <code>ADMIN_TOKEN</code> con una clave secreta. Luego haz <b>Redeploy</b> y escribe esa
+                misma clave aquí abajo.
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="sync-key">
+          <label className="fl">Clave de publicación (tu ADMIN_TOKEN de Vercel)</label>
+          <div className="co-coupon-row">
+            <input
+              className="fi"
+              type="password"
+              placeholder="Pega aquí tu ADMIN_TOKEN"
+              value={tokenInput}
+              onChange={(e) => setTokenInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveAdminToken()}
+            />
+            <button className="btn-o" onClick={saveAdminToken} style={{ whiteSpace: "nowrap" }}>Guardar clave</button>
+          </div>
         </div>
       </div>
     );
@@ -3503,7 +3856,13 @@ export default function ReyDelAroma() {
               <button className="btn-o" onClick={() => setAdminView("list")}>← Volver</button>
             </div>
           </div>
-          <div className="admin-info">Crea cupones de descuento. El cupón activo se aplica <b>automáticamente</b> al pagar (el cliente no escribe ningún código). Si activas varios, se aplica el más reciente. Se guardan en este navegador.</div>
+          {cloudCard()}
+          <div className="admin-info">
+            Crea cupones de descuento y pásale el código a tu cliente (WhatsApp, Instagram…).
+            Al pagar, el cliente <b>escribe el código</b> en el campo <b>“¿Tienes un cupón de descuento?”</b> del
+            checkout y el descuento se le aplica al total. Solo funcionan los cupones en estado <b>Activo</b>;
+            si lo desactivas o lo eliminas, deja de servir al instante — incluso a quien ya lo tenía puesto.
+          </div>
 
           <div className="coupon-create">
             <div className="fg">
@@ -3771,7 +4130,8 @@ export default function ReyDelAroma() {
             <button className="btn-g" onClick={startAdd}>+ Agregar</button>
           </div>
         </div>
-        <div className="admin-info"><b>{products.length}</b> productos en catálogo{hiddenCount > 0 ? <> · <b>{hiddenCount}</b> {hiddenCount === 1 ? "oculto" : "ocultos"}</> : ""} · Los cambios se guardan automáticamente en este navegador (localStorage).</div>
+        {cloudCard()}
+        <div className="admin-info"><b>{products.length}</b> productos en catálogo{hiddenCount > 0 ? <> · <b>{hiddenCount}</b> {hiddenCount === 1 ? "oculto" : "ocultos"}</> : ""} · Cuando cambias un precio se publica solo en la nube y se ve al instante en el celular de tus clientes.</div>
         <table className="atbl">
           <thead>
             <tr><th></th><th>Producto</th><th>Precio</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Estado</th><th>Acciones</th></tr>
