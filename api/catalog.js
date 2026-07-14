@@ -25,8 +25,9 @@
 
    1) Blob Store:
       Vercel → tu proyecto → pestaña "Storage" → Create Database →
-      elige "Blob" → Create. Vercel agrega solo la variable
-      BLOB_READ_WRITE_TOKEN al proyecto.
+      elige "Blob" → Create. Vercel automáticamente lo conecta vía OIDC
+      (más seguro) y agrega BLOB_STORE_ID, BLOB_READ_WRITE_TOKEN,
+      BLOB_WEBHOOK_PUBLIC_KEY.
 
    2) Clave de publicación:
       Vercel → Settings → Environment Variables → Add
@@ -67,7 +68,8 @@ async function versions() {
 export default async function handler(req, res) {
   noCache(res);
 
-  const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
+  // Soporta tanto OIDC (BLOB_STORE_ID) como token tradicional (BLOB_READ_WRITE_TOKEN)
+  const hasBlob = !!(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN);
 
   /* ── LEER EL CATÁLOGO (público: lo llaman todos los clientes) ── */
   if (req.method === "GET") {

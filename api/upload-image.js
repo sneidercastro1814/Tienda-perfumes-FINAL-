@@ -41,7 +41,8 @@ export default async function handler(req, res) {
   if (token !== expected) {
     return res.status(401).json({ ok: false, error: "Clave de publicación incorrecta." });
   }
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  // Soporta tanto OIDC (BLOB_STORE_ID) como token tradicional (BLOB_READ_WRITE_TOKEN)
+  if (!process.env.BLOB_STORE_ID && !process.env.BLOB_READ_WRITE_TOKEN) {
     return res.status(500).json({
       ok: false,
       error: "Falta conectar el Blob Store en Vercel (Storage → Create Database → Blob).",
