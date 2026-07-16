@@ -1863,6 +1863,7 @@ export default function ReyDelAroma() {
   const [cloudAt, setCloudAt] = useState(null);      // fecha de la última publicación
   const [publishing, setPublishing] = useState(false);
   const publishedRef = useRef("");                   // huella de lo último publicado
+  const autoFailShownRef = useRef(false);            // ya avisamos que un autoguardado falló (para no repetir el aviso)
 
   /* ── COLECCIONES Y TIPOS DE AROMA (los crea/edita el admin) ── */
   const [collectionList, setCollectionList] = useState(loadCollections);
@@ -2074,18 +2075,44 @@ export default function ReyDelAroma() {
   };
 
   /* PUBLICACIÓN AUTOMÁTICA: cuando el admin cambia un precio, crea un cupón,
-     oculta un producto… se publica solo 1,5 s después. Así no se te olvida.
-     (La PRIMERA publicación sí es manual, con el botón: es la red de seguridad
-     para no pisar tu catálogo bueno desde un dispositivo que no lo tenga.) */
+     oculta un producto… se publica solo ~1,2 s después. Así no se te olvida y
+     el celular del cliente ve los precios nuevos sin que hagas nada más.
+
+     · Publica desde el PRIMER cambio, aunque nunca hayas pulsado el botón
+       (estado "empty" = la nube está conectada pero aún vacía → no hay nada
+       que pisar, así que es seguro subir tu catálogo con el precio nuevo).
+     · Si hay un catálogo bueno en la nube ("ready"), sube tus cambios encima.
+     · NO auto-publica si estamos consultando la nube ("loading"), si falta el
+       Blob/clave ("off") o si la última consulta falló ("error"): en esos casos
+       no sabemos qué hay en la nube y NO queremos pisar un catálogo bueno. El
+       botón "Publicar cambios" sigue disponible para forzarlo a mano.
+     · Si la subida falla (red, clave incorrecta…), REINTENTA unas veces y te
+       AVISA con un mensaje, en vez de quedarse callado. */
   useEffect(() => {
-    if (!adminAuth || cloudState !== "ready" || publishing) return;
-    const t = setTimeout(() => {
-      if (catalogPrint(products, coupons, collectionList, aromaList) === publishedRef.current) return;
-      publishCatalog({ silent: true });
-    }, 1500);
-    return () => clearTimeout(t);
+    if (!adminAuth || publishing) return;
+    if (cloudState !== "ready" && cloudState !== "empty") return;
+    // ¿Ya está publicado tal cual? Entonces no hay nada que subir.
+    if (catalogPrint(products, coupons, collectionList, aromaList) === publishedRef.current) return;
+
+    let alive = true;
+    let tries = 0;
+    const intentar = async () => {
+      if (!alive) return;
+      const ok = await publishCatalog({ silent: true });
+      if (!alive) return;
+      if (ok) { autoFailShownRef.current = false; return; }
+      // Falló: avisamos UNA vez (no en cada reintento) y reintentamos ante fallos de red.
+      if (!autoFailShownRef.current) {
+        autoFailShownRef.current = true;
+        showToast("⚠️ Tus cambios NO se publicaron. Abre “Catálogo en la nube” para ver por qué.");
+      }
+      tries += 1;
+      if (tries <= 3) setTimeout(intentar, 5000);
+    };
+    const t = setTimeout(intentar, 1200);
+    return () => { alive = false; clearTimeout(t); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, coupons, collectionList, aromaList, adminAuth, cloudState]);
+  }, [products, coupons, collectionList, aromaList, adminAuth, cloudState, adminToken, publishing]);
 
   /* guardar colecciones y tipos de aroma en localStorage */
   useEffect(() => {
@@ -3639,9 +3666,9 @@ export default function ReyDelAroma() {
           )}
           {cloudState === "empty" && (
             <>
-              La nube ya está conectada, pero <b>todavía no has publicado</b>. Pulsa
-              <b> Publicar cambios</b> una sola vez: desde ese momento tus clientes verán
-              estos precios en el celular, y los cambios siguientes se publicarán solos.
+              La nube ya está conectada. <b>El primer cambio que hagas (o el botón
+              <b> Publicar cambios</b>) publica el catálogo automáticamente</b> y, desde
+              ahí, tus clientes verán los precios nuevos en el celular al instante.
             </>
           )}
           {(cloudState === "off" || cloudState === "error") && (
