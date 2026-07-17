@@ -223,7 +223,7 @@ export default async function handler(req, res) {
       shippingAddress: address,
       billingAddress: address,
       allyUrlRedirection: {
-        logoUrl: `${origin}/favicon.svg`,
+        logoUrl: `${origin}/favicon.png`,
         callbackUrl: `${origin}/api/addi-webhook`,
         redirectionUrl: `${origin}/?addi=1`,
       },
