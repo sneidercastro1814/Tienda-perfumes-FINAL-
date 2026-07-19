@@ -266,7 +266,7 @@ body::after {
 /* ── NAVBAR ── */
 .nav { background: rgba(12,12,11,0.97); backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%); border-bottom: 1px solid var(--border); padding: 0 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; height: 72px; }
 .nav-logo-img { height: 46px; width: auto; display: block; flex-shrink: 0; }
-.nav-logo { display: flex; align-items: center; gap: 14px; cursor: pointer; transition: opacity 0.3s; }
+.nav-logo { display: flex; align-items: center; gap: 14px; cursor: pointer; transition: opacity 0.3s; text-decoration: none; color: inherit; }
 .nav-logo-c { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 .nav-left { display: flex; align-items: center; gap: 8px; }
 .nav-logo:hover { opacity: 0.75; }
@@ -275,7 +275,7 @@ body::after {
 .l-da { font-size: 10px; font-weight: 500; letter-spacing: 7px; color: var(--gold); opacity: 0.45; display: block; margin-top: 4px; }
 .nav-sep { display: none; }
 .nav-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; align-items: center; z-index: 1; white-space: nowrap; }
-.nl { font-size: 12px; font-weight: 500; letter-spacing: 2.5px; color: rgba(255,255,255,0.72); cursor: pointer; text-transform: uppercase; background: none; border: none; transition: color 0.25s; padding: 8px 13px; position: relative; }
+.nl { text-decoration: none; font-size: 12px; font-weight: 500; letter-spacing: 2.5px; color: rgba(255,255,255,0.72); cursor: pointer; text-transform: uppercase; background: none; border: none; transition: color 0.25s; padding: 8px 13px; position: relative; }
 .nl::after { content: ''; position: absolute; bottom: 2px; left: 50%; right: 50%; height: 1px; background: var(--gold); transition: left 0.35s, right 0.35s; }
 .nl:hover::after, .nl.act::after { left: 13px; right: 13px; }
 .nl:hover, .nl.act { color: var(--gold); }
@@ -373,6 +373,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .sec-tools { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .pgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(201,168,76,0.08); max-width: 1180px; margin: 0 auto; }
 .pcard { background: var(--bg); cursor: pointer; overflow: hidden; transition: all 0.45s cubic-bezier(0.25,0.46,0.45,0.94); position: relative; display: flex; flex-direction: column; }
+.pcard-link { display: flex; flex-direction: column; flex: 1; min-width: 0; color: inherit; text-decoration: none; }
 .pcard::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 55%); opacity: 0; transition: opacity 0.4s; z-index: 1; pointer-events: none; }
 .pcard:hover::before { opacity: 1; }
 .pcard:hover { background: #f6f6f2; box-shadow: 0 28px 70px rgba(0,0,0,0.1); z-index: 2; transform: translateY(-8px); }
@@ -427,7 +428,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .bc { display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--text-muted); margin-bottom: 40px; letter-spacing: 1.5px; text-transform: uppercase; flex-wrap: wrap; }
 .bc .cur { color: var(--gold); }
 .bc-sep { color: rgba(0,0,0,0.18); font-size: 14px; }
-.bc-lnk { cursor: pointer; transition: color 0.2s; }
+.bc-lnk { cursor: pointer; transition: color 0.2s; color: inherit; text-decoration: none; background: none; border: none; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; }
 .bc-lnk:hover { color: var(--gold); }
 .pd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; }
 .pd-grid > * { min-width: 0; }
@@ -570,6 +571,19 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .avis.off { color: #9a9a9a; border-color: rgba(0,0,0,0.16); background: rgba(0,0,0,0.03); }
 .avis.off:hover { background: rgba(0,0,0,0.07); }
 .atbl tr.is-hidden td { opacity: 0.5; }
+
+/* 🔍 Buscador de productos del panel de administración */
+.asearch { position: relative; display: flex; align-items: center; margin-bottom: 18px; }
+.asearch-ic { position: absolute; left: 18px; width: 18px; height: 18px; color: var(--gold-d); opacity: 0.9; pointer-events: none; display: flex; }
+.asearch-ic svg { width: 100%; height: 100%; }
+.asearch-input { width: 100%; box-sizing: border-box; padding: 15px 48px 15px 48px; font-family: var(--sans); font-size: 15px; color: var(--text); background: #fff; border: 1px solid var(--border); border-radius: 999px; outline: none; transition: border-color 0.25s, box-shadow 0.25s; }
+.asearch-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+.asearch-input::placeholder { color: var(--text-muted); }
+.asearch-x { position: absolute; right: 14px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background: rgba(0,0,0,0.06); color: var(--text-muted); font-size: 12px; line-height: 1; cursor: pointer; transition: all 0.2s; }
+.asearch-x:hover { background: rgba(0,0,0,0.13); color: var(--text); }
+.asearch-count { margin: -6px 0 18px; font-size: 13.5px; color: var(--text-muted); }
+.asearch-count b { color: var(--gold-d); }
+.asearch-all { background: none; border: none; padding: 0; font: inherit; color: var(--gold-d); text-decoration: underline; cursor: pointer; }
 .atbl tr.is-hidden td .athumb { filter: grayscale(1); }
 .atbl tr.is-hidden td .avis { opacity: 1; }
 /* Productos más vendidos (stock de ventas) en el panel de admin */
@@ -1035,7 +1049,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 
 /* ── RESULTADOS EN VIVO DE LA BÚSQUEDA (LUPA) ── */
 .search-results { margin: 16px 0 2px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; box-shadow: 0 14px 36px rgba(0,0,0,0.12); max-height: 56vh; overflow-y: auto; animation: srFade 0.2s ease; }
-.sr-item { width: 100%; display: flex; align-items: center; gap: 14px; background: none; border: none; border-bottom: 1px solid rgba(0,0,0,0.06); padding: 12px 16px; cursor: pointer; text-align: left; transition: background 0.15s; }
+.sr-item { width: 100%; display: flex; align-items: center; gap: 14px; background: none; border: none; border-bottom: 1px solid rgba(0,0,0,0.06); padding: 12px 16px; cursor: pointer; text-align: left; transition: background 0.15s; color: inherit; text-decoration: none; box-sizing: border-box; }
 .sr-item:last-of-type { border-bottom: none; }
 .sr-item:hover { background: rgba(201,168,76,0.09); }
 .sr-img { width: 48px; height: 48px; flex-shrink: 0; border-radius: 7px; overflow: hidden; background: #f4f4f0; border: 1px solid rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; }
@@ -1194,7 +1208,7 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .catpage-desc { font-size: 16px; color: rgba(255,255,255,0.82); line-height: 1.6; margin: 18px auto 0; max-width: 560px; }
 .catpage-count { display: inline-block; margin-top: 26px; font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold-l); border: 1px solid rgba(201,168,76,0.45); border-radius: 999px; padding: 8px 18px; }
 .catpage-bc { position: absolute; top: 22px; left: 0; right: 0; z-index: 3; display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 11.5px; color: rgba(255,255,255,0.7); letter-spacing: 1.5px; text-transform: uppercase; }
-.catpage-bc .bc-lnk { cursor: pointer; transition: color 0.2s; }
+.catpage-bc .bc-lnk { cursor: pointer; transition: color 0.2s; color: inherit; text-decoration: none; background: none; border: none; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; }
 .catpage-bc .bc-lnk:hover { color: var(--gold-l); }
 .catpage-bc .cur { color: var(--gold); }
 
@@ -1400,24 +1414,34 @@ const isKingFavorite = (p) =>
 function ProductCard({ p, className = "", onOpen, onAdd }) {
   // Imagen de la tarjeta: portada; si no hay, la primera foto de la galería.
   const cardImg = p.image || (Array.isArray(p.images) && p.images.find(Boolean)) || "";
+  const href = productPath(p);
+  // La tarjeta es un ENLACE de verdad: se puede copiar, compartir o abrir en
+  // otra pestaña con Ctrl/⌘ + clic. El clic normal navega sin recargar.
+  const open = (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    onOpen(p);
+  };
   return (
-    <div className={`pcard${className ? " " + className : ""}`} onClick={() => onOpen(p)}>
-      <div className="pcard-img">
-        {p.promo && <span className="pcard-badge">2 × $300.000</span>}
-        {cardImg ? <img src={cardImg} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
-        <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
-      </div>
-      <div className="pcard-body">
-        <div className="pcard-cat">{p.brand}</div>
-        <div className="pcard-name">{p.name}</div>
-        {isKingFavorite(p) && (
-          <div className="pcard-fav"><span className="crown">👑</span> Favorito del Rey</div>
-        )}
-        <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
-        <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
-        <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
-        {/* Los aromas ya NO se muestran en la tarjeta; solo aparecen al abrir el producto (Notas de aroma). */}
-      </div>
+    <div className={`pcard${className ? " " + className : ""}`}>
+      <a className="pcard-link" href={href} onClick={open}>
+        <div className="pcard-img">
+          {p.promo && <span className="pcard-badge">2 × $300.000</span>}
+          {cardImg ? <img src={cardImg} alt={p.name} className="pcard-real-img" loading="lazy" /> : <NoImg />}
+          <img className="pcard-seal" src={selloOriginal} alt="100% Original" loading="lazy" />
+        </div>
+        <div className="pcard-body">
+          <div className="pcard-cat">{p.brand}</div>
+          <div className="pcard-name">{p.name}</div>
+          {isKingFavorite(p) && (
+            <div className="pcard-fav"><span className="crown">👑</span> Favorito del Rey</div>
+          )}
+          <div className="pcard-sub">{p.subtitle || p.size || p.collection}</div>
+          <div className="pcard-price">{cop(p.price)} <span className="pcard-curr">COP</span></div>
+          <div className="pcard-trust"><span className="pcard-stars">★★★★★</span><span className="pcard-trust-txt">+500 clientes satisfechos</span></div>
+          {/* Los aromas ya NO se muestran en la tarjeta; solo aparecen al abrir el producto (Notas de aroma). */}
+        </div>
+      </a>
       <div className="pcard-foot">
         <button className="quick-buy" onClick={(e) => { e.stopPropagation(); onAdd({ ...p, image: cardImg }, p.size || "", 1); }}>+ Agregar</button>
       </div>
@@ -1449,10 +1473,9 @@ const CATEGORY_META = {
   "Destacados":    { eyebrow: "Selección", pre: "Productos",     hi: "Destacados",  banner: "banner1", desc: "Nuestra selección curada: los más vendidos y mejor valorados por nuestros clientes." },
 };
 
-/* Slug de URL de cada categoría → permite abrir cada una en una PESTAÑA NUEVA
-   del navegador con un enlace tipo  ?categoria=para-el  */
+/* Dirección web propia de cada categoría.  reydelaroma.com/hombre , /mujer , … */
 const CATEGORY_SLUGS = {
-  "Todos": "catalogo",
+  "Todos": "ver-todo",
   "Hombre": "hombre",
   "Mujer": "mujer",
   "Unisex": "unisex",
@@ -1461,7 +1484,10 @@ const CATEGORY_SLUGS = {
   "Árabes": "arabes",
   "Destacados": "destacados",
 };
-const SLUG_TO_CATEGORY = Object.fromEntries(Object.entries(CATEGORY_SLUGS).map(([name, slug]) => [slug, name]));
+const SLUG_TO_CATEGORY = {
+  ...Object.fromEntries(Object.entries(CATEGORY_SLUGS).map(([name, slug]) => [slug, name])),
+  catalogo: "Todos",   // alias: los enlaces viejos (?categoria=catalogo) siguen funcionando
+};
 // Opciones de ordenamiento del catálogo (las elige el cliente en el menú "Ordenar")
 const SORTS = [
   { id: "recomendado", label: "Recomendado" },
@@ -1741,68 +1767,157 @@ function readAdminParam() {
   } catch { return false; }
 }
 
-/* Lee ?categoria=<slug> de la URL y devuelve el nombre de la categoría (o null).
-   Es lo que permite que una pestaña nueva se abra ya mostrando esa categoría. */
-function readCategoryParam() {
-  try {
-    const slug = new URLSearchParams(window.location.search).get("categoria");
-    return slug && SLUG_TO_CATEGORY[slug] ? SLUG_TO_CATEGORY[slug] : null;
-  } catch { return null; }
+/* ──────────────────────────────────────────────────────────────
+   ENLACES ÚNICOS  (mini-router propio, sin librerías externas)
+
+   Cada parte de la tienda tiene ahora su PROPIA dirección web, que se puede
+   copiar, compartir por WhatsApp, guardar en favoritos o abrir en otra pestaña:
+
+     /                          → Inicio
+     /ver-todo                  → Todo el catálogo
+     /hombre  /mujer  /unisex   → Categorías
+     /promo  /disenador  /arabes  /destacados
+     /producto/dior-sauvage-1   → Ficha de un perfume
+     /buscar?q=lattafa          → Resultados de búsqueda
+     /filtros?aroma=…&sexo=…    → Resultados del panel de filtros
+     /pagar                     → Finalizar compra
+
+   El panel de administración sigue entrando SOLO por su enlace privado
+   (?panel=<clave>) y no aparece en ninguna dirección pública.
+────────────────────────────────────────────────────────────── */
+
+/* Convierte cualquier texto en algo apto para una URL: "Dior Sauvage" → "dior-sauvage" */
+function slugify(txt) {
+  return String(txt || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")   // quita tildes
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
-/* URLs para abrir en pestañas nuevas (inicio y cada categoría). */
-function homeUrl() { return window.location.origin + window.location.pathname; }
-function categoryUrl(name) {
+
+/* Dirección de un producto: /producto/<marca-nombre>-<id>.
+   El número final es el que identifica el perfume, así que el enlace sigue
+   funcionando aunque después se cambie el nombre. */
+function productPath(p) {
+  if (!p) return "/";
+  const base = slugify(`${p.brand || ""} ${p.name || ""}`) || slugify(p.slug) || "perfume";
+  return `/producto/${base}-${p.id}`;
+}
+function productIdFromSlug(seg) {
+  const m = String(seg || "").match(/-(\d+)$/);
+  return m ? m[1] : "";
+}
+function categoryPath(name) {
   const slug = CATEGORY_SLUGS[name];
-  return slug ? `${homeUrl()}?categoria=${slug}` : homeUrl();
+  return slug ? `/${slug}` : "/";
 }
-/* URL y lectura del término de búsqueda (?busqueda=<texto>): permite que la
-   página de resultados sobreviva a un refresh y se pueda compartir/abrir directo. */
-function searchUrl(query) {
-  const term = (query || "").trim();
-  return term ? `${homeUrl()}?busqueda=${encodeURIComponent(term)}` : homeUrl();
+function searchPath(term) {
+  const t = (term || "").trim();
+  return t ? `/buscar?q=${encodeURIComponent(t)}` : "/buscar";
 }
-function readSearchParam() {
-  try {
-    const v = new URLSearchParams(window.location.search).get("busqueda");
-    return v ? v.trim() : "";
-  } catch { return ""; }
+function filtersPath(f = {}) {
+  const p = new URLSearchParams();
+  if (f.aroma && f.aroma !== "Todos") p.set("aroma", f.aroma);
+  if (f.sexo && f.sexo !== "Todos") p.set("sexo", f.sexo);
+  if (f.cat && f.cat !== "Todos") p.set("cat", f.cat);
+  if (f.min !== null && f.min !== undefined && f.min !== "") p.set("min", String(f.min));
+  if (f.max !== null && f.max !== undefined && f.max !== "") p.set("max", String(f.max));
+  const qs = p.toString();
+  return qs ? `/filtros?${qs}` : "/filtros";
+}
+
+/* Dirección que le corresponde a una vista. */
+function pathOf(r) {
+  if (!r) return "/";
+  switch (r.view) {
+    case "category": return categoryPath(r.cat);
+    case "product":  return r.path || productPath(r.product);
+    case "search":   return searchPath(r.q);
+    case "filtros":  return filtersPath(r);
+    case "checkout": return "/pagar";
+    default:         return "/";
+  }
+}
+/* Enlace completo (con dominio) — para compartir por WhatsApp, redes, etc.
+   Ej.: absUrl(productPath(p)) → https://reydelaroma.com/producto/dior-sauvage-1 */
+function absUrl(path) {
+  try { return window.location.origin + (path || "/"); } catch { return path || "/"; }
+}
+
+/* Lee la dirección actual del navegador y dice qué página hay que mostrar. */
+function parseRoute() {
+  let pathname = "/", search = "";
+  try { pathname = window.location.pathname || "/"; search = window.location.search || ""; } catch { /* ignore */ }
+  const sp = new URLSearchParams(search);
+
+  /* Enlaces ANTIGUOS (?categoria=… y ?busqueda=…): se siguen aceptando para que
+     nada de lo ya compartido se rompa. Al abrirlos, la barra de direcciones se
+     actualiza sola a la dirección nueva. */
+  const oldCat = sp.get("categoria");
+  if (oldCat && SLUG_TO_CATEGORY[oldCat]) return { view: "category", cat: SLUG_TO_CATEGORY[oldCat] };
+  const oldSearch = sp.get("busqueda");
+  if (oldSearch) return { view: "search", q: oldSearch.trim() };
+
+  let clean = pathname.replace(/\/+$/, "") || "/";
+  try { clean = decodeURIComponent(clean); } catch { /* ignore */ }
+  const parts = clean.split("/").filter(Boolean);
+  if (!parts.length) return { view: "store" };
+
+  const [a, b] = parts;
+  if (a === "producto" && b) return { view: "product", id: productIdFromSlug(b), path: clean };
+  if (a === "buscar")  return { view: "search", q: (sp.get("q") || "").trim() };
+  if (a === "filtros") return {
+    view: "filtros",
+    aroma: sp.get("aroma") || "Todos",
+    sexo:  sp.get("sexo")  || "Todos",
+    cat:   sp.get("cat")   || "Todos",
+    min:   sp.get("min"),
+    max:   sp.get("max"),
+  };
+  if (a === "pagar" || a === "checkout") return { view: "checkout" };
+  if (SLUG_TO_CATEGORY[a]) return { view: "category", cat: SLUG_TO_CATEGORY[a] };
+
+  return { view: "store" };   // dirección desconocida → inicio
 }
 
 /* ──────────────────────────────────────────────────────────────
    COMPONENTE PRINCIPAL
 ────────────────────────────────────────────────────────────── */
 export default function ReyDelAroma() {
-  const initialCat = readCategoryParam(); // si la URL trae ?categoria=… abrimos esa página directamente
-  const initialSearch = readSearchParam(); // si la URL trae ?busqueda=… abrimos la página de resultados
-  const savedNav = loadNav(); // página que el cliente estaba viendo antes de recargar (solo esta pestaña)
-  const [view, setView] = useState(() => {
-    // 1) La URL manda (retorno de pago o enlace compartido de categoría/búsqueda)
-    if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste || readAddiReturn().fromAddi) return "pago-resultado";
-    if (readAdminParam()) return "admin";   // ← enlace privado del panel (reydelaroma.com/?panel=…)
-    if (initialSearch) return "search";
-    if (initialCat) return "category";
-    // 2) Si no, restauramos la última página abierta (para que un F5 no devuelva al inicio)
-    if (savedNav && savedNav.view && savedNav.view !== "pago-resultado") {
-      if (savedNav.view === "product") return savedNav.product ? "product" : "store";
-      return savedNav.view;
-    }
-    // 3) Por defecto, la tienda
-    return "store";
+  /* ── Página inicial: la decide la DIRECCIÓN WEB con la que se abrió el sitio ──
+     Se calcula una sola vez, antes de que cualquier efecto toque la URL. */
+  const [initialRoute] = useState(() => {
+    if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste || readAddiReturn().fromAddi) return { view: "pago-resultado" };
+    if (readAdminParam()) return { view: "admin" };   // ← enlace privado del panel (reydelaroma.com/?panel=…)
+    return parseRoute();
   });
+  /* Datos de retorno de la pasarela, guardados antes de limpiar la barra de
+     direcciones (así el resultado del pago no depende del orden de los efectos). */
+  const [payReturn] = useState(() => ({
+    wompi: readWompiReturn(),
+    siste: readSistecreditoReturn(),
+    addi:  readAddiReturn(),
+  }));
+  const savedNav = loadNav(); // datos del checkout antes de recargar (solo esta pestaña)
+  const [view, setView] = useState(initialRoute.view);
   const [products, setProducts] = useState(loadInitialProducts);
   /* Catálogo que ve el CLIENTE. Cuando el admin oculta un producto (hidden: true)
      con el switch "Visible/Oculto", desaparece de la tienda pero NO se borra.
      El panel de admin sigue trabajando con `products` completo. */
   const shopProducts = useMemo(() => products.filter((p) => !p.hidden), [products]);
-  const [selectedProduct, setSelectedProduct] = useState(
-    savedNav && savedNav.view === "product" ? (savedNav.product || null) : null
+  /* Producto abierto. Si el enlace es /producto/…-12, lo buscamos por ese número. */
+  const routeProductId = useRef(initialRoute.view === "product" ? String(initialRoute.id || "") : "");
+  const [selectedProduct, setSelectedProduct] = useState(() =>
+    initialRoute.view === "product"
+      ? (products.find((p) => String(p.id) === String(initialRoute.id)) || null)
+      : null
   );
   const [qty, setQty] = useState(1);
   const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
   const [galleryIdx, setGalleryIdx] = useState(0); // foto activa en la galería del detalle
   const [cart, setCart] = useState(loadCart); // ← carrito persistente (sobrevive al recargar)
   const [cartOpen, setCartOpen] = useState(false);
-  const [catFilter, setCatFilter] = useState(initialCat || "Todos");
+  const [catFilter, setCatFilter] = useState(initialRoute.view === "category" ? initialRoute.cat : "Todos");
   const [sortBy, setSortBy] = useState("recomendado"); // ordenamiento elegido por el cliente
   const [priceFilter, setPriceFilter] = useState("all"); // filtro por rango de precio
   const [toast, setToast] = useState(null);
@@ -1816,8 +1931,9 @@ export default function ReyDelAroma() {
   const [appReady, setAppReady] = useState(false);
   const [slide, setSlide] = useState(0);
   const [pauseSlide, setPauseSlide] = useState(false);
-  const [search, setSearch] = useState(initialSearch || "");
+  const [search, setSearch] = useState(initialRoute.view === "search" ? (initialRoute.q || "") : "");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [adminSearch, setAdminSearch] = useState(""); // 🔍 lupa del panel de administración
   const [tagFilter, setTagFilter] = useState("Todos"); // filtro por familia olfativa (tipo de aroma)
 
   /* ── SUSCRIPCIÓN (correo) — al final de la página, sin ventana emergente ── */
@@ -1873,19 +1989,35 @@ export default function ReyDelAroma() {
 
   /* ── PANEL DE FILTROS (Aroma · Sexo · Precio · Categoría) ── */
   const [filtersOpen, setFiltersOpen] = useState(false); // cajón abierto/cerrado
-  const [fAroma, setFAroma] = useState("Todos");
-  const [fSex, setFSex] = useState("Todos");
-  const [fCat, setFCat] = useState("Todos");
+  const [fAroma, setFAroma] = useState(initialRoute.view === "filtros" ? (initialRoute.aroma || "Todos") : "Todos");
+  const [fSex, setFSex] = useState(initialRoute.view === "filtros" ? (initialRoute.sexo || "Todos") : "Todos");
+  const [fCat, setFCat] = useState(initialRoute.view === "filtros" ? (initialRoute.cat || "Todos") : "Todos");
   // Límites de precio (mín/máx reales del catálogo, redondeados a 10.000)
   const priceBounds = useMemo(() => {
     const ps = shopProducts.map((p) => Number(p.price)).filter((n) => Number.isFinite(n) && n > 0);
     if (!ps.length) return { min: 0, max: 1000000 };
     return { min: Math.floor(Math.min(...ps) / 10000) * 10000, max: Math.ceil(Math.max(...ps) / 10000) * 10000 };
   }, [shopProducts]);
-  const [priceLo, setPriceLo] = useState(priceBounds.min);
-  const [priceHi, setPriceHi] = useState(priceBounds.max);
-  // Al cargar (o si cambia el catálogo) ajustamos el slider a los límites reales
-  useEffect(() => { setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); }, [priceBounds.min, priceBounds.max]);
+  /* ¿El rango de precio lo eligió alguien (cliente o enlace compartido)?
+     Si es así NO lo pisamos cuando llega el catálogo de la nube. */
+  const priceTouchedRef = useRef(
+    initialRoute.view === "filtros" && (initialRoute.min != null || initialRoute.max != null)
+  );
+  const [priceLo, setPriceLo] = useState(() =>
+    initialRoute.view === "filtros" && initialRoute.min ? Number(initialRoute.min) : priceBounds.min
+  );
+  const [priceHi, setPriceHi] = useState(() =>
+    initialRoute.view === "filtros" && initialRoute.max ? Number(initialRoute.max) : priceBounds.max
+  );
+  const setPriceLoUser = (v) => { priceTouchedRef.current = true; setPriceLo(v); };
+  const setPriceHiUser = (v) => { priceTouchedRef.current = true; setPriceHi(v); };
+  const resetPriceRange = () => { priceTouchedRef.current = false; setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); };
+  // Al cargar (o si cambia el catálogo) ajustamos el slider a los límites reales,
+  // salvo que el rango venga elegido a propósito (panel de filtros o enlace).
+  useEffect(() => {
+    if (priceTouchedRef.current) return;
+    setPriceLo(priceBounds.min); setPriceHi(priceBounds.max);
+  }, [priceBounds.min, priceBounds.max]);
 
   const banners = [
     { src: banner2, alt: "2 perfumes por $300.000", filter: "2 × $300.000", dur: 15000 },
@@ -2133,93 +2265,228 @@ export default function ReyDelAroma() {
     }
   }, [cart]);
 
-  /* Recordar la PÁGINA abierta (solo en esta pestaña) para que un F5 no devuelva
-     al inicio. No guardamos la pantalla de resultado de pago: esa depende de la URL. */
+  /* Guardamos los productos del checkout (solo en esta pestaña) para que un F5
+     dentro de /pagar no vacíe la compra. La PÁGINA ya no hace falta guardarla:
+     ahora la dice la propia dirección web. */
   useEffect(() => {
     try {
       if (view === "pago-resultado") { sessionStorage.removeItem(LS_NAV); return; }
-      const payload = {
-        view,
-        product: view === "product" ? selectedProduct : null,
-        checkoutItems: view === "checkout" ? checkoutItems : [],
-      };
-      sessionStorage.setItem(LS_NAV, JSON.stringify(payload));
+      sessionStorage.setItem(LS_NAV, JSON.stringify({ view, checkoutItems: view === "checkout" ? checkoutItems : [] }));
     } catch { /* ignore */ }
-  }, [view, selectedProduct, checkoutItems]);
+  }, [view, checkoutItems]);
 
-  /* ── BOTÓN "ATRÁS" DEL NAVEGADOR (incluido el del celular) → SIEMPRE al INICIO ──
-     La tienda es UNA sola página con vistas internas (producto, categoría,
-     checkout, admin…). El navegador por sí solo no conoce esas vistas: al pulsar
-     "atrás" sacaba al cliente de la página. Aquí "atrapamos" el botón atrás y lo
-     convertimos en un "ir al inicio": nunca abandona el sitio. Los refs nos dejan
-     leer el estado más reciente dentro del listener (sin ellos quedaría congelado). */
-  const viewRef = useRef(view);
+  /* ──────────────────────────────────────────────────────────────
+     ROUTER: la dirección web y lo que se ve en pantalla van siempre juntos
+     · applyRoute → pinta la página que pide una dirección
+     · go         → cambia de página Y actualiza la barra de direcciones
+     ────────────────────────────────────────────────────────────── */
+  const routeRef = useRef(initialRoute);
+
+  const applyRoute = (r) => {
+    const route = r || { view: "store" };
+    routeRef.current = route;
+    // Cualquier cambio de página cierra menú, buscador, carrito y filtros.
+    setMenuOpen(false);
+    setSearchOpen(false);
+    setCartOpen(false);
+    setFiltersOpen(false);
+
+    switch (route.view) {
+      case "category":
+        setCatFilter(route.cat || "Todos");
+        setTagFilter("Todos");
+        setSortBy("recomendado");
+        setPriceFilter("all");
+        setSearch("");
+        setSelectedProduct(null);
+        setView("category");
+        break;
+      case "search":
+        setSearch(route.q || "");
+        setCatFilter("Todos");
+        setTagFilter("Todos");
+        setSelectedProduct(null);
+        setView("search");
+        break;
+      case "filtros":
+        setFAroma(route.aroma || "Todos");
+        setFSex(route.sexo || "Todos");
+        setFCat(route.cat || "Todos");
+        if (route.min != null && route.min !== "") { priceTouchedRef.current = true; setPriceLo(Number(route.min)); }
+        if (route.max != null && route.max !== "") { priceTouchedRef.current = true; setPriceHi(Number(route.max)); }
+        setSelectedProduct(null);
+        setView("filtros");
+        break;
+      case "product": {
+        const id = String(route.id || (route.product && route.product.id) || "");
+        routeProductId.current = id;
+        const found = route.product || products.find((p) => String(p.id) === id) || null;
+        setSelectedProduct(found);
+        setQty(1);
+        setSelSize(null);
+        setGalleryIdx(0);
+        setView("product");
+        break;
+      }
+      case "checkout":
+        setView("checkout");
+        break;
+      case "admin":
+        setView("admin");
+        break;
+      default:
+        setCatFilter("Todos");
+        setTagFilter("Todos");
+        setSearch("");
+        setSelectedProduct(null);
+        setView("store");
+    }
+  };
+  /* El listener del botón "atrás" vive fuera de los renders, así que le dejamos
+     siempre a mano la última versión de applyRoute (con el catálogo actualizado). */
+  const applyRouteRef = useRef(applyRoute);
+  useEffect(() => { applyRouteRef.current = applyRoute; });
+
+  /* Cambia de página: nueva dirección en la barra + nueva vista. */
+  const go = (r, opts = {}) => {
+    const { replace = false, scroll = true } = opts;
+    const path = pathOf(r);
+    try {
+      if (replace) window.history.replaceState({ rda: 1 }, "", path);
+      else window.history.pushState({ rda: 1 }, "", path);
+    } catch { /* ignore */ }
+    applyRoute(r);
+    if (scroll) window.scrollTo({ top: 0 });
+  };
+  /* Clic en un enlace <a>: navegamos sin recargar, pero dejando que Ctrl/⌘ +
+     clic (o el clic con la rueda) siga abriendo una pestaña nueva de verdad. */
+  const linkGo = (e, r) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    go(r);
+  };
+
+  /* Si el producto abierto todavía no estaba en el catálogo local (por ejemplo,
+     alguien abrió el enlace directo y el catálogo real llegó después de la nube),
+     lo enganchamos apenas aparece. También mantiene el precio siempre al día. */
+  useEffect(() => {
+    if (view !== "product") return;
+    const id = routeProductId.current;
+    if (!id) return;
+    const found = products.find((p) => String(p.id) === id);
+    if (found) setSelectedProduct((cur) => (cur === found ? cur : found));
+  }, [products, view]);
+
   const menuOpenRef = useRef(menuOpen);
   const cartOpenRef = useRef(cartOpen);
   const filtersOpenRef = useRef(filtersOpen);
   useEffect(() => {
-    viewRef.current = view;
     menuOpenRef.current = menuOpen;
     cartOpenRef.current = cartOpen;
     filtersOpenRef.current = filtersOpen;
-  }, [view, menuOpen, cartOpen, filtersOpen]);
+  }, [menuOpen, cartOpen, filtersOpen]);
 
+  /* ── BOTÓN "ATRÁS" DEL NAVEGADOR (celular incluido) ──
+     Ahora cada página tiene su dirección, así que "atrás" vuelve de verdad a la
+     página anterior. Se mantienen dos cortesías de siempre:
+       · si hay un panel abierto (menú, carrito, filtros), "atrás" solo lo cierra;
+       · al llegar al final del historial de la tienda, "atrás" lleva al inicio
+         en vez de sacar al cliente del sitio. */
   useEffect(() => {
-    // Sembramos una entrada en el historial y la volvemos a sembrar en CADA "atrás".
-    // Así el botón atrás del navegador (celular incluido) siempre lleva al inicio
-    // y NUNCA saca al cliente de la página.
-    const armarTrampa = () => {
-      try { window.history.pushState({ rda: 1 }, ""); } catch { /* ignore */ }
-    };
-    armarTrampa();
+    // Dirección "limpia" con la que arrancamos (el resultado de pago y el panel
+    // privado no se muestran en la barra de direcciones).
+    const startPath =
+      initialRoute.view === "pago-resultado" || initialRoute.view === "admin"
+        ? "/"
+        : pathOf(initialRoute);
+    try {
+      window.history.replaceState({ rda: 1, seed: 1 }, "", startPath); // ← suelo del historial
+      window.history.pushState({ rda: 1 }, "", startPath);             // ← página actual
+    } catch { /* ignore */ }
 
-    const irAlInicio = () => {
-      setView("store");
-      setSelectedProduct(null);
-      setCatFilter("Todos");
-      setSearch("");
-      setSearchOpen(false);
-      setCartOpen(false);
-      setMenuOpen(false);
-      setFiltersOpen(false);
-      try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
-      window.scrollTo({ top: 0 });
-    };
-
-    const alRetroceder = () => {
-      // 1) Si hay un panel abierto (menú, carrito o filtros), "atrás" solo lo cierra.
+    const alRetroceder = (e) => {
+      // 1) Panel abierto → "atrás" solo lo cierra y nos quedamos donde estamos.
       if (menuOpenRef.current || cartOpenRef.current || filtersOpenRef.current) {
         setMenuOpen(false);
         setCartOpen(false);
         setFiltersOpen(false);
-        armarTrampa();
+        try { window.history.pushState({ rda: 1 }, "", pathOf(routeRef.current)); } catch { /* ignore */ }
         return;
       }
-      // 2) Si estamos en cualquier otra vista, "atrás" lleva al INICIO.
-      //    Si ya estamos en el inicio, no cambia nada visible pero igual re-armamos
-      //    la trampa → "atrás" nunca abandona la página.
-      if (viewRef.current !== "store") irAlInicio();
-      armarTrampa();
+      // 2) Llegamos al suelo del historial → al inicio, sin abandonar la tienda.
+      if (!e.state || e.state.seed) {
+        try { window.history.pushState({ rda: 1 }, "", "/"); } catch { /* ignore */ }
+        applyRouteRef.current({ view: "store" });
+        window.scrollTo({ top: 0 });
+        return;
+      }
+      // 3) Navegación normal: mostramos lo que pide la dirección.
+      applyRouteRef.current(parseRoute());
+      window.scrollTo({ top: 0 });
     };
 
     window.addEventListener("popstate", alRetroceder);
     return () => window.removeEventListener("popstate", alRetroceder);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /* Si el cliente refina la búsqueda o quita un filtro sin salir de la página,
+     la dirección se actualiza sola (sin llenar el historial de entradas), para
+     que el enlace que copie siempre corresponda a lo que está viendo. */
+  const syncUrl = (path, route) => {
+    try {
+      if (window.location.pathname + window.location.search === path) return;
+      window.history.replaceState({ rda: 1 }, "", path);
+      routeRef.current = route;
+    } catch { /* ignore */ }
+  };
+  useEffect(() => {
+    if (view !== "search") return;
+    const term = search.trim();
+    const t = setTimeout(() => syncUrl(searchPath(term), { view: "search", q: term }), 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, search]);
+  useEffect(() => {
+    if (view !== "filtros") return;
+    const r = {
+      view: "filtros", aroma: fAroma, sexo: fSex, cat: fCat,
+      min: priceLo > priceBounds.min ? priceLo : null,
+      max: priceHi < priceBounds.max ? priceHi : null,
+    };
+    syncUrl(filtersPath(r), r);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, fAroma, fSex, fCat, priceLo, priceHi, priceBounds.min, priceBounds.max]);
+
+  /* Título de la pestaña y enlace canónico: cada página se ve distinta en el
+     historial, en los favoritos y al compartirla. */
+  useEffect(() => {
+    let t = "Rey del Aroma · Perfumería";
+    if (view === "category") t = `${catFilter === "Todos" ? "Todo el catálogo" : catFilter} · Rey del Aroma`;
+    else if (view === "product" && selectedProduct) t = `${selectedProduct.name}${selectedProduct.brand ? ` · ${selectedProduct.brand}` : ""} · Rey del Aroma`;
+    else if (view === "search") t = search.trim() ? `«${search.trim()}» · Rey del Aroma` : "Buscar · Rey del Aroma";
+    else if (view === "filtros") t = "Filtros · Rey del Aroma";
+    else if (view === "checkout") t = "Finalizar compra · Rey del Aroma";
+    else if (view === "pago-resultado") t = "Resultado del pago · Rey del Aroma";
+    else if (view === "admin") t = "Panel · Rey del Aroma";
+    try {
+      document.title = t;
+      let link = document.querySelector('link[rel="canonical"]');
+      if (!link) { link = document.createElement("link"); link.rel = "canonical"; document.head.appendChild(link); }
+      link.href = absUrl(view === "admin" || view === "pago-resultado" ? "/" : window.location.pathname + window.location.search);
+    } catch { /* ignore */ }
+  }, [view, catFilter, selectedProduct, search]);
 
   useEffect(() => { const t = requestAnimationFrame(() => setAppReady(true)); return () => cancelAnimationFrame(t); }, []);
 
   /* ── RETORNO DESDE WOMPI ──
      view y payResult ya se inicializan (perezosamente) según la URL.
-     Aquí solo limpiamos la URL y consultamos el estado real de la transacción
-     a la API pública de Wompi (los setState van en callbacks async, no en el
-     cuerpo del efecto). */
+     Aquí solo consultamos el estado real de la transacción a la API pública de
+     Wompi (los setState van en callbacks async, no en el cuerpo del efecto). */
   useEffect(() => {
-    const { id, fromWompi } = readWompiReturn();
+    const { id, fromWompi } = payReturn.wompi;
     if (!id || !fromWompi) return;
-
-    // limpia la URL para que un refresh no reabra el resultado
-    window.history.replaceState({}, "", window.location.pathname);
-
+    // La barra de direcciones ya quedó limpia (?wompi=… no se ve ni se guarda).
     fetch(`${WOMPI_API}/transactions/${id}`)
       .then((r) => r.json())
       .then((j) => {
@@ -2239,12 +2506,11 @@ export default function ReyDelAroma() {
   }, []);
 
   /* ── RETORNO DESDE SISTECRÉDITO ──
-     Igual que con Wompi: limpiamos la URL y consultamos el estado final real
-     en la pasarela (vía nuestra función /api/sistecredito-status). */
+     Igual que con Wompi: consultamos el estado final real en la pasarela
+     (vía nuestra función /api/sistecredito-status). */
   useEffect(() => {
-    const { fromSiste, id } = readSistecreditoReturn();
+    const { fromSiste, id } = payReturn.siste;
     if (!fromSiste) return;
-    window.history.replaceState({}, "", window.location.pathname);
 
     const PEND = ["Pending", "PendingForPaymentMethod", "Started"];
     const finish = (status, reference = "") => {
@@ -2266,23 +2532,14 @@ export default function ReyDelAroma() {
 
   /* ── RETORNO DESDE ADDI ──
      Addi confirma el crédito de forma asíncrona (y por su webhook), así que al
-     volver mostramos un resultado "en proceso" amable. Limpiamos la URL y, como
-     el cliente ya completó el flujo, vaciamos el carrito. */
+     volver mostramos un resultado "en proceso" amable. Como el cliente ya
+     completó el flujo, vaciamos el carrito. */
   useEffect(() => {
-    if (!readAddiReturn().fromAddi) return;
-    window.history.replaceState({}, "", window.location.pathname);
+    if (!payReturn.addi.fromAddi) return;
     let ref = "";
     try { ref = (JSON.parse(localStorage.getItem("rda-last-order") || "{}").reference) || ""; } catch { /* ignore */ }
     setPayResult({ loading: false, status: "PENDING", method: "addi", reference: ref });
     clearCartAfterOrder();
-  }, []);
-
-  /* ── ENTRADA POR EL ENLACE PRIVADO DEL PANEL ──
-     Si abrió con ?panel=<clave>, ya mostramos el panel (arriba). Aquí limpiamos
-     la URL para que la palabra secreta no quede a la vista ni en el historial. */
-  useEffect(() => {
-    if (!readAdminParam()) return;
-    try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
   }, []);
 
   /* auto-avance del carrusel (cada banner con su propia duración) */
@@ -2370,53 +2627,19 @@ export default function ReyDelAroma() {
     showToast("¡Gracias por suscribirte! 👑");
   };
 
-  /* "Catálogo" / "Todos" → abre la página propia con TODO el catálogo (grid completo) */
-  const quickFilter = (f) => {
-    setCatFilter(f);
-    setTagFilter("Todos");
-    setSortBy("recomendado");
-    setPriceFilter("all");
-    setSearch("");
-    setSearchOpen(false);
-    setMenuOpen(false);
-    setView("category");
-    try { window.history.replaceState({}, "", categoryUrl(f)); } catch { /* ignore */ }
-    window.scrollTo({ top: 0 });
-  };
-  /* Envía la búsqueda a su PÁGINA propia de resultados (distinta a la de inicio). */
+  /* Envía la búsqueda a su PÁGINA propia  (reydelaroma.com/buscar?q=…) */
   const submitSearch = () => {
     const term = search.trim();
     if (!term) return;
-    setSearchOpen(false);
-    setMenuOpen(false);
-    setView("search");
-    try { window.history.replaceState({}, "", searchUrl(term)); } catch { /* ignore */ }
-    window.scrollTo({ top: 0 });
+    go({ view: "search", q: term });
   };
   /* Cierra los resultados, limpia el término y vuelve al inicio. */
-  const exitSearch = () => {
-    setSearch("");
-    setSearchOpen(false);
-    setMenuOpen(false);
-    setView("store");
-    try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ }
-    window.scrollTo({ top: 0 });
-  };
+  const exitSearch = () => go({ view: "store" });
 
   /* Abre la página propia de una categoría (Hombre, Mujer, Unisex, 2 × $300.000, …) */
-  const goCategory = (f) => {
-    setCatFilter(f);
-    setTagFilter("Todos");
-    setSortBy("recomendado");
-    setSearch("");
-    setSearchOpen(false);
-    setMenuOpen(false);
-    setView("category");
-    try { window.history.replaceState({}, "", categoryUrl(f)); } catch { /* ignore */ }
-    window.scrollTo({ top: 0 });
-  };
-  /* Decide a dónde ir: "Todos"/"Catálogo" → tienda; el resto → su propia página */
-  const goFilter = (f) => { if (f === "Todos") quickFilter("Todos"); else goCategory(f); };
+  const goCategory = (f) => go({ view: "category", cat: f });
+  /* Todas las categorías (incluida "Todos") tienen su propia dirección. */
+  const goFilter = (f) => go({ view: "category", cat: f });
 
   /* Desplaza un carrusel de productos del inicio (flechas ‹ ›) */
   const scrollRow = (id, dir) => {
@@ -2424,14 +2647,8 @@ export default function ReyDelAroma() {
     if (el) el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.85), behavior: "smooth" });
   };
 
-  const openProduct = (p) => {
-    setSelectedProduct(p);
-    setQty(1);
-    setSelSize(null);
-    setGalleryIdx(0);
-    setView("product");
-    window.scrollTo({ top: 0 });
-  };
+  /* Abre la ficha de un perfume en su propia dirección: /producto/<nombre>-<id> */
+  const openProduct = (p) => go({ view: "product", id: p.id, product: p, path: productPath(p) });
 
   // Desde el carrito: al tocar la foto o el nombre, abre esa ficha de producto.
   const goToProduct = (item) => {
@@ -2480,6 +2697,24 @@ export default function ReyDelAroma() {
 
   // Resultados en vivo bajo la lupa (primeros 6 mientras el cliente escribe)
   const searchResults = q ? filtered.slice(0, 6) : [];
+
+  /* ── 🔍 LUPA DEL PANEL DE ADMINISTRACIÓN ──
+     Busca dentro de TODO el catálogo del panel (incluidos los ocultos) por
+     nombre, marca, subtítulo, colección, categoría, aroma o precio. */
+  const adminQ = adminSearch.trim().toLowerCase();
+  const adminProducts = useMemo(() => {
+    if (!adminQ) return products;
+    const terms = adminQ.split(/\s+/).filter(Boolean);
+    return products.filter((p) => {
+      const hay = [
+        p.name, p.fullName, p.brand, p.subtitle, p.size, p.collection, p.category,
+        p.tag, ...(Array.isArray(p.tags) ? p.tags : []), p.slug,
+        String(p.price || ""), cop(p.price), p.promo ? "promo 2x300" : "",
+        p.hidden ? "oculto" : "visible",
+      ].filter(Boolean).join(" ").toLowerCase();
+      return terms.every((t) => hay.includes(t));   // todas las palabras deben aparecer
+    });
+  }, [products, adminQ]);
 
   /* Aromas que REALMENTE tienen productos (evita filtros vacíos como Vainilla, Oud, etc.).
      El admin sigue viendo la lista completa para poder etiquetar; esto es solo para los filtros del cliente. */
@@ -2537,8 +2772,15 @@ export default function ReyDelAroma() {
     }
     setFiltersOpen(true);
   };
-  const clearFilters = () => { setFAroma("Todos"); setFSex("Todos"); setFCat("Todos"); setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); };
-  const applyFilters = () => { setFiltersOpen(false); setMenuOpen(false); setView("filtros"); window.scrollTo({ top: 0 }); };
+  const clearFilters = () => { setFAroma("Todos"); setFSex("Todos"); setFCat("Todos"); resetPriceRange(); };
+  /* Aplica los filtros y los deja guardados en la dirección web, para poder
+     compartir exactamente esa selección: /filtros?aroma=…&sexo=…&cat=…&min=…&max=… */
+  const applyFilters = () => go({
+    view: "filtros",
+    aroma: fAroma, sexo: fSex, cat: fCat,
+    min: priceLo > priceBounds.min ? priceLo : null,
+    max: priceHi < priceBounds.max ? priceHi : null,
+  });
 
   /* Totales del checkout: subtotal, descuento del cupón, envío y total. */
   const computeTotals = (items = checkoutItems) => {
@@ -2562,8 +2804,7 @@ export default function ReyDelAroma() {
     setMenuOpen(false);
     const first = ["wompi", "addi", "sistecredito"].find((m) => PAYMENTS[m]?.enabled);
     setPayMethod(first || "wompi");
-    setView("checkout");
-    window.scrollTo({ top: 0 });
+    go({ view: "checkout" });
   };
   const buyNow = (p, size, q) => goCheckout([{ ...p, size, qty: q }]);
   const setCo = (key) => (e) => setCoForm((f) => ({ ...f, [key]: e.target.value }));
@@ -3150,7 +3391,7 @@ export default function ReyDelAroma() {
         <section className="srch-hero">
           <div className="srch-hero-in">
             <div className="srch-bc">
-              <button className="bc-lnk" onClick={exitSearch}>Inicio</button>
+              <a className="bc-lnk" href="/" onClick={(e) => linkGo(e, { view: "store" })}>Inicio</a>
               <span aria-hidden="true">›</span>
               <span className="cur">Búsqueda</span>
             </div>
@@ -3230,7 +3471,7 @@ export default function ReyDelAroma() {
         <section className="srch-hero">
           <div className="srch-hero-in">
             <div className="srch-bc">
-              <button className="bc-lnk" onClick={() => { setView("store"); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>Inicio</button>
+              <a className="bc-lnk" href="/" onClick={(e) => linkGo(e, { view: "store" })}>Inicio</a>
               <span aria-hidden="true">›</span>
               <span className="cur">Filtros</span>
             </div>
@@ -3251,7 +3492,7 @@ export default function ReyDelAroma() {
                 <span className="filt-tag">{fCat}<button onClick={() => setFCat("Todos")} aria-label="Quitar categoría">✕</button></span>
               )}
               {priceTouched && (
-                <span className="filt-tag">{cop(priceLo)} – {cop(priceHi)}<button onClick={() => { setPriceLo(priceBounds.min); setPriceHi(priceBounds.max); }} aria-label="Quitar precio">✕</button></span>
+                <span className="filt-tag">{cop(priceLo)} – {cop(priceHi)}<button onClick={resetPriceRange} aria-label="Quitar precio">✕</button></span>
               )}
               <button className="filt-edit" onClick={openFilters}>⚙️ Editar filtros</button>
             </div>
@@ -3285,7 +3526,26 @@ export default function ReyDelAroma() {
 
   /* ── VISTA DETALLE ── */
   const ProductDetailView = () => {
-    if (!selectedProduct) return null;
+    /* El enlace apunta a un perfume que ya no está (se eliminó, se ocultó o el
+       catálogo aún viene en camino desde la nube). */
+    if (!selectedProduct) {
+      const cargando = cloudState === "loading";
+      return (
+        <div className="srch-empty" style={{ minHeight: "52vh" }}>
+          <div className="srch-empty-ic">{cargando ? "⏳" : "🫙"}</div>
+          <h3>{cargando ? <>Cargando el <span>perfume</span>…</> : <>Este perfume ya no está <span>disponible</span></>}</h3>
+          <p>{cargando
+            ? "Un momento, estamos trayendo el catálogo actualizado."
+            : "Es posible que se haya agotado o que el enlace haya cambiado. Mira el resto de nuestras fragancias."}</p>
+          {!cargando && (
+            <div className="srch-sugg">
+              <button onClick={() => go({ view: "category", cat: "Todos" })}>Ver todo el catálogo</button>
+              <button onClick={() => go({ view: "store" })}>Ir al inicio</button>
+            </div>
+          )}
+        </div>
+      );
+    }
     const p = selectedProduct;
     const words = (p.name || "").split(" ").filter(Boolean);
     const last = words.pop() || "";
@@ -3301,9 +3561,9 @@ export default function ReyDelAroma() {
     return (
       <div className="pd-wrap">
         <div className="bc">
-          <span className="bc-lnk" onClick={() => setView("store")}>Inicio</span>
+          <a className="bc-lnk" href="/" onClick={(e) => linkGo(e, { view: "store" })}>Inicio</a>
           <span className="bc-sep">›</span>
-          <span className="bc-lnk" onClick={() => quickFilter("Todos")}>Catálogo</span>
+          <a className="bc-lnk" href={categoryPath("Todos")} onClick={(e) => linkGo(e, { view: "category", cat: "Todos" })}>Ver todo</a>
           <span className="bc-sep">›</span>
           <span className="cur">{p.name}</span>
         </div>
@@ -3415,7 +3675,7 @@ export default function ReyDelAroma() {
   /* ── VISTA RESULTADO DE PAGO (retorno de Wompi) ── */
   const PaymentResultView = () => {
     const r = payResult || {};
-    const goStore = () => { setPayResult(null); setView("store"); quickFilter("Todos"); window.scrollTo({ top: 0 }); };
+    const goStore = () => { setPayResult(null); go({ view: "category", cat: "Todos" }); };
 
     if (r.loading) {
       return (
@@ -3462,7 +3722,7 @@ export default function ReyDelAroma() {
         <div className="co-empty">
           <div className="empty-icon">🛒</div>
           <p style={{ fontSize: 15, letterSpacing: 1 }}>No hay productos para pagar.</p>
-          <button className="btn-g" onClick={() => { setView("store"); quickFilter("Todos"); }} style={{ marginTop: 20, justifyContent: "center" }}>Ver catálogo →</button>
+          <button className="btn-g" onClick={() => go({ view: "category", cat: "Todos" })} style={{ marginTop: 20, justifyContent: "center" }}>Ver todo →</button>
         </div>
       );
     }
@@ -3478,7 +3738,7 @@ export default function ReyDelAroma() {
     return (
       <div className="co-wrap">
         <div className="bc">
-          <span className="bc-lnk" onClick={() => setView("store")}>Inicio</span>
+          <a className="bc-lnk" href="/" onClick={(e) => linkGo(e, { view: "store" })}>Inicio</a>
           <span className="bc-sep">›</span>
           <span className="cur">Finalizar compra</span>
         </div>
@@ -4160,18 +4420,46 @@ export default function ReyDelAroma() {
             <button className="btn-o" onClick={() => setAdminView("taxonomy")}>🗂️ Colecciones y aromas</button>
             <button className="btn-o" onClick={() => setAdminView("coupons")}>🎟️ Cupones</button>
             <button className="btn-o" onClick={resetCatalog}>Restaurar catálogo</button>
-            <button className="btn-o" onClick={() => { setAdminAuth(false); setView("store"); }}>Salir</button>
+            <button className="btn-o" onClick={() => { setAdminAuth(false); setAdminSearch(""); go({ view: "store" }); }}>Salir</button>
             <button className="btn-g" onClick={startAdd}>+ Agregar</button>
           </div>
         </div>
         {cloudCard()}
         <div className="admin-info"><b>{products.length}</b> productos en catálogo{hiddenCount > 0 ? <> · <b>{hiddenCount}</b> {hiddenCount === 1 ? "oculto" : "ocultos"}</> : ""} · Cuando cambias un precio se publica solo en la nube y se ve al instante en el celular de tus clientes.</div>
+
+        {/* 🔍 BUSCADOR — encuentra cualquier producto sin bajar por toda la tabla */}
+        <div className="asearch">
+          <span className="asearch-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+              <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </span>
+          <input
+            className="asearch-input"
+            type="text"
+            placeholder="Buscar producto: nombre, marca, colección, aroma o precio…"
+            value={adminSearch}
+            onChange={(e) => setAdminSearch(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Escape") setAdminSearch(""); }}
+            aria-label="Buscar producto en el catálogo"
+          />
+          {adminSearch && (
+            <button className="asearch-x" onClick={() => setAdminSearch("")} aria-label="Limpiar búsqueda">✕</button>
+          )}
+        </div>
+        {adminQ && (
+          <div className="asearch-count">
+            <b>{adminProducts.length}</b> {adminProducts.length === 1 ? "producto encontrado" : "productos encontrados"} para «{adminSearch.trim()}» · <button className="asearch-all" onClick={() => setAdminSearch("")}>ver todos</button>
+          </div>
+        )}
+
         <table className="atbl">
           <thead>
             <tr><th></th><th>Producto</th><th>Precio</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Estado</th><th>Acciones</th></tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {adminProducts.map((p) => (
               <tr key={p.id} className={p.hidden ? "is-hidden" : ""}>
                 <td>{p.image ? <img className="athumb" src={p.image} alt={p.name} /> : <div className="athumb" />}</td>
                 <td><div className="atn">{isKingFavorite(p) && <span title="Favorito del Rey">👑 </span>}{p.name}</div><div className="ats">{p.brand}{p.subtitle ? ` · ${p.subtitle}` : ""}</div></td>
@@ -4192,6 +4480,13 @@ export default function ReyDelAroma() {
             ))}
           </tbody>
         </table>
+        {adminProducts.length === 0 && products.length > 0 && (
+          <div style={{ textAlign: "center", padding: "70px 24px", color: "#999" }}>
+            <div style={{ fontSize: 44, marginBottom: 12, opacity: 0.35 }}>🔍</div>
+            <p>No hay productos que coincidan con «{adminSearch.trim()}».</p>
+            <button className="btn-o" onClick={() => setAdminSearch("")} style={{ marginTop: 14 }}>Limpiar búsqueda</button>
+          </div>
+        )}
         {products.length === 0 && (
           <div style={{ textAlign: "center", padding: "80px", color: "#999" }}>
             <div style={{ fontSize: 48, marginBottom: 12, opacity: 0.3 }}>📦</div>
@@ -4228,10 +4523,10 @@ export default function ReyDelAroma() {
             </div>
 
             {/* CENTRO — logo */}
-            <div className="nav-logo nav-logo-c" onClick={() => { setView("store"); setCatFilter("Todos"); setSearch(""); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+            <a className="nav-logo nav-logo-c" href="/" onClick={(e) => linkGo(e, { view: "store" })}>
               <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
-              <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
-            </div>
+              <span className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></span>
+            </a>
 
             {/* DERECHA — buscar + carrito */}
             <div className="nav-r">
@@ -4241,25 +4536,28 @@ export default function ReyDelAroma() {
 
             {/* Menú desplegable */}
             <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
-              <a className="nl" href={homeUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Inicio</a>
-              <a className="nl nl-promo" href={categoryUrl("2 × $300.000")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
-              <a className="nl" href={homeUrl()} onClick={(e) => { e.preventDefault(); quickFilter("Todos"); setMenuOpen(false); }}>Catálogo</a>
-              <a className="nl" href={categoryUrl("Hombre")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Hombre</a>
-              <a className="nl" href={categoryUrl("Mujer")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Mujer</a>
-              <a className="nl" href={categoryUrl("Unisex")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Unisex</a>
-              <a className="nl" href={categoryUrl("Diseñador")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Diseñador</a>
-              <a className="nl" href={categoryUrl("Árabes")} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Árabes</a>
+              {/* Cada opción es un enlace real con su propia dirección: se puede
+                  copiar, compartir o abrir en pestaña nueva (clic derecho / Ctrl+clic). */}
+              <a className="nl" href="/" onClick={(e) => linkGo(e, { view: "store" })}>Inicio</a>
+              <a className="nl nl-promo" href={categoryPath("2 × $300.000")} onClick={(e) => linkGo(e, { view: "category", cat: "2 × $300.000" })}><span className="nl-flame">🔥</span><span className="nl-promo-txt">2 × $300.000</span><span className="nl-flame nl-flame2">🔥</span></a>
+              <a className="nl" href={categoryPath("Todos")} onClick={(e) => linkGo(e, { view: "category", cat: "Todos" })}>Ver todo</a>
+              <a className="nl" href={categoryPath("Hombre")} onClick={(e) => linkGo(e, { view: "category", cat: "Hombre" })}>Hombre</a>
+              <a className="nl" href={categoryPath("Mujer")} onClick={(e) => linkGo(e, { view: "category", cat: "Mujer" })}>Mujer</a>
+              <a className="nl" href={categoryPath("Unisex")} onClick={(e) => linkGo(e, { view: "category", cat: "Unisex" })}>Unisex</a>
+              <a className="nl" href={categoryPath("Diseñador")} onClick={(e) => linkGo(e, { view: "category", cat: "Diseñador" })}>Diseñador</a>
+              <a className="nl" href={categoryPath("Árabes")} onClick={(e) => linkGo(e, { view: "category", cat: "Árabes" })}>Árabes</a>
+              <a className="nl" href={categoryPath("Destacados")} onClick={(e) => linkGo(e, { view: "category", cat: "Destacados" })}>Destacados</a>
             </div>
           </>
         ) : (
           <>
-            <div className="nav-logo" onClick={() => { setView("store"); setCatFilter("Todos"); setSearch(""); setMenuOpen(false); try { window.history.replaceState({}, "", homeUrl()); } catch { /* ignore */ } window.scrollTo({ top: 0 }); }}>
+            <a className="nav-logo" href="/" onClick={(e) => linkGo(e, { view: "store" })}>
               <img className="nav-logo-img" src={logoPrincipal} alt="Rey del Aroma" />
-              <div className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></div>
-            </div>
+              <span className="nav-logo-text"><span className="l-rey">REY</span><span className="l-da">DEL AROMA</span></span>
+            </a>
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
               <span style={{ fontSize: 12, color: "#aaa", letterSpacing: 2.5, textTransform: "uppercase" }}>Administración</span>
-              <button className="nl" onClick={() => setView("store")}>← Volver a la tienda</button>
+              <button className="nl" onClick={() => go({ view: "store" })}>← Volver a la tienda</button>
             </div>
           </>
         )}
@@ -4301,14 +4599,14 @@ export default function ReyDelAroma() {
                   {searchResults.length > 0 ? (
                     <>
                       {searchResults.map((p) => (
-                        <button key={p.id} className="sr-item" onClick={() => { openProduct(p); setSearchOpen(false); }}>
+                        <a key={p.id} className="sr-item" href={productPath(p)} onClick={(e) => linkGo(e, { view: "product", id: p.id, product: p, path: productPath(p) })}>
                           <span className="sr-img">{p.image ? <img src={p.image} alt={p.name} /> : <span className="sr-noimg">🧴</span>}</span>
                           <span className="sr-info">
                             <span className="sr-name">{p.name}</span>
                             <span className="sr-sub">{p.brand}{p.tag ? ` · ${FAMILY_META[p.tag]?.emoji || ""} ${p.tag}` : ""}</span>
                           </span>
                           <span className="sr-price">{cop(p.price)}</span>
-                        </button>
+                        </a>
                       ))}
                       <button className="sr-all" onClick={submitSearch}>Ver todos los resultados de “{search.trim()}” →</button>
                     </>
@@ -4386,7 +4684,7 @@ export default function ReyDelAroma() {
                     max={priceBounds.max}
                     step={10000}
                     value={priceLo}
-                    onChange={(e) => setPriceLo(Math.min(Number(e.target.value), priceHi - 10000))}
+                    onChange={(e) => setPriceLoUser(Math.min(Number(e.target.value), priceHi - 10000))}
                     aria-label="Precio mínimo"
                   />
                   <input
@@ -4395,7 +4693,7 @@ export default function ReyDelAroma() {
                     max={priceBounds.max}
                     step={10000}
                     value={priceHi}
-                    onChange={(e) => setPriceHi(Math.max(Number(e.target.value), priceLo + 10000))}
+                    onChange={(e) => setPriceHiUser(Math.max(Number(e.target.value), priceLo + 10000))}
                     aria-label="Precio máximo"
                   />
                 </div>
@@ -4491,7 +4789,11 @@ export default function ReyDelAroma() {
       {view !== "admin" && !cartOpen && (
         <a
           className="wa-float"
-          href={waLink("Hola Rey del Aroma 👑, quiero más información sobre sus perfumes.")}
+          href={waLink(
+            view === "product" && selectedProduct
+              ? `Hola Rey del Aroma 👑, me interesa este perfume: ${selectedProduct.name}${selectedProduct.brand ? ` (${selectedProduct.brand})` : ""} — ${absUrl(productPath(selectedProduct))}`
+              : "Hola Rey del Aroma 👑, quiero más información sobre sus perfumes."
+          )}
           target="_blank"
           rel="noreferrer"
           aria-label="Escríbenos por WhatsApp"
