@@ -12,6 +12,8 @@
    (y WEB3FORMS_KEY si quieres el aviso por correo).
    ════════════════════════════════════════════════════════════════ */
 
+import { hayBlob, actualizarEstado } from "../lib/pedidos.js";
+
 const BASE = "https://api.credinet.co/pay";
 const ADMIN_EMAIL = "reydelaromacolombia@gmail.com";
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
@@ -43,6 +45,28 @@ export default async function handler(req, res) {
       const d = j?.data || {};
       const status = d.transactionStatus || "";
       console.log("Sistecrédito webhook:", id, status);
+
+      /* Marca el pedido en el panel de ventas (funciona aunque el cliente
+         cierre el navegador). La referencia es la factura que enviamos. */
+      const refPedido = d.invoice || "";
+      if (hayBlob() && refPedido) {
+        const PEND = ["Pending", "PendingForPaymentMethod", "Started"];
+        const estado =
+          status === "Approved" ? "pagado"
+          : PEND.includes(status) ? "pendiente"
+          : status ? "rechazado"
+          : "pendiente";
+        try {
+          await actualizarEstado(refPedido, {
+            estado,
+            txId: id,
+            pasarelaEstado: status,
+            pagadoValor: Number(d.value) || 0,
+          });
+        } catch (e) {
+          console.error("sistecredito-webhook (panel de ventas):", e);
+        }
+      }
 
       // Si quedó aprobada, avisa por correo (Web3Forms)
       const w3key = process.env.WEB3FORMS_KEY || "";

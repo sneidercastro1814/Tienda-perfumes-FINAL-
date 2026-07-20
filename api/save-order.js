@@ -1,52 +1,57 @@
 /* ════════════════════════════════════════════════════════════════
-   GUARDA / NOTIFICA CADA PEDIDO — versión para VERCEL
-   En Vercel este endpoint ENVÍA EL CORREO al admin con los datos del
-   pedido (Web3Forms, gratis). Así te enteras de cada venta al instante.
+   GUARDA CADA PEDIDO  —  POST /api/save-order
+   ────────────────────────────────────────────────────────────────
+   Hace DOS cosas con cada compra:
 
-   (El panel de Ventas dentro de la página usaba almacenamiento de
-   Netlify, que no existe en Vercel. Para verlo dentro de la web en
-   Vercel hay que conectar una base de datos — ver api/list-orders.js.)
+   1) La guarda en el almacenamiento de Vercel (Blob) para que aparezca
+      en el panel "Ventas en tiempo real" del administrador.
+   2) Te manda el correo con todos los datos (Web3Forms), como siempre.
 
-   Ruta automática:  /api/save-order   ←  api/save-order.js
+   Si una de las dos falla, la otra sigue funcionando: nunca se pierde
+   una venta por un problema de red.
 
-   CÓMO ACTIVAR EL CORREO (1 sola vez):
-   1) Entra a  https://web3forms.com  y escribe el correo
-      reydelaromacolombia@gmail.com  → te llega un "Access Key".
-   2) En Vercel: Project Settings → Environment Variables → Add
-      Key:   WEB3FORMS_KEY
-      Value: (el Access Key que te llegó al correo)
-      …o, si prefieres, pégalo abajo en W3KEY_FALLBACK.
-   El correo SIEMPRE llega al correo con el que creaste el Access Key.
+   El pedido se guarda como "pendiente" porque en este momento el
+   cliente todavía no ha pagado (lo mandamos a Wompi / Addi /
+   Sistecrédito). Cuando el pago se confirma, el estado pasa a
+   "pagado" desde:
+      · api/confirm-order.js  (cuando el cliente vuelve a la tienda)
+      · api/wompi-webhook.js / api/sistecredito-webhook.js  (avisos de
+        la pasarela, aunque el cliente cierre el navegador)
+
+   CORREO (opcional, una sola vez):
+     1) https://web3forms.com  con  reydelaromacolombia@gmail.com
+        → te llega un "Access Key".
+     2) Vercel → Settings → Environment Variables → Add
+          Key:   WEB3FORMS_KEY
+          Value: (el Access Key)
    ════════════════════════════════════════════════════════════════ */
+
+import { hayBlob, guardarPedido } from "../lib/pedidos.js";
 
 const ADMIN_EMAIL = "reydelaromacolombia@gmail.com";
 const W3KEY_FALLBACK = ""; // ← opcional: pega aquí tu Access Key de Web3Forms
 
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+/* Nombre bonito del medio de pago para el correo y el panel. */
+const MEDIOS = { wompi: "Wompi", addi: "Addi", sistecredito: "Sistecrédito" };
 
-  try {
-    const order = req.body || {};
-    const reference = order.reference || "RDA-" + Date.now();
-    order.reference = reference;
-    order.date = order.date || new Date().toISOString();
+async function enviarCorreo(order) {
+  const w3key = process.env.WEB3FORMS_KEY || W3KEY_FALLBACK;
+  if (!w3key) return;
 
-    // Enviar el correo con los datos del pedido (Web3Forms)
-    const w3key = process.env.WEB3FORMS_KEY || W3KEY_FALLBACK;
-    if (w3key) {
-      const c = order.customer || {};
-      const itemsTxt = (order.items || [])
-        .map((it) => `• ${it.qty} x ${it.name}${it.size ? " (" + it.size + ")" : ""} — ${cop(it.price * it.qty)}`)
-        .join("\n");
+  const c = order.customer || {};
+  const itemsTxt = (order.items || [])
+    .map((it) => `• ${it.qty} x ${it.name}${it.size ? " (" + it.size + ")" : ""} — ${cop(it.price * it.qty)}`)
+    .join("\n");
 
-      const message =
+  const message =
 `NUEVO PEDIDO — Rey del Aroma
 
-Pedido:  ${reference}
+Pedido:  ${order.reference}
 Fecha:   ${new Date(order.date).toLocaleString("es-CO")}
-Pago:    ${order.method || "-"}
+Pago:    ${MEDIOS[order.method] || order.method || "-"}
+Estado:  PENDIENTE DE PAGO (el cliente va camino a la pasarela)
 
 — CLIENTE —
 Nombre:        ${c.name || "-"}
@@ -64,32 +69,52 @@ Descuento: ${cop(order.discount)}${order.coupon ? " (cupón " + order.coupon + "
 Envío (${order.zone || "-"}): ${cop(order.shipping)}
 TOTAL:     ${cop(order.total)}`;
 
-      try {
-        await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            access_key: w3key,
-            subject: `🛒 Nuevo pedido ${reference} — ${c.name || "Cliente"} (${cop(order.total)})`,
-            from_name: "Rey del Aroma — Tienda",
-            to: ADMIN_EMAIL, // informativo (Web3Forms envía al correo del Access Key)
-            replyto: c.email || "",
-            nombre_cliente: c.name || "",
-            id_cedula: c.cedula || "",
-            telefono: c.phone || "",
-            ciudad: c.city || "",
-            direccion: c.address || "",
-            total: cop(order.total),
-            message,
-          }),
-        });
-      } catch (e) {
-        console.error("Error enviando el correo (Web3Forms):", e);
-      }
-    }
+  await fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      access_key: w3key,
+      subject: `🛒 Nuevo pedido ${order.reference} — ${c.name || "Cliente"} (${cop(order.total)})`,
+      from_name: "Rey del Aroma — Tienda",
+      to: ADMIN_EMAIL, // informativo (Web3Forms envía al correo del Access Key)
+      replyto: c.email || "",
+      nombre_cliente: c.name || "",
+      id_cedula: c.cedula || "",
+      telefono: c.phone || "",
+      ciudad: c.city || "",
+      direccion: c.address || "",
+      total: cop(order.total),
+      message,
+    }),
+  });
+}
 
-    return res.status(200).json({ ok: true, reference });
+export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method Not Allowed" });
+
+  try {
+    const order = req.body || {};
+    order.reference = order.reference || "RDA-" + Date.now();
+    order.date = order.date || new Date().toISOString();
+    order.estado = "pendiente";       // ← todavía no ha pagado
+    order.metodoNombre = MEDIOS[order.method] || order.method || "";
+
+    // Las dos tareas van en paralelo: si una falla, la otra igual se cumple.
+    const [guardado, correo] = await Promise.allSettled([
+      hayBlob() ? guardarPedido(order) : Promise.resolve(false),
+      enviarCorreo(order),
+    ]);
+
+    if (guardado.status === "rejected") console.error("save-order (blob):", guardado.reason);
+    if (correo.status === "rejected") console.error("save-order (correo):", correo.reason);
+
+    return res.status(200).json({
+      ok: true,
+      reference: order.reference,
+      guardado: guardado.status === "fulfilled" && guardado.value === true,
+    });
   } catch (err) {
+    console.error("save-order:", err);
     return res.status(500).json({ ok: false, error: err.message });
   }
 }

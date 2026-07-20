@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { hayBlob, actualizarEstado } from "../lib/pedidos.js";
 
 /* ════════════════════════════════════════════════════════════════
    WEBHOOK DE WOMPI — versión para VERCEL
@@ -14,7 +15,7 @@ import crypto from "node:crypto";
    Variable de entorno requerida:
      WOMPI_EVENTS_SECRET = tu  prod_events_...  (o test_events_...)
    ════════════════════════════════════════════════════════════════ */
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -47,7 +48,24 @@ export default function handler(req, res) {
     // transaction.status puede ser: APPROVED, DECLINED, VOIDED, ERROR
     console.log("Evento Wompi válido:", transaction.reference, transaction.status);
 
-    // TODO: cuando tengas base de datos, marca el pedido como pagado/fallido aquí.
+    /* Marcamos el pedido en el panel de ventas. Esto funciona aunque el
+       cliente cierre el navegador después de pagar. */
+    if (hayBlob() && transaction.reference) {
+      const estado =
+        transaction.status === "APPROVED" ? "pagado"
+        : ["DECLINED", "VOIDED", "ERROR"].includes(transaction.status) ? "rechazado"
+        : "pendiente";
+      try {
+        await actualizarEstado(transaction.reference, {
+          estado,
+          txId: transaction.id || "",
+          pasarelaEstado: transaction.status || "",
+          pagadoValor: (transaction.amount_in_cents || 0) / 100,
+        });
+      } catch (e) {
+        console.error("wompi-webhook (panel de ventas):", e);
+      }
+    }
 
     return res.status(200).json({ received: true });
   } catch (err) {
