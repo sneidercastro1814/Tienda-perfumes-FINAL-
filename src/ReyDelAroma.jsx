@@ -433,7 +433,13 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; }
 .pd-grid > * { min-width: 0; }
 .pd-main { width: 100%; aspect-ratio: 1/1; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; }
+/* Carril con TODAS las fotos del producto, una al lado de la otra.
+   En el celular se pasan con el dedo (scroll nativo con imán) y en el PC con
+   las flechas o las miniaturas. La barra de scroll va oculta a propósito. */
+.pd-track { position: absolute; inset: 0; z-index: 1; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+.pd-track::-webkit-scrollbar { display: none; }
+.pd-slide { flex: 0 0 100%; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; }
+.pd-real-img { max-width: 88%; max-height: 88%; object-fit: contain; position: relative; z-index: 1; cursor: zoom-in; -webkit-user-select: none; user-select: none; }
 /* Etiqueta colgante "100% Original" en la imagen de detalle */
 .pd-hangpin { position: absolute; top: 6px; right: 78px; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f0dca0, #b8973f); box-shadow: 0 1px 3px rgba(0,0,0,0.35); z-index: 5; pointer-events: none; }
 .pd-hangtag { position: absolute; top: 104px; right: 48px; width: 72px; height: 94px; display: flex; align-items: flex-end; justify-content: center; text-align: center; padding: 0 7px 14px; box-sizing: border-box; background: linear-gradient(150deg, #181c1e, #0a0c0d); border: 1px solid rgba(201,168,76,0.6); border-radius: 9px; box-shadow: 0 14px 26px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.06); transform: rotate(8deg); transform-origin: 50% -82px; z-index: 4; pointer-events: none; font-family: var(--sans); animation: pd-tag-sway 3.6s ease-in-out infinite alternate; }
@@ -442,14 +448,42 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-hangtag-in { font-size: 10px; font-weight: 800; letter-spacing: 0.7px; line-height: 1.18; color: var(--gold-l); text-transform: uppercase; }
 .pd-hangtag-in b { display: block; font-size: 15px; letter-spacing: 0; margin-bottom: 1px; }
 .pd-hangtag-stars { display: block; font-size: 8px; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; }
-/* Galería de detalle: columna de miniaturas a la IZQUIERDA + foto grande a la derecha */
-.pd-media { display: flex; gap: 14px; align-items: flex-start; }
+/* Galería de detalle: columna de miniaturas a la IZQUIERDA + foto grande a la derecha.
+   El riel va en posición absoluta dentro de .pd-rail para que NUNCA quede más
+   alto que la foto grande: si el producto tiene muchas fotos, el riel se
+   desplaza por dentro en vez de desbordarse y descuadrar la página. */
+.pd-media { display: flex; gap: 14px; align-items: stretch; }
 .pd-media > .pd-main { flex: 1 1 0; min-width: 0; width: auto; }
-.pd-gallery { display: flex; flex-direction: column; gap: 10px; flex: 0 0 auto; }
+.pd-rail { flex: 0 0 78px; position: relative; }
+.pd-gallery { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--border-h) transparent; }
+.pd-gallery::-webkit-scrollbar { width: 4px; height: 4px; }
+.pd-gallery::-webkit-scrollbar-thumb { background: var(--border-h); border-radius: 4px; }
+.pd-gallery::-webkit-scrollbar-track { background: transparent; }
 .pd-thumb { width: 74px; height: 74px; flex: 0 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 9px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
 .pd-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .pd-thumb:hover { border-color: var(--gold); transform: translateY(-2px); }
 .pd-thumb.act { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.35); }
+.pd-thumb:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* Controles sobre la foto grande: flechas (aparecen al pasar el mouse),
+   contador de fotos y botón para verla a pantalla completa. */
+.pd-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 6; width: 42px; height: 42px; padding: 0 0 3px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255,255,255,0.94); color: #1a1a18; font-size: 26px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: opacity 0.22s, border-color 0.22s, background 0.22s; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+.pd-main:hover .pd-nav, .pd-nav:focus-visible { opacity: 1; }
+.pd-nav:hover { border-color: var(--gold); background: #fff; }
+.pd-nav.prev { left: 12px; }
+.pd-nav.next { right: 12px; }
+.pd-count { position: absolute; left: 12px; bottom: 12px; z-index: 6; background: rgba(12,12,11,0.82); color: var(--gold-l); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; padding: 6px 11px; border-radius: 20px; pointer-events: none; }
+.pd-zoom { position: absolute; right: 12px; bottom: 12px; z-index: 6; width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); background: rgba(12,12,11,0.82); color: var(--gold-l); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.pd-zoom:hover { border-color: var(--gold); background: #0c0c0b; }
+/* Foto a pantalla completa */
+.pd-lightbox { position: fixed; inset: 0; z-index: 400; background: rgba(8,8,7,0.94); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 62px 18px 58px; animation: fadeIn 0.22s ease; overscroll-behavior: none; }
+.plb-img { max-width: min(1100px, 92vw); max-height: 100%; object-fit: contain; cursor: default; -webkit-user-select: none; user-select: none; }
+.plb-x { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255,255,255,0.06); color: var(--gold-l); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s, background 0.2s; }
+.plb-x:hover { border-color: var(--gold); background: rgba(255,255,255,0.14); }
+.plb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; padding: 0 0 4px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255,255,255,0.06); color: var(--gold-l); font-size: 28px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s, background 0.2s; }
+.plb-nav:hover { border-color: var(--gold); background: rgba(255,255,255,0.14); }
+.plb-nav.prev { left: 16px; }
+.plb-nav.next { right: 16px; }
+.plb-count { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); color: var(--gold-l); font-size: 12px; font-weight: 700; letter-spacing: 2.4px; }
 @keyframes pd-tag-sway { 0% { transform: rotate(6.5deg); } 100% { transform: rotate(9.5deg); } }
 .pd-info { padding-top: 8px; }
 .pd-badge { display: inline-block; background: var(--gold); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 6px 16px; text-transform: uppercase; margin-bottom: 22px; }
@@ -772,6 +806,16 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .coll-title { font-size: 40px; }
   .nav-links { gap: 0; }
   .nav-links .nl { padding: 8px 8px; letter-spacing: 1.4px; }
+
+  /* Tablet y celular: la foto grande ocupa TODO el ancho de la columna y las
+     miniaturas pasan debajo, en una tira horizontal que se desliza. Así las
+     fotos que sube el admin se ven grandes en cualquier pantalla. */
+  .pd-media { flex-direction: column; gap: 10px; }
+  .pd-media > .pd-main { order: 1; flex: none; width: 100%; }
+  .pd-rail { order: 2; flex: none; width: 100%; position: static; }
+  .pd-gallery { position: static; flex-direction: row; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 2px 0 6px; scroll-snap-type: x proximity; }
+  .pd-thumb { width: 68px; height: 68px; scroll-snap-align: start; }
+  .pd-nav { display: none; }
 }
 @media (max-width: 768px) {
   .nav { padding: 0 18px; position: sticky; top: 0; height: 64px; }
@@ -855,9 +899,15 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-hangtag::before { height: 74px; }
   .pd-hangtag-in { font-size: 9px; }
   .pd-hangtag-in b { font-size: 13px; }
-  .pd-media { gap: 10px; }
+  .pd-media { gap: 8px; }
   .pd-gallery { gap: 8px; }
-  .pd-thumb { width: 58px; height: 58px; padding: 5px; }
+  .pd-thumb { width: 62px; height: 62px; padding: 5px; }
+  .pd-zoom { width: 36px; height: 36px; right: 10px; bottom: 10px; font-size: 15px; }
+  .pd-count { left: 10px; bottom: 10px; padding: 5px 10px; }
+  .pd-lightbox { padding: 58px 10px 52px; }
+  .plb-nav { width: 42px; height: 42px; font-size: 24px; }
+  .plb-nav.prev { left: 8px; }
+  .plb-nav.next { right: 8px; }
   .pcard-real-img { padding: 16px; }
   .pcard-body { padding: 13px 13px 6px; }
   .pcard-name { font-size: 17px; min-height: 40px; }
@@ -1483,6 +1533,10 @@ const EMPTY_FORM = {
   tag: "", tags: [], description: "", image: "", images: [],
 };
 
+/* Tope de fotos por producto en la galería del panel. Suficiente para mostrar
+   el frasco por todos lados sin que la ficha tarde en abrir en el celular. */
+const MAX_GALLERY = 10;
+
 const FILTER_TABS = ["Todos", "Hombre", "Mujer", "Destacados", "Diseñador", "Árabes", "2 × $300.000"];
 
 /* Pestañas que abren su propia página al hacer clic (orden de aparición) */
@@ -1628,10 +1682,31 @@ function compressImage(file, maxDim = 1100, quality = 0.82) {
   });
 }
 
+/* Deja una lista de fotos limpia: solo textos, sin vacíos y sin repetidas.
+   Se usa en todos lados para que una misma foto nunca salga dos veces. */
+const cleanImages = (arr) =>
+  [...new Set((Array.isArray(arr) ? arr : []).filter((s) => typeof s === "string" && s.trim()))];
+
+/* ¿Esta foto sirve en CUALQUIER dispositivo? Solo las que subió el admin:
+   en base64 (todavía en su navegador) o ya alojadas en la nube (http).
+   Las fotos del proyecto (/assets/nombre-hash.jpg) cambian de nombre en cada
+   despliegue, así que fuera de este navegador quedarían rotas. */
+const isPortableImg = (s) =>
+  typeof s === "string" && (s.startsWith("data:image") || /^https?:\/\//i.test(s));
+
+/* TODAS las fotos de un producto, en orden: primero la portada y detrás las de
+   la galería. Es la única fuente de verdad de la ficha: la usan la foto grande,
+   las miniaturas y la vista ampliada, así las tres muestran siempre lo mismo. */
+function galleryOf(p, portada) {
+  if (!p) return [];
+  return cleanImages([portada || p.image || "", ...(Array.isArray(p.images) ? p.images : [])]);
+}
+
 /* Deja un catálogo listo para pintarse en pantalla:
    · re-resuelve la foto original por su nombre de archivo (las URLs con hash
      cambian en cada build, así la imagen nunca se rompe);
    · corrige la categoría;
+   · normaliza la galería (que siempre sea una lista de fotos válida);
    · recupera la familia olfativa por slug si no viniera.
    Sirve igual para el catálogo del navegador que para el que llega de la nube. */
 function hydrateProducts(list) {
@@ -1639,6 +1714,7 @@ function hydrateProducts(list) {
     ...p,
     category: fixCategory(p.category),
     image: (p.img && imageForFile(p.img)) || p.image || "",
+    images: cleanImages(p.images),
     tag: p.tag || TAG_BY_SLUG[p.slug] || "",
   }));
 }
@@ -1667,6 +1743,8 @@ function toCloudProducts(list) {
   return list.map((p) => ({
     ...p,
     image: p.img && imageForFile(p.img) ? "" : (p.image || ""),
+    // De la galería solo viajan las fotos que sirven en cualquier dispositivo.
+    images: cleanImages(p.images).filter(isPortableImg),
   }));
 }
 
@@ -1943,6 +2021,11 @@ export default function ReyDelAroma() {
   const [qty, setQty] = useState(1);
   const [selSize, setSelSize] = useState(null); // presentación / variante elegida en el detalle
   const [galleryIdx, setGalleryIdx] = useState(0); // foto activa en la galería del detalle
+  const [zoomOpen, setZoomOpen] = useState(false); // foto del detalle a pantalla completa
+  const trackRef = useRef(null);       // carril con las fotos grandes
+  const thumbsRef = useRef(null);      // tira / columna de miniaturas
+  const galleryLenRef = useRef(1);     // cuántas fotos tiene la ficha abierta
+  const pendingScrollRef = useRef(null); // destino al que se está deslizando el carril solo
   const [cart, setCart] = useState(loadCart); // ← carrito persistente (sobrevive al recargar)
   const [cartOpen, setCartOpen] = useState(false);
   const [catFilter, setCatFilter] = useState(initialRoute.view === "category" ? initialRoute.cat : "Todos");
@@ -2058,12 +2141,23 @@ export default function ReyDelAroma() {
      → ya no hace falta un efecto: el catálogo se carga como estado inicial
        perezoso en loadInitialProducts(). */
 
-  /* guardar cambios del catálogo en localStorage */
+  /* guardar cambios del catálogo en localStorage.
+     Las fotos en base64 pesan mucho: si el navegador se queda sin espacio,
+     guardamos igual el catálogo pero SIN esas fotos (nombres, precios y demás
+     no se pierden). Las fotos siguen en memoria y viajan a la nube al publicar. */
   useEffect(() => {
     try { localStorage.setItem(LS_KEY, JSON.stringify(products)); }
     catch (err) {
       if (err && (err.name === "QuotaExceededError" || err.code === 22 || err.code === 1014)) {
-        showToast("Almacenamiento lleno: usa menos fotos o más livianas");
+        try {
+          const liviano = products.map((p) => ({
+            ...p,
+            image: isDataUrl(p.image) ? "" : p.image,
+            images: cleanImages(p.images).filter((s) => !isDataUrl(s)),
+          }));
+          localStorage.setItem(LS_KEY, JSON.stringify(liviano));
+        } catch { /* ignore */ }
+        showToast("Almacenamiento lleno: pulsa “Publicar cambios” para guardar las fotos en la nube");
       }
     }
   }, [products]);
@@ -2176,15 +2270,28 @@ export default function ReyDelAroma() {
       const subirFoto = async (foto) => {
         if (!isDataUrl(foto)) return foto || "";
         if (subidas.has(foto)) return subidas.get(foto);
-        const r = await fetch("/api/upload-image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
-          body: JSON.stringify({ dataUrl: foto }),
-        });
-        const d = await r.json().catch(() => ({}));
-        if (!r.ok || !d.ok || !d.url) throw new Error(d.error || "No se pudo subir una foto.");
-        subidas.set(foto, d.url);
-        return d.url;
+        // Reintentamos: en el celular la señal se cae y no queremos que una foto
+        // suelta tumbe la publicación entera del catálogo.
+        let ultimoError = null;
+        for (let intento = 1; intento <= 3; intento += 1) {
+          try {
+            const r = await fetch("/api/upload-image", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "x-admin-token": adminToken },
+              body: JSON.stringify({ dataUrl: foto }),
+            });
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok || !d.ok || !d.url) throw new Error(d.error || "No se pudo subir una foto.");
+            subidas.set(foto, d.url);
+            return d.url;
+          } catch (e) {
+            ultimoError = e;
+            // Si la clave está mal o la foto pesa demasiado, reintentar no sirve.
+            if (/clave|token|pesa|válida|vacía|Blob|ADMIN_TOKEN/i.test(e.message || "")) break;
+            if (intento < 3) await new Promise((ok) => setTimeout(ok, 700 * intento));
+          }
+        }
+        throw ultimoError || new Error("No se pudo subir una foto.");
       };
 
       const pendientes = products.reduce(
@@ -2196,9 +2303,10 @@ export default function ReyDelAroma() {
       const conUrls = [];
       for (const p of products) {
         const image = await subirFoto(p.image);
-        const images = [];
-        for (const g of (Array.isArray(p.images) ? p.images : [])) images.push(await subirFoto(g));
-        conUrls.push({ ...p, image, images: images.filter(Boolean) });
+        // Las fotos de la galería suben en paralelo: con 3 o 4 por producto la
+        // publicación termina en un tercio del tiempo que subiéndolas de a una.
+        const images = await Promise.all(cleanImages(p.images).map(subirFoto));
+        conUrls.push({ ...p, image, images: cleanImages(images) });
       }
 
       /* 2) Publicar el catálogo (ya liviano, sin base64). */
@@ -2406,14 +2514,129 @@ export default function ReyDelAroma() {
     if (found) setSelectedProduct((cur) => (cur === found ? cur : found));
   }, [products, view]);
 
+  /* ════════════════════════════════════════════════════════════════
+     GALERÍA DE FOTOS DEL PRODUCTO
+
+     Un producto puede tener la portada + todas las fotos que suba el admin.
+     La foto grande, las miniaturas y la vista ampliada leen SIEMPRE la misma
+     lista (detailGallery), así nunca se descuadran entre ellas.
+
+     · En el celular el cliente pasa la foto con el dedo → el carril avisa en
+       qué foto quedó y se marca la miniatura.
+     · En el PC toca una miniatura o una flecha → el carril se desliza solo.
+     ════════════════════════════════════════════════════════════════ */
+
+  /* Las fotos del perfume abierto, en el mismo orden en que se ven. */
+  const detailGallery = (() => {
+    const p = selectedProduct;
+    if (!p) return [];
+    const vars = Array.isArray(p.variants) && p.variants.length ? p.variants : null;
+    const activa = vars ? (vars.find((v) => v.size === selSize) || vars[0]) : null;
+    const portada = activa && activa.img ? (imageForFile(activa.img) || p.image) : p.image;
+    return galleryOf(p, portada);
+  })();
+  galleryLenRef.current = Math.max(detailGallery.length, 1);
+  /* Índice siempre dentro de rango, aunque el catálogo cambie mientras miras. */
+  const fotoIdx = detailGallery.length ? Math.min(galleryIdx, detailGallery.length - 1) : 0;
+
+  /* Al abrir OTRO perfume: primera foto, sin animación y sin ampliación abierta. */
+  const openProductId = selectedProduct ? String(selectedProduct.id) : "";
+  useEffect(() => {
+    setGalleryIdx(0);
+    setZoomOpen(false);
+    pendingScrollRef.current = 0;
+    if (trackRef.current) trackRef.current.scrollLeft = 0;
+    if (thumbsRef.current) { thumbsRef.current.scrollLeft = 0; thumbsRef.current.scrollTop = 0; }
+    const fin = setTimeout(() => { pendingScrollRef.current = null; }, 250);
+    return () => clearTimeout(fin);
+  }, [openProductId]);
+
+  /* Miniatura o flecha → el carril se desliza hasta esa foto.
+     Guardamos el DESTINO (no un temporizador): un salto largo puede tardar más
+     de lo previsto y, si soltáramos el control antes de tiempo, una posición
+     intermedia se tomaría como la foto elegida y el carril se devolvería. */
+  useEffect(() => {
+    const carril = trackRef.current;
+    if (!carril) return;
+    const destino = fotoIdx * carril.clientWidth;
+    if (Math.abs(carril.scrollLeft - destino) < 4) { pendingScrollRef.current = null; return; }
+    pendingScrollRef.current = destino;
+    let suave = true;
+    try { suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch { /* ignore */ }
+    try { carril.scrollTo({ left: destino, behavior: suave ? "smooth" : "auto" }); }
+    catch { carril.scrollLeft = destino; }
+    // Red de seguridad: si el navegador no llega exacto o el cliente interrumpe
+    // con el dedo, soltamos el control igual y el carril vuelve a mandar.
+    const fin = setTimeout(() => { pendingScrollRef.current = null; }, 1600);
+    return () => clearTimeout(fin);
+  }, [fotoIdx]);
+
+  /* La miniatura marcada siempre a la vista (sirve cuando hay muchas fotos).
+     Movemos SOLO la tira de miniaturas: la página no se mueve sola. */
+  useEffect(() => {
+    const tira = thumbsRef.current;
+    if (!tira) return;
+    const activa = tira.children[fotoIdx];
+    if (!activa) return;
+    const a = activa.getBoundingClientRect();
+    const c = tira.getBoundingClientRect();
+    if (tira.scrollWidth > tira.clientWidth + 1) {
+      if (a.left < c.left) tira.scrollLeft += a.left - c.left - 8;
+      else if (a.right > c.right) tira.scrollLeft += a.right - c.right + 8;
+    } else if (tira.scrollHeight > tira.clientHeight + 1) {
+      if (a.top < c.top) tira.scrollTop += a.top - c.top - 8;
+      else if (a.bottom > c.bottom) tira.scrollTop += a.bottom - c.bottom + 8;
+    }
+  }, [fotoIdx]);
+
+  /* El cliente pasó la foto con el dedo: marcamos la miniatura que corresponde.
+     Si el carril venía deslizándose solo, esperamos a que llegue a su destino. */
+  const onTrackScroll = (e) => {
+    const carril = e.currentTarget;
+    const destino = pendingScrollRef.current;
+    if (destino !== null) {
+      if (Math.abs(carril.scrollLeft - destino) > 3) return;
+      pendingScrollRef.current = null;
+    }
+    const ancho = carril.clientWidth || 1;
+    const i = Math.round(carril.scrollLeft / ancho);
+    if (i < 0 || i >= galleryLenRef.current) return;
+    setGalleryIdx((cur) => (cur === i ? cur : i));
+  };
+
+  /* Foto anterior / siguiente (flechas y teclado). Da la vuelta al llegar al final. */
+  const stepPhoto = (paso) => setGalleryIdx((i) => {
+    const n = galleryLenRef.current;
+    if (n < 2) return 0;
+    return ((Math.min(i, n - 1) + paso) % n + n) % n;
+  });
+
+  /* Foto ampliada: ← → cambian de foto y Esc cierra. */
+  useEffect(() => {
+    if (!zoomOpen) return;
+    const alTeclear = (e) => {
+      if (e.key === "Escape") { setZoomOpen(false); return; }
+      if (e.key === "ArrowRight") { e.preventDefault(); stepPhoto(1); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); stepPhoto(-1); }
+    };
+    window.addEventListener("keydown", alTeclear);
+    return () => window.removeEventListener("keydown", alTeclear);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomOpen]);
+
+  /* Si el cliente sale de la ficha, la foto ampliada se cierra sola. */
+  useEffect(() => { if (view !== "product") setZoomOpen(false); }, [view]);
+
   const menuOpenRef = useRef(menuOpen);
   const cartOpenRef = useRef(cartOpen);
   const filtersOpenRef = useRef(filtersOpen);
+  const zoomOpenRef = useRef(zoomOpen);
   useEffect(() => {
     menuOpenRef.current = menuOpen;
     cartOpenRef.current = cartOpen;
     filtersOpenRef.current = filtersOpen;
-  }, [menuOpen, cartOpen, filtersOpen]);
+    zoomOpenRef.current = zoomOpen;
+  }, [menuOpen, cartOpen, filtersOpen, zoomOpen]);
 
   /* ── BOTÓN "ATRÁS" DEL NAVEGADOR (celular incluido) ──
      Ahora cada página tiene su dirección, así que "atrás" vuelve de verdad a la
@@ -2434,7 +2657,13 @@ export default function ReyDelAroma() {
     } catch { /* ignore */ }
 
     const alRetroceder = (e) => {
-      // 1) Panel abierto → "atrás" solo lo cierra y nos quedamos donde estamos.
+      // 1) Foto ampliada abierta → "atrás" solo la cierra (celular).
+      if (zoomOpenRef.current) {
+        setZoomOpen(false);
+        try { window.history.pushState({ rda: 1 }, "", pathOf(routeRef.current)); } catch { /* ignore */ }
+        return;
+      }
+      // 2) Panel abierto → "atrás" solo lo cierra y nos quedamos donde estamos.
       if (menuOpenRef.current || cartOpenRef.current || filtersOpenRef.current) {
         setMenuOpen(false);
         setCartOpen(false);
@@ -2442,14 +2671,14 @@ export default function ReyDelAroma() {
         try { window.history.pushState({ rda: 1 }, "", pathOf(routeRef.current)); } catch { /* ignore */ }
         return;
       }
-      // 2) Llegamos al suelo del historial → al inicio, sin abandonar la tienda.
+      // 3) Llegamos al suelo del historial → al inicio, sin abandonar la tienda.
       if (!e.state || e.state.seed) {
         try { window.history.pushState({ rda: 1 }, "", "/"); } catch { /* ignore */ }
         applyRouteRef.current({ view: "store" });
         window.scrollTo({ top: 0 });
         return;
       }
-      // 3) Navegación normal: mostramos lo que pide la dirección.
+      // 4) Navegación normal: mostramos lo que pide la dirección.
       applyRouteRef.current(parseRoute());
       window.scrollTo({ top: 0 });
     };
@@ -2602,11 +2831,11 @@ export default function ReyDelAroma() {
     return () => clearTimeout(t);
   }, [pauseSlide, view, slide, banners.length]);
 
-  /* Bloquea el scroll del fondo mientras el CARRITO o la búsqueda están abiertos.
-     Técnica robusta para celular: fija el body y guarda/restaura la posición del
-     scroll, para que el fondo no se mueva detrás del panel. */
+  /* Bloquea el scroll del fondo mientras el CARRITO, la búsqueda o la foto
+     ampliada están abiertos. Técnica robusta para celular: fija el body y
+     guarda/restaura la posición del scroll, para que el fondo no se mueva. */
   useEffect(() => {
-    if (!(searchOpen || cartOpen || filtersOpen)) return;
+    if (!(searchOpen || cartOpen || filtersOpen || zoomOpen)) return;
     const scrollY = window.scrollY;
     const b = document.body;
     const prev = {
@@ -2628,7 +2857,7 @@ export default function ReyDelAroma() {
       b.style.overflow = prev.overflow;
       window.scrollTo(0, scrollY);
     };
-  }, [searchOpen, cartOpen, filtersOpen]);
+  }, [searchOpen, cartOpen, filtersOpen, zoomOpen]);
 
   /* ── VENTAS: traer pedidos guardados desde el servidor (Netlify) ── */
   const fetchOrders = async (tokenArg, opts = {}) => {
@@ -3025,7 +3254,7 @@ export default function ReyDelAroma() {
   const startEdit = (p) => {
     setEditingId(p.id);
     const editTags = (Array.isArray(p.tags) && p.tags.length) ? p.tags.filter(Boolean) : (p.tag ? [p.tag] : []);
-    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, favorite: isKingFavorite(p), tag: editTags[0] || "", tags: editTags, description: p.description || "", image: p.image || "", img: p.img || "", images: Array.isArray(p.images) ? p.images.filter(Boolean) : [] });
+    setForm({ name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "", price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes", promo: !!p.promo, favorite: isKingFavorite(p), tag: editTags[0] || "", tags: editTags, description: p.description || "", image: p.image || "", img: p.img || "", images: cleanImages(p.images) });
     setAdminView("form");
   };
   const deleteProduct = (id) => {
@@ -3047,7 +3276,7 @@ export default function ReyDelAroma() {
   };
   const saveProduct = () => {
     if (!form.name.trim() || !form.price) return showToast("Nombre y precio son obligatorios");
-    const galleryImgs = Array.isArray(form.images) ? form.images.filter(Boolean) : [];
+    const galleryImgs = cleanImages(form.images);
     const aromaTags = Array.isArray(form.tags) ? form.tags.filter(Boolean) : [];
     // Si no hay portada pero sí fotos de galería, usamos la primera como portada
     // (así la tarjeta del catálogo nunca queda sin imagen).
@@ -3097,13 +3326,21 @@ export default function ReyDelAroma() {
       .then((dataUrl) => setForm((f) => ({ ...f, image: dataUrl, img: "" })))
       .catch(() => showToast("No se pudo procesar la imagen (formato no compatible)"));
   };
-  // Galería: varias fotos adicionales por producto (se muestran como miniaturas en el detalle).
-  // Se procesan TODAS las fotos elegidas y se agregan JUNTAS en una sola operación,
-  // así nunca se pierde ninguna aunque el cliente suba 2, 3 o más a la vez.
+  // Galería: varias fotos adicionales por producto (se ven como miniaturas en el
+  // detalle). Se procesan TODAS las fotos elegidas y se agregan JUNTAS en una
+  // sola operación, así nunca se pierde ninguna aunque subas 2, 3 o más a la vez.
+  // Se comprimen IGUAL que la portada (1000 px / 0.78) por dos razones:
+  //   · se ven nítidas cuando el cliente las abre en grande;
+  //   · si la misma foto se usa de portada y de galería, el texto base64 queda
+  //     idéntico y no sale repetida en la ficha.
   const handleGalleryUpload = (e) => {
     const files = Array.from(e.target.files || []);
     e.target.value = ""; // permite volver a subir el mismo archivo
     if (!files.length) return;
+
+    const yaHay = cleanImages(form.images).length;
+    const cupo = Math.max(0, MAX_GALLERY - yaHay);
+    if (!cupo) return showToast(`La galería admite hasta ${MAX_GALLERY} fotos. Quita alguna para agregar otra.`);
 
     // Filtramos lo que no es imagen o pesa demasiado, avisando cuántos se omiten.
     const validas = files.filter((f) => f.type.startsWith("image/") && f.size <= 12 * 1024 * 1024);
@@ -3111,15 +3348,18 @@ export default function ReyDelAroma() {
     if (omitidas > 0) showToast(omitidas === 1 ? "Se omitió 1 archivo (no es imagen o supera 12MB)" : `Se omitieron ${omitidas} archivos (no son imágenes o superan 12MB)`);
     if (!validas.length) return;
 
-    showToast(validas.length === 1 ? "Procesando la foto…" : `Procesando ${validas.length} fotos…`);
+    const aProcesar = validas.slice(0, cupo);
+    if (validas.length > cupo) showToast(`Se agregan ${cupo}: la galería admite hasta ${MAX_GALLERY} fotos.`);
+
+    showToast(aProcesar.length === 1 ? "Procesando la foto…" : `Procesando ${aProcesar.length} fotos…`);
     // Comprimimos todas en paralelo; las que fallen quedan en null y se descartan.
-    Promise.all(validas.map((file) => compressImage(file, 820, 0.7).catch(() => null)))
+    Promise.all(aProcesar.map((file) => compressImage(file, 1000, 0.78).catch(() => null)))
       .then((resultados) => {
         const nuevas = resultados.filter(Boolean);
         const fallidas = resultados.length - nuevas.length;
         if (nuevas.length) {
           // Una sola actualización de estado con TODAS las fotos nuevas → no se pierde ninguna.
-          setForm((f) => ({ ...f, images: [...(Array.isArray(f.images) ? f.images : []), ...nuevas] }));
+          setForm((f) => ({ ...f, images: cleanImages([...(Array.isArray(f.images) ? f.images : []), ...nuevas]) }));
           showToast(nuevas.length === 1 ? "1 foto agregada a la galería" : `${nuevas.length} fotos agregadas a la galería`);
         }
         if (fallidas) showToast(fallidas === 1 ? "No se pudo procesar 1 foto (formato no compatible)" : `No se pudieron procesar ${fallidas} fotos (formato no compatible)`);
@@ -3128,12 +3368,14 @@ export default function ReyDelAroma() {
   const removeGalleryImage = (idx) => setForm((f) => ({ ...f, images: (Array.isArray(f.images) ? f.images : []).filter((_, i) => i !== idx) }));
   const makeGalleryCover = (idx) => setForm((f) => {
     const imgs = Array.isArray(f.images) ? [...f.images] : [];
-    const chosen = imgs[idx];
-    if (!chosen) return f;
-    // La portada actual pasa a la galería y la elegida se vuelve portada
-    const rest = imgs.filter((_, i) => i !== idx);
-    const nextImages = f.image ? [f.image, ...rest] : rest;
-    return { ...f, image: chosen, img: "", images: nextImages };
+    const elegida = imgs[idx];
+    if (!elegida) return f;
+    const resto = imgs.filter((_, i) => i !== idx);
+    // La portada actual pasa a la galería, SALVO que venga de una foto del
+    // proyecto (se reconoce por f.img): la dirección de esas fotos cambia en
+    // cada despliegue, así que guardarla suelta dejaría una imagen rota.
+    const anterior = f.img ? "" : f.image;
+    return { ...f, image: elegida, img: "", images: cleanImages([anterior, ...resto]) };
   });
 
   /* ── CUPONES ── */
@@ -3610,9 +3852,9 @@ export default function ReyDelAroma() {
     const shownPrice = activeVar ? activeVar.price : p.price;
     const shownSize = activeVar ? activeVar.size : (p.size || "");
     const shownImg = activeVar && activeVar.img ? (imageForFile(activeVar.img) || p.image) : p.image;
-    const extraImgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
-    const gallery = [shownImg, ...extraImgs.filter((u) => u && u !== shownImg)].filter(Boolean);
-    const mainImg = gallery[galleryIdx] || gallery[0] || shownImg;
+    /* Las fotos salen de detailGallery (portada + galería del admin, sin repetidas). */
+    const gallery = detailGallery;
+    const totalFotos = gallery.length;
     const aromas = (Array.isArray(p.tags) && p.tags.length) ? p.tags : (p.tag ? [p.tag] : []);
     return (
       <div className="pd-wrap">
@@ -3626,17 +3868,51 @@ export default function ReyDelAroma() {
         <div className="pd-grid">
           <div>
             <div className="pd-media">
-              {gallery.length > 1 && (
-                <div className="pd-gallery">
-                  {gallery.map((src, i) => (
-                    <button key={i} type="button" className={`pd-thumb${i === galleryIdx ? " act" : ""}`} onClick={() => setGalleryIdx(i)} aria-label={`Ver foto ${i + 1}`}>
-                      <img src={src} alt={`${p.name} ${i + 1}`} loading="lazy" />
-                    </button>
-                  ))}
+              {totalFotos > 1 && (
+                <div className="pd-rail">
+                  <div className="pd-gallery" ref={thumbsRef}>
+                    {gallery.map((src, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`pd-thumb${i === fotoIdx ? " act" : ""}`}
+                        onClick={() => setGalleryIdx(i)}
+                        aria-label={`Ver foto ${i + 1} de ${totalFotos}`}
+                        aria-current={i === fotoIdx ? "true" : undefined}
+                      >
+                        <img src={src} alt="" loading="lazy" draggable="false" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
               <div className="pd-main">
-                {mainImg ? <img src={mainImg} alt={p.name} className="pd-real-img" /> : <NoImg />}
+                {totalFotos ? (
+                  <div className="pd-track" ref={trackRef} onScroll={onTrackScroll}>
+                    {gallery.map((src, i) => (
+                      <div className="pd-slide" key={i}>
+                        <img
+                          src={src}
+                          alt={totalFotos > 1 ? `${p.name} — foto ${i + 1} de ${totalFotos}` : p.name}
+                          className="pd-real-img"
+                          loading={i === 0 ? "eager" : "lazy"}
+                          draggable="false"
+                          onClick={() => setZoomOpen(true)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : <NoImg />}
+                {totalFotos > 1 && (
+                  <>
+                    <button type="button" className="pd-nav prev" onClick={() => stepPhoto(-1)} aria-label="Foto anterior">‹</button>
+                    <button type="button" className="pd-nav next" onClick={() => stepPhoto(1)} aria-label="Foto siguiente">›</button>
+                    <span className="pd-count">{fotoIdx + 1} / {totalFotos}</span>
+                  </>
+                )}
+                {totalFotos > 0 && (
+                  <button type="button" className="pd-zoom" onClick={() => setZoomOpen(true)} aria-label="Ver la foto en grande">⤢</button>
+                )}
                 <span className="pd-hangpin" aria-hidden="true" />
                 <div className="pd-hangtag" aria-hidden="true">
                   <span className="pd-hangtag-in"><span className="pd-hangtag-stars">★★★</span><b>100%</b>Original</span>
@@ -4853,6 +5129,35 @@ export default function ReyDelAroma() {
             </div>
           </div>
         </>
+      )}
+
+      {/* ── FOTO DEL PRODUCTO A PANTALLA COMPLETA ──
+          Se dibuja aquí (fuera de la ficha) para que quede por encima de todo.
+          Toca el fondo, la ✕ o Esc para cerrar; flechas / ← → para cambiar. */}
+      {zoomOpen && view === "product" && detailGallery.length > 0 && (
+        <div
+          className="pd-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Fotos de ${(selectedProduct && selectedProduct.name) || "el perfume"}`}
+          onClick={() => setZoomOpen(false)}
+        >
+          <img
+            className="plb-img"
+            src={detailGallery[fotoIdx]}
+            alt={`${(selectedProduct && selectedProduct.name) || ""} — foto ${fotoIdx + 1} de ${detailGallery.length}`}
+            onClick={(e) => e.stopPropagation()}
+            draggable="false"
+          />
+          <button type="button" className="plb-x" onClick={() => setZoomOpen(false)} aria-label="Cerrar">✕</button>
+          {detailGallery.length > 1 && (
+            <>
+              <button type="button" className="plb-nav prev" onClick={(e) => { e.stopPropagation(); stepPhoto(-1); }} aria-label="Foto anterior">‹</button>
+              <button type="button" className="plb-nav next" onClick={(e) => { e.stopPropagation(); stepPhoto(1); }} aria-label="Foto siguiente">›</button>
+              <span className="plb-count">{fotoIdx + 1} / {detailGallery.length}</span>
+            </>
+          )}
+        </div>
       )}
 
       {cartOpen && (
