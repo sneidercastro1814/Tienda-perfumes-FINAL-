@@ -1143,6 +1143,22 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 @keyframes vtpulse { 0%{ box-shadow: 0 0 0 0 rgba(31,168,85,0.5); } 70%{ box-shadow: 0 0 0 8px rgba(31,168,85,0); } 100%{ box-shadow: 0 0 0 0 rgba(31,168,85,0); } }
 .vt-refresh { background: none; border: 1px solid var(--border); color: var(--gold-d); font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 9px 16px; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
 .vt-refresh:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
+
+/* Filtro «solo pagados / todos los intentos» */
+.vt-filtro { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -6px 0 22px; }
+.vt-chip { display: inline-flex; align-items: center; gap: 7px; background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: 0.4px; padding: 8px 15px; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+.vt-chip b { font-weight: 800; opacity: 0.65; }
+.vt-chip:hover { border-color: var(--gold); }
+.vt-chip.on { background: rgba(201,168,76,0.13); border-color: var(--gold); color: var(--gold-d); }
+.vt-chip.on b { opacity: 1; }
+.vt-filtro-hint { font-size: 12.5px; color: var(--text-muted); flex: 1; min-width: 240px; }
+
+/* Etiqueta de estado de cada pedido */
+.vt-estado { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; padding: 4px 11px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+.vt-estado.ok  { color: #1f9d55; border-color: rgba(31,157,85,0.4);  background: rgba(31,157,85,0.10); }
+.vt-estado.rev { color: #a06a00; border-color: rgba(201,140,0,0.42); background: rgba(201,140,0,0.12); }
+.vt-estado.pen { color: #8a8a8a; border-color: rgba(0,0,0,0.16);     background: rgba(0,0,0,0.04); }
+.vt-estado.no  { color: #d64545; border-color: rgba(214,69,69,0.35); background: rgba(214,69,69,0.08); }
 .vt-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 16px; margin-bottom: 26px; }
 .vt-kpi { background: linear-gradient(165deg, var(--bg2), var(--bg)); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
 .vt-kpi.hot { border-color: var(--border-h); box-shadow: 0 10px 30px -16px rgba(201,168,76,0.5); }
@@ -1175,11 +1191,23 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .vt-empty .emoji { font-size: 46px; opacity: 0.35; margin-bottom: 12px; }
 .vt-err { background: rgba(214,69,69,0.07); border: 1px solid rgba(214,69,69,0.32); color: #b4453c; border-radius: 11px; padding: 15px 18px; font-size: 13.5px; margin-bottom: 20px; line-height: 1.55; }
 .vt-err b { color: #9a342c; }
+.vt-cards { display: none; }
+.vt-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 15px 16px; margin-bottom: 10px; }
+.vt-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.vt-card-tot { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--gold-d); }
+.vt-card-n { font-size: 15px; font-weight: 700; color: var(--text); }
+.vt-card-s { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+.vt-card-i { font-size: 12.5px; color: var(--text-dim); margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--border); line-height: 1.45; }
+.vt-card-r { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; margin-top: 7px; }
+.vt-card-wa { display: block; text-align: center; margin-top: 11px; padding: 10px; border-radius: 8px; background: rgba(31,168,85,0.10); border: 1px solid rgba(31,168,85,0.35); color: var(--wa); font-size: 12.5px; font-weight: 700; text-decoration: none; }
+
 @media (max-width: 768px) {
   .vt-kpis { grid-template-columns: 1fr; }
   .vt-bars { gap: 5px; height: 150px; }
   .vt-bar-val { display: none; }
   .atbl.vt-tbl, .atbl.vt-tbl thead { display: none; }
+  .vt-cards { display: block; }
+  .vt-filtro-hint { min-width: 0; }
 }
 
 @media (max-width: 768px) {
@@ -1954,6 +1982,7 @@ export default function ReyDelAroma() {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState("");
   const [ordersUpdatedAt, setOrdersUpdatedAt] = useState(null);
+  const [ventasFiltro, setVentasFiltro] = useState("pagados"); // "pagados" | "todos"
   const [adminToken, setAdminToken] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
   const [tokenInput, setTokenInput] = useState(() => { try { return localStorage.getItem(LS_ADMIN_TOKEN) || ""; } catch { return ""; } });
   const sentRefs = useRef(new Set());     // evita enviar el mismo pedido dos veces
@@ -2479,6 +2508,25 @@ export default function ReyDelAroma() {
 
   useEffect(() => { const t = requestAnimationFrame(() => setAppReady(true)); return () => cancelAnimationFrame(t); }, []);
 
+  /* Avisa al servidor que el cliente volvió de la pasarela para que el pedido
+     pase de "pendiente" a "pagado" en el panel de ventas. El servidor NO se fía
+     de esto: vuelve a preguntarle a la pasarela cuál fue el estado real. */
+  const confirmarPago = (reference, method, txId) => {
+    if (!reference) return;
+    try {
+      fetch("/api/confirm-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference, method, txId: txId || "" }),
+      }).catch(() => { /* el webhook de la pasarela lo confirmará igual */ });
+    } catch { /* ignore */ }
+  };
+  /* Referencia del último pedido creado en este navegador. */
+  const ultimaReferencia = () => {
+    try { return JSON.parse(localStorage.getItem("rda-last-order") || "{}").reference || ""; }
+    catch { return ""; }
+  };
+
   /* ── RETORNO DESDE WOMPI ──
      view y payResult ya se inicializan (perezosamente) según la URL.
      Aquí solo consultamos el estado real de la transacción a la API pública de
@@ -2499,6 +2547,8 @@ export default function ReyDelAroma() {
           amount: (t.amount_in_cents || 0) / 100,
           method: t.payment_method_type || "",
         });
+        // Registrar el resultado real en el panel de ventas.
+        confirmarPago(t.reference || ultimaReferencia(), "wompi", t.id || id);
         // Compra completada → vaciar el carrito. Si fue rechazada, lo dejamos para reintentar.
         if (t.status === "APPROVED" || t.status === "PENDING") clearCartAfterOrder();
       })
@@ -2519,6 +2569,8 @@ export default function ReyDelAroma() {
       else if (PEND.includes(status)) s = "PENDING";
       else if (status) s = "DECLINED";
       setPayResult({ loading: false, status: s, txId: id, reference });
+      // Registrar el resultado real en el panel de ventas.
+      confirmarPago(reference || ultimaReferencia(), "sistecredito", id);
       // Compra completada → vaciar el carrito. Si fue rechazada, lo dejamos para reintentar.
       if (s === "APPROVED" || s === "PENDING") clearCartAfterOrder();
     };
@@ -2536,9 +2588,9 @@ export default function ReyDelAroma() {
      completó el flujo, vaciamos el carrito. */
   useEffect(() => {
     if (!payReturn.addi.fromAddi) return;
-    let ref = "";
-    try { ref = (JSON.parse(localStorage.getItem("rda-last-order") || "{}").reference) || ""; } catch { /* ignore */ }
+    const ref = ultimaReferencia();
     setPayResult({ loading: false, status: "PENDING", method: "addi", reference: ref });
+    confirmarPago(ref, "addi", "");
     clearCartAfterOrder();
   }, []);
 
@@ -2579,21 +2631,25 @@ export default function ReyDelAroma() {
   }, [searchOpen, cartOpen, filtersOpen]);
 
   /* ── VENTAS: traer pedidos guardados desde el servidor (Netlify) ── */
-  const fetchOrders = async (tokenArg) => {
+  const fetchOrders = async (tokenArg, opts = {}) => {
     const tk = (tokenArg ?? adminToken).trim();
-    if (!tk) { setOrdersError("Escribe tu token de administrador para ver las ventas."); return; }
-    setOrdersLoading(true);
+    if (!tk) { setOrdersError("Escribe tu clave de administrador para ver las ventas."); return; }
+    if (opts.reconstruir) setOrdersLoading(true);
+    else if (!orders.length) setOrdersLoading(true);
     try {
-      const res = await fetch(`/api/list-orders?token=${encodeURIComponent(tk)}`);
+      const extra = opts.reconstruir ? "?reconstruir=1" : "";
+      const res = await fetch(`/api/list-orders${extra}`, { headers: { "x-admin-token": tk } });
+      const data = await res.json().catch(() => ({}));
       if (res.status === 401) {
-        setOrders([]); setOrdersError("Token incorrecto. Revisa el valor de ADMIN_TOKEN configurado en Netlify.");
-      } else if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        setOrders([]); setOrdersError(d.error || "No se pudieron cargar las ventas. ¿Ya publicaste la función en Netlify?");
+        setOrders([]);
+        setOrdersError("Clave incorrecta. Es la misma que pusiste en ADMIN_TOKEN dentro de Vercel (Settings → Environment Variables).");
+      } else if (!res.ok || data.ok === false) {
+        setOrders([]);
+        setOrdersError(data.error || "No se pudieron cargar las ventas. Revisa que el proyecto esté publicado en Vercel.");
       } else {
-        const data = await res.json();
         setOrders(Array.isArray(data.orders) ? data.orders : []);
         setOrdersError(""); setOrdersUpdatedAt(new Date());
+        if (opts.reconstruir) showToast(`Resumen reconstruido: ${(data.orders || []).length} pedidos`);
       }
     } catch {
       setOrdersError("Sin conexión con el servidor de ventas. Intenta de nuevo en unos segundos.");
@@ -2602,12 +2658,12 @@ export default function ReyDelAroma() {
     }
   };
 
-  /* Refresco automático cada 10 s mientras el panel de Ventas está abierto (tiempo real) */
+  /* Refresco automático cada 20 s mientras el panel de Ventas está abierto */
   useEffect(() => {
     if (!(view === "admin" && adminAuth && adminView === "ventas")) return;
     if (!adminToken.trim()) return;
     fetchOrders();
-    const id = setInterval(() => fetchOrders(), 10000);
+    const id = setInterval(() => fetchOrders(), 20000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, adminAuth, adminView, adminToken]);
@@ -4212,8 +4268,29 @@ export default function ReyDelAroma() {
       const fmtWhen = (iso) => new Date(iso).toLocaleString("es-CO", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
       const todayK = fmtDay(new Date().toISOString());
 
+      /* ── ESTADO DE CADA PEDIDO ──
+         Un pedido se guarda apenas el cliente pulsa "Realizar pedido", pero en
+         ese momento TODAVÍA NO HA PAGADO (va camino a Wompi / Addi /
+         Sistecrédito). Por eso separamos:
+           pagado    → la pasarela confirmó el pago  ✅ es una venta de verdad
+           revisión  → Addi está estudiando el crédito
+           pendiente → empezó la compra y no la terminó
+           rechazado → la pasarela negó el pago
+         Los totales usan SOLO los pagados, para que las cifras sean reales. */
+      const estadoDe = (o) => o.estado || "pendiente";
+      const ESTADOS = {
+        pagado:    { txt: "Pagado",    cls: "ok"   },
+        revision:  { txt: "En revisión", cls: "rev" },
+        pendiente: { txt: "Pendiente", cls: "pen"  },
+        rechazado: { txt: "Rechazado", cls: "no"   },
+      };
+      const pagados = orders.filter((o) => estadoDe(o) === "pagado");
+      const conteos = orders.reduce((m, o) => { const e = estadoDe(o); m[e] = (m[e] || 0) + 1; return m; }, {});
+      // Lo que alimenta gráficas, totales y ranking de productos.
+      const base = ventasFiltro === "todos" ? orders : pagados;
+
       const byDay = {};
-      orders.forEach((o) => {
+      base.forEach((o) => {
         const k = fmtDay(o.date);
         if (!byDay[k]) byDay[k] = { count: 0, total: 0, last: o.date };
         byDay[k].count++;
@@ -4222,13 +4299,13 @@ export default function ReyDelAroma() {
       });
       const todayTotal = byDay[todayK]?.total || 0;
       const todayCount = byDay[todayK]?.count || 0;
-      const allTotal = orders.reduce((s, o) => s + (Number(o.total) || 0), 0);
-      const allCount = orders.length;
+      const allTotal = base.reduce((s, o) => s + (Number(o.total) || 0), 0);
+      const allCount = base.length;
       const avg = allCount ? Math.round(allTotal / allCount) : 0;
 
       /* ── STOCK DE VENTAS: unidades vendidas por producto (suma de todos los pedidos) ── */
       const soldMap = {};
-      orders.forEach((o) => (o.items || []).forEach((it) => {
+      base.forEach((o) => (o.items || []).forEach((it) => {
         const nm = (it.name || "").trim();
         const key = `${nm.toLowerCase()}|${(it.brand || "").trim().toLowerCase()}`;
         if (!soldMap[key]) soldMap[key] = { name: nm || "Producto", brand: it.brand || "", qty: 0, revenue: 0 };
@@ -4259,7 +4336,7 @@ export default function ReyDelAroma() {
       });
       const maxBar = Math.max(1, ...last7.map((d) => d.total));
       const daysSorted = Object.entries(byDay).sort((a, b) => new Date(b[1].last) - new Date(a[1].last));
-      const ordersDesc = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const ordersDesc = [...base].sort((a, b) => new Date(b.date) - new Date(a.date));
       const hasToken = !!adminToken.trim();
       const connect = () => {
         const v = tokenInput.trim();
@@ -4279,7 +4356,7 @@ export default function ReyDelAroma() {
 
           <div className="vt-token">
             <div className="fg">
-              <label className="fl">Token de administrador</label>
+              <label className="fl">Clave de administrador <span className="fl-soft">(la misma ADMIN_TOKEN de Vercel)</span></label>
               <input
                 className="fi"
                 type="password"
@@ -4297,8 +4374,29 @@ export default function ReyDelAroma() {
           {hasToken && !ordersError && (
             <>
               <div className="vt-livebar">
-                <span className="vt-live"><span className="vt-dot" /> En vivo · se actualiza solo cada 10 s{ordersUpdatedAt ? ` · última: ${ordersUpdatedAt.toLocaleTimeString("es-CO")}` : ""}</span>
-                <button className="vt-refresh" onClick={() => fetchOrders()}>{ordersLoading ? "Actualizando…" : "↻ Actualizar"}</button>
+                <span className="vt-live"><span className="vt-dot" /> En vivo · se actualiza solo cada 20 s{ordersUpdatedAt ? ` · última: ${ordersUpdatedAt.toLocaleTimeString("es-CO")}` : ""}</span>
+                <span style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button className="vt-refresh" onClick={() => fetchOrders()}>{ordersLoading ? "Actualizando…" : "↻ Actualizar"}</button>
+                  <button className="vt-refresh" title="Vuelve a armar el resumen leyendo la copia de respaldo de cada pedido" onClick={() => fetchOrders(undefined, { reconstruir: true })}>🛟 Reconstruir</button>
+                </span>
+              </div>
+
+              {/* Qué pedidos se están contando */}
+              <div className="vt-filtro">
+                <button className={`vt-chip${ventasFiltro === "pagados" ? " on" : ""}`} onClick={() => setVentasFiltro("pagados")}>
+                  ✅ Solo pagados <b>{pagados.length}</b>
+                </button>
+                <button className={`vt-chip${ventasFiltro === "todos" ? " on" : ""}`} onClick={() => setVentasFiltro("todos")}>
+                  📋 Todos los intentos <b>{orders.length}</b>
+                </button>
+                <span className="vt-filtro-hint">
+                  {ventasFiltro === "pagados"
+                    ? "Los totales cuentan solo las compras que la pasarela confirmó como pagadas."
+                    : "Estás contando también pedidos sin pagar, en revisión y rechazados."}
+                  {(conteos.pendiente || conteos.revision || conteos.rechazado)
+                    ? ` · ${conteos.pendiente || 0} pendientes · ${conteos.revision || 0} en revisión · ${conteos.rechazado || 0} rechazados`
+                    : ""}
+                </span>
               </div>
 
               <div className="vt-kpis">
@@ -4373,9 +4471,39 @@ export default function ReyDelAroma() {
 
               <div className="vt-sec-t" style={{ marginTop: 30 }}>Pedidos <span>recientes</span></div>
               {ordersDesc.length > 0 ? (
+                <>
+                {/* CELULAR: la tabla no cabe, así que cada pedido se ve como tarjeta */}
+                <div className="vt-cards">
+                  {ordersDesc.map((o, idx) => {
+                    const c = o.customer || {};
+                    const est = ESTADOS[estadoDe(o)] || ESTADOS.pendiente;
+                    return (
+                      <div key={`c-${o.reference || idx}`} className="vt-card">
+                        <div className="vt-card-top">
+                          <span className={`vt-estado ${est.cls}`}>{est.txt}</span>
+                          <span className="vt-card-tot">{cop(o.total)}</span>
+                        </div>
+                        <div className="vt-card-n">{c.name || "Cliente sin nombre"}</div>
+                        <div className="vt-card-s">
+                          {fmtWhen(o.date)} · {o.metodoNombre || o.method || "—"}
+                          <br />ID: {c.cedula || "—"} · {c.phone || "—"}
+                          {c.city ? <><br />{c.city}{c.address ? ` — ${c.address}` : ""}</> : ""}
+                        </div>
+                        <div className="vt-card-i">{(o.items || []).map((it) => `${it.qty}× ${it.name}`).join(", ") || "—"}</div>
+                        <div className="vt-card-r">{o.reference}</div>
+                        {c.phone && (
+                          <a className="vt-card-wa" href={`https://wa.me/57${String(c.phone).replace(/\D/g, "").slice(-10)}?text=${encodeURIComponent(`Hola ${c.name || ""} 👑, te escribimos de Rey del Aroma por tu pedido ${o.reference}.`)}`} target="_blank" rel="noreferrer">
+                            💬 Escribirle por WhatsApp
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
                 <table className="atbl vt-tbl">
                   <thead>
-                    <tr><th>Fecha</th><th>Pedido</th><th>Cliente</th><th>Productos</th><th>Pago</th><th>Total</th></tr>
+                    <tr><th>Fecha</th><th>Pedido</th><th>Cliente</th><th>Productos</th><th>Pago</th><th>Estado</th><th>Total</th></tr>
                   </thead>
                   <tbody>
                     {ordersDesc.map((o, idx) => {
@@ -4392,19 +4520,27 @@ export default function ReyDelAroma() {
                             <div className="vt-cust-s">{c.phone || ""}{c.city ? ` · ${c.city}` : ""}{c.email ? ` · ${c.email}` : ""}{c.address ? <><br />{c.address}</> : ""}</div>
                           </td>
                           <td><div className="vt-items">{(o.items || []).map((it) => `${it.qty}× ${it.name}`).join(", ") || "—"}</div></td>
-                          <td><span className="vt-pay">{o.method || "—"}</span></td>
+                          <td><span className="vt-pay">{o.metodoNombre || o.method || "—"}</span></td>
+                          <td>
+                            <span className={`vt-estado ${ESTADOS[estadoDe(o)]?.cls || "pen"}`}>
+                              {ESTADOS[estadoDe(o)]?.txt || "Pendiente"}
+                            </span>
+                          </td>
                           <td className="vt-tot">{cop(o.total)}</td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
-              ) : <div className="vt-empty"><div className="emoji">🛍️</div><p>Cuando un cliente complete una compra, aparecerá aquí al instante.</p></div>}
+                </>
+              ) : <div className="vt-empty"><div className="emoji">🛍️</div><p>{ventasFiltro === "pagados" && orders.length > 0
+                    ? "Todavía no hay compras PAGADAS. Hay pedidos empezados sin terminar: míralos en «Todos los intentos»."
+                    : "Cuando un cliente complete una compra, aparecerá aquí al instante."}</p></div>}
             </>
           )}
 
           {!hasToken && !ordersError && (
-            <div className="admin-info">Escribe tu <b>token de administrador</b> arriba y pulsa “Conectar” para ver las ventas. Es el mismo valor que configures como <b>ADMIN_TOKEN</b> en Netlify.</div>
+            <div className="admin-info">Escribe tu <b>clave de administrador</b> arriba y pulsa “Conectar” para ver las ventas. Es el mismo valor que pusiste como <b>ADMIN_TOKEN</b> en Vercel (Settings → Environment Variables), el mismo del catálogo en la nube.</div>
           )}
         </div>
       );
