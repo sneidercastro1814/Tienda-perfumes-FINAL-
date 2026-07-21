@@ -448,18 +448,20 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
 .pd-hangtag-in { font-size: 10px; font-weight: 800; letter-spacing: 0.7px; line-height: 1.18; color: var(--gold-l); text-transform: uppercase; }
 .pd-hangtag-in b { display: block; font-size: 15px; letter-spacing: 0; margin-bottom: 1px; }
 .pd-hangtag-stars { display: block; font-size: 8px; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; }
-/* Galería de detalle: columna de miniaturas a la IZQUIERDA + foto grande a la derecha.
+/* Galería de detalle: foto grande a la IZQUIERDA + columna de miniaturas a la
+   DERECHA. Es igual en PC, tablet y celular: las miniaturas NUNCA pasan debajo
+   de la foto, siempre quedan al lado.
    El riel va en posición absoluta dentro de .pd-rail para que NUNCA quede más
    alto que la foto grande: si el producto tiene muchas fotos, el riel se
    desplaza por dentro en vez de desbordarse y descuadrar la página. */
 .pd-media { display: flex; gap: 14px; align-items: stretch; }
 .pd-media > .pd-main { flex: 1 1 0; min-width: 0; width: auto; }
 .pd-rail { flex: 0 0 78px; position: relative; }
-.pd-gallery { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--border-h) transparent; }
+.pd-gallery { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--border-h) transparent; }
 .pd-gallery::-webkit-scrollbar { width: 4px; height: 4px; }
 .pd-gallery::-webkit-scrollbar-thumb { background: var(--border-h); border-radius: 4px; }
 .pd-gallery::-webkit-scrollbar-track { background: transparent; }
-.pd-thumb { width: 74px; height: 74px; flex: 0 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 9px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+.pd-thumb { width: 74px; height: 74px; flex: 0 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 9px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; scroll-snap-align: start; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
 .pd-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .pd-thumb:hover { border-color: var(--gold); transform: translateY(-2px); }
 .pd-thumb.act { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.35); }
@@ -807,14 +809,14 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .nav-links { gap: 0; }
   .nav-links .nl { padding: 8px 8px; letter-spacing: 1.4px; }
 
-  /* Tablet y celular: la foto grande ocupa TODO el ancho de la columna y las
-     miniaturas pasan debajo, en una tira horizontal que se desliza. Así las
-     fotos que sube el admin se ven grandes en cualquier pantalla. */
-  .pd-media { flex-direction: column; gap: 10px; }
-  .pd-media > .pd-main { order: 1; flex: none; width: 100%; }
-  .pd-rail { order: 2; flex: none; width: 100%; position: static; }
-  .pd-gallery { position: static; flex-direction: row; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 2px 0 6px; scroll-snap-type: x proximity; }
-  .pd-thumb { width: 68px; height: 68px; scroll-snap-align: start; }
+  /* Tablet y celular: la foto grande manda a la izquierda y las miniaturas se
+     quedan en columna a la DERECHA, como en el PC. Si el perfume tiene muchas
+     fotos, la columna se desliza por dentro (la página no se mueve). */
+  .pd-media { flex-direction: row; gap: 10px; align-items: stretch; }
+  .pd-media > .pd-main { order: 1; flex: 1 1 0; width: auto; min-width: 0; }
+  .pd-rail { order: 2; flex: 0 0 72px; width: auto; position: relative; }
+  .pd-gallery { position: absolute; inset: 0; flex-direction: column; gap: 8px; overflow-x: hidden; overflow-y: auto; padding: 0 3px 0 0; scroll-snap-type: y proximity; }
+  .pd-thumb { width: 66px; height: 66px; }
   .pd-nav { display: none; }
 }
 @media (max-width: 768px) {
@@ -857,6 +859,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .pd-wrap { padding: 22px 16px 56px; }
   .bc { margin-bottom: 24px; }
   .pd-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pd-media { gap: 9px; }
+  .pd-rail { flex: 0 0 66px; }
+  .pd-thumb { width: 60px; height: 60px; }
   .pd-name { font-size: 40px; }
   .pd-price { font-size: 34px; }
   .feats { grid-template-columns: repeat(2,1fr); }
@@ -894,14 +899,15 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .hc-arrow { width: 32px; height: 32px; font-size: 18px; }
   .feat-badge { width: 45%; }
   .pcard-img { height: 172px; }
-  .pd-hangpin { right: 56px; }
-  .pd-hangtag { top: 78px; right: 34px; width: 60px; height: 78px; transform-origin: 50% -66px; padding: 0 6px 12px; }
-  .pd-hangtag::before { height: 74px; }
-  .pd-hangtag-in { font-size: 9px; }
-  .pd-hangtag-in b { font-size: 13px; }
+  .pd-hangpin { right: 46px; }
+  .pd-hangtag { top: 72px; right: 20px; width: 52px; height: 68px; transform-origin: 50% -60px; padding: 0 5px 11px; }
+  .pd-hangtag::before { height: 66px; }
+  .pd-hangtag-in { font-size: 8.5px; }
+  .pd-hangtag-in b { font-size: 12px; }
   .pd-media { gap: 8px; }
-  .pd-gallery { gap: 8px; }
-  .pd-thumb { width: 62px; height: 62px; padding: 5px; }
+  .pd-rail { flex: 0 0 58px; }
+  .pd-gallery { gap: 7px; }
+  .pd-thumb { width: 54px; height: 54px; padding: 5px; }
   .pd-zoom { width: 36px; height: 36px; right: 10px; bottom: 10px; font-size: 15px; }
   .pd-count { left: 10px; bottom: 10px; padding: 5px 10px; }
   .pd-lightbox { padding: 58px 10px 52px; }
@@ -927,6 +933,9 @@ a.nl { text-decoration: none; display: inline-flex; align-items: center; }
   .l-rey { font-size: 22px; letter-spacing: 4px; }
   .l-da { letter-spacing: 4px; }
   .nav { padding: 0 12px; }
+  .pd-media { gap: 7px; }
+  .pd-rail { flex: 0 0 52px; }
+  .pd-thumb { width: 48px; height: 48px; padding: 4px; }
 }
 
 /* ── PROGRESO DEL CARRUSEL ── */
@@ -3868,24 +3877,6 @@ export default function ReyDelAroma() {
         <div className="pd-grid">
           <div>
             <div className="pd-media">
-              {totalFotos > 1 && (
-                <div className="pd-rail">
-                  <div className="pd-gallery" ref={thumbsRef}>
-                    {gallery.map((src, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        className={`pd-thumb${i === fotoIdx ? " act" : ""}`}
-                        onClick={() => setGalleryIdx(i)}
-                        aria-label={`Ver foto ${i + 1} de ${totalFotos}`}
-                        aria-current={i === fotoIdx ? "true" : undefined}
-                      >
-                        <img src={src} alt="" loading="lazy" draggable="false" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
               <div className="pd-main">
                 {totalFotos ? (
                   <div className="pd-track" ref={trackRef} onScroll={onTrackScroll}>
@@ -3918,6 +3909,24 @@ export default function ReyDelAroma() {
                   <span className="pd-hangtag-in"><span className="pd-hangtag-stars">★★★</span><b>100%</b>Original</span>
                 </div>
               </div>
+              {totalFotos > 1 && (
+                <div className="pd-rail">
+                  <div className="pd-gallery" ref={thumbsRef}>
+                    {gallery.map((src, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`pd-thumb${i === fotoIdx ? " act" : ""}`}
+                        onClick={() => setGalleryIdx(i)}
+                        aria-label={`Ver foto ${i + 1} de ${totalFotos}`}
+                        aria-current={i === fotoIdx ? "true" : undefined}
+                      >
+                        <img src={src} alt="" loading="lazy" draggable="false" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
