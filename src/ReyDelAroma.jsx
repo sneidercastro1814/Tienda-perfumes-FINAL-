@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { Analytics } from "@vercel/analytics/react"; // ← Métricas de visitas de Vercel (panel Analytics del proyecto)
 import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, COLLECTIONS } from "./data/products";
 import banner1 from "./assets/banners/banner-1.jpg";
 import banner2 from "./assets/banners/banner-2.jpg";
@@ -38,6 +39,17 @@ const ADMIN_SESSION_DAYS = 30;               // ← Días que dura la sesión de
 
 const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
+
+/* MÉTRICAS (Vercel Analytics): descartamos la visita cuando la dirección lleva
+   la clave del panel privado (?panel=…). Así el enlace secreto del panel no
+   aparece nunca en el tablero de métricas. El resto de páginas se cuentan
+   normal: inicio, cada perfume, categorías, búsquedas y el checkout. */
+const ocultarPanelEnMetricas = (evento) => {
+  try {
+    if (evento && typeof evento.url === "string" && evento.url.includes("panel=")) return null;
+  } catch { /* ignore */ }
+  return evento;
+};
 
 /* ════════════════════════════════════════════════════════════════
    ENVÍOS — edita estos valores a tu gusto
@@ -5321,6 +5333,11 @@ export default function ReyDelAroma() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+
+      {/* Métricas de visitas (Vercel → pestaña Analytics del proyecto).
+          Las visitas al panel privado NO se envían: así la dirección secreta
+          (?panel=…) nunca queda escrita en el tablero de métricas. */}
+      <Analytics beforeSend={ocultarPanelEnMetricas} />
     </div>
   );
 }
