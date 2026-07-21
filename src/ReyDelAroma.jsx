@@ -33,6 +33,8 @@ const LS_ORDERS = "rda-orders-v1";           // ← Respaldo local de pedidos (p
 const LS_ADMIN_TOKEN = "rda-admin-token";    // ← Clave de publicación (ADMIN_TOKEN). Se guarda en este navegador
 const LS_CART = "rda-cart-v1";               // ← Carrito del cliente (sobrevive al recargar la página)
 const LS_NAV = "rda-nav-v1";                 // ← Página abierta (para no perderla al recargar) — solo esta pestaña
+const LS_ADMIN_SESSION = "rda-admin-session-v1"; // ← Sesión del panel: se mantiene abierta hasta que el admin toca "Salir"
+const ADMIN_SESSION_DAYS = 30;               // ← Días que dura la sesión del panel sin usarla. Súbelo si la quieres más larga.
 
 const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
@@ -1837,6 +1839,55 @@ function loadNav() {
   } catch { return null; }
 }
 
+/* ════════════════════════════════════════════════════════════════
+   SESIÓN DEL PANEL DE ADMINISTRACIÓN
+
+   Antes la sesión vivía solo en la memoria de la página: cualquier recarga
+   (F5, el celular refrescando la pestaña solo, volver de una pasarela…)
+   devolvía a la pantalla de la contraseña. Ahora la sesión queda guardada en
+   ESTE navegador y solo se cierra cuando el admin pulsa el botón "Salir".
+
+   No se guarda la contraseña, sino una huella suya: si el dueño la cambia en
+   el código, las sesiones abiertas dejan de valer y hay que entrar de nuevo.
+   ════════════════════════════════════════════════════════════════ */
+const pwPrint = (s) => {
+  let h = 5381;
+  const t = String(s);
+  for (let i = 0; i < t.length; i += 1) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+};
+function saveAdminSession() {
+  try { localStorage.setItem(LS_ADMIN_SESSION, JSON.stringify({ k: pwPrint(ADMIN_PASSWORD), at: Date.now() })); }
+  catch { /* ignore */ }
+}
+function clearAdminSession() {
+  try { localStorage.removeItem(LS_ADMIN_SESSION); } catch { /* ignore */ }
+}
+/* ¿Hay una sesión abierta y válida en este navegador? Al comprobarla se
+   renueva la fecha, así los días solo corren cuando el panel deja de usarse. */
+function loadAdminSession() {
+  try {
+    const raw = localStorage.getItem(LS_ADMIN_SESSION);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (!s || s.k !== pwPrint(ADMIN_PASSWORD)) { clearAdminSession(); return false; }
+    if (!s.at || Date.now() - s.at > ADMIN_SESSION_DAYS * 86400000) { clearAdminSession(); return false; }
+    saveAdminSession();
+    return true;
+  } catch { return false; }
+}
+/* ¿El admin recargó estando DENTRO del panel? Como la dirección privada
+   (?panel=…) se borra de la barra a propósito, miramos la página que tenía
+   abierta esta pestaña. Si estaba en el panel lo devolvemos al panel: si su
+   sesión sigue abierta entra directo y, si ya venció, ve la contraseña. */
+function wasInAdminPanel() {
+  try {
+    if (window.location.pathname !== "/") return false;
+    const nav = loadNav();
+    return !!(nav && nav.view === "admin");
+  } catch { return false; }
+}
+
 /* ¿El usuario está volviendo de Wompi? (?wompi=1&id=<txId> o ?env=...) */
 function readWompiReturn() {
   try {
@@ -2004,6 +2055,7 @@ export default function ReyDelAroma() {
   const [initialRoute] = useState(() => {
     if (readWompiReturn().fromWompi || readSistecreditoReturn().fromSiste || readAddiReturn().fromAddi) return { view: "pago-resultado" };
     if (readAdminParam()) return { view: "admin" };   // ← enlace privado del panel (reydelaroma.com/?panel=…)
+    if (wasInAdminPanel()) return { view: "admin" }; // ← recargó estando dentro del panel (misma pestaña)
     return parseRoute();
   });
   /* Datos de retorno de la pasarela, guardados antes de limpiar la barra de
@@ -2042,7 +2094,9 @@ export default function ReyDelAroma() {
   const [priceFilter, setPriceFilter] = useState("all"); // filtro por rango de precio
   const [toast, setToast] = useState(null);
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2800); };
-  const [adminAuth, setAdminAuth] = useState(false);
+  /* Sesión del panel: sigue abierta aunque se recargue la página. Solo la
+     cierra el botón "Salir" del panel. */
+  const [adminAuth, setAdminAuth] = useState(loadAdminSession);
   const [adminPw, setAdminPw] = useState("");
   const [adminView, setAdminView] = useState("list");
   const [editingId, setEditingId] = useState(null);
@@ -3256,8 +3310,19 @@ export default function ReyDelAroma() {
 
   /* ── ADMIN ── */
   const adminLogin = () => {
-    if (adminPw === ADMIN_PASSWORD) { setAdminAuth(true); setAdminPw(""); }
+    if (adminPw === ADMIN_PASSWORD) { saveAdminSession(); setAdminAuth(true); setAdminPw(""); }
     else showToast("Contraseña incorrecta");
+  };
+  /* Cerrar sesión: SOLO desde el botón "Salir". Mientras no lo pulses, el panel
+     te sigue reconociendo aunque recargues o cierres el navegador. */
+  const adminLogout = () => {
+    clearAdminSession();
+    setAdminAuth(false);
+    setAdminPw("");
+    setAdminSearch("");
+    setAdminView("list");
+    go({ view: "store" });
+    showToast("Sesión cerrada");
   };
   const startAdd = () => { setForm(EMPTY_FORM); setEditingId(null); setAdminView("form"); };
   const startEdit = (p) => {
@@ -4841,7 +4906,7 @@ export default function ReyDelAroma() {
             <button className="btn-o" onClick={() => setAdminView("taxonomy")}>🗂️ Colecciones y aromas</button>
             <button className="btn-o" onClick={() => setAdminView("coupons")}>🎟️ Cupones</button>
             <button className="btn-o" onClick={resetCatalog}>Restaurar catálogo</button>
-            <button className="btn-o" onClick={() => { setAdminAuth(false); setAdminSearch(""); go({ view: "store" }); }}>Salir</button>
+            <button className="btn-o" onClick={adminLogout}>Salir</button>
             <button className="btn-g" onClick={startAdd}>+ Agregar</button>
           </div>
         </div>
