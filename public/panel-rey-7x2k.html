@@ -2,103 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Panel · Rey del Aroma</title>
-
-  <!-- Ícono del acceso directo en el iPhone -->
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/favicon.png" />
-  <meta name="theme-color" content="#12120f" />
-  <meta name="apple-mobile-web-app-title" content="Panel Rey" />
-
-  <!-- SIN etiqueta canonical a propósito:
-       esta página existe SOLO para el acceso directo del panel. Si tuviera
-       <link rel="canonical" href="…/"> (como la tienda), el iPhone guardaría
-       esa dirección al "Añadir a inicio" y el ícono abriría la tienda en vez
-       del panel. Al no tenerla, el ícono guarda ESTA página, que abre el panel. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-
-  <style>
-    :root { color-scheme: dark; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; height: 100%; }
-    body {
-      min-height: 100svh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 26px; padding: 32px 24px calc(32px + env(safe-area-inset-bottom));
-      background:
-        radial-gradient(120% 80% at 50% 0%, #1e1c16 0%, #12120f 55%, #0c0b09 100%);
-      color: #f4f1ea;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      text-align: center;
-    }
-    .crown {
-      width: 86px; height: 86px; margin-bottom: 4px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 22px;
-      background: linear-gradient(160deg, #23201a, #16150f);
-      border: 1px solid #35322a;
-      box-shadow: 0 10px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
-    }
-    .crown svg { width: 52px; height: 52px; }
-    .brand { font-size: 13px; letter-spacing: 7px; font-weight: 700; color: #c9a84c; }
-    .brand small { display:block; letter-spacing: 5px; font-size: 10px; color:#8f8b7e; font-weight:600; margin-top:4px; }
-    h1 { margin: 6px 0 0; font-size: 21px; font-weight: 700; letter-spacing: .3px; }
-    p.sub { margin: 0; max-width: 300px; font-size: 14px; line-height: 1.5; color: #a7a396; }
-    .btn {
-      margin-top: 6px; appearance: none; border: none; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      min-width: 250px; padding: 17px 26px; border-radius: 15px;
-      font-size: 17px; font-weight: 700; letter-spacing: .3px;
-      color: #1a1710; text-decoration: none;
-      background: linear-gradient(160deg, #e6c463, #c9a84c);
-      box-shadow: 0 12px 30px rgba(201,168,76,.28), inset 0 1px 0 rgba(255,255,255,.4);
-      transition: transform .12s ease, box-shadow .12s ease;
-    }
-    .btn:active { transform: translateY(1px) scale(.99); box-shadow: 0 6px 18px rgba(201,168,76,.24); }
-    .hint {
-      margin-top: 10px; max-width: 320px; font-size: 12.5px; line-height: 1.55; color: #7c7869;
-    }
-    .hint b { color: #b9b4a4; font-weight: 600; }
-  </style>
+  <title>Redirigiendo…</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <!-- Enlace viejo: ahora todo el panel vive en /admin (página completamente aparte
+       de la tienda). Redirigimos al instante para que quien tenga guardado el
+       link antiguo llegue al panel nuevo sin darse cuenta. -->
+  <meta http-equiv="refresh" content="0; url=/admin" />
+  <script>window.location.replace("/admin");</script>
 </head>
-<body>
-  <div class="crown" aria-hidden="true">
-    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 46 L12 20 L24 34 L32 14 L40 34 L52 20 L56 46 Z"
-            fill="#c9a84c" stroke="#e6c463" stroke-width="1.5" stroke-linejoin="round"/>
-      <rect x="8" y="46" width="48" height="7" rx="2" fill="#b9973f"/>
-      <circle cx="32" cy="12" r="3.4" fill="#e6c463"/>
-      <circle cx="12" cy="18" r="2.6" fill="#e6c463"/>
-      <circle cx="52" cy="18" r="2.6" fill="#e6c463"/>
-    </svg>
-  </div>
-
-  <div class="brand">REY DEL AROMA<small>ADMINISTRACIÓN</small></div>
-
-  <h1>Panel de administración</h1>
-  <p class="sub">Toca el botón para entrar a tu panel y gestionar la tienda.</p>
-
-  <a href="/" class="btn" id="go">Entrar al panel</a>
-
-  <div class="hint">
-    ¿Primera vez en el iPhone? Con esta pantalla abierta, toca <b>Compartir</b> y
-    luego <b>“Añadir a inicio”</b> para dejar el panel como acceso directo.
-  </div>
-
-  <script>
-    // Al entrar, dejamos una marca de "vengo al panel" y abrimos la tienda en la
-    // misma pestaña. La aplicación ve esa marca y muestra el panel (la pantalla
-    // de contraseña, o directo si ya iniciaste sesión en este teléfono).
-    // Usamos replace() para que "atrás" desde el panel no vuelva a esta pantalla.
-    function entrarAlPanel(e) {
-      if (e) e.preventDefault();
-      try {
-        sessionStorage.setItem('rda-nav-v1', JSON.stringify({ view: 'admin', checkoutItems: [] }));
-      } catch (_) { /* si el navegador bloquea el almacenamiento, igual seguimos */ }
-      window.location.replace('/');
-    }
-    document.getElementById('go').addEventListener('click', entrarAlPanel);
-  </script>
-</body>
+<body></body>
 </html>
