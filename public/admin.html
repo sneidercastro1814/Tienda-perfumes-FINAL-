@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#12120f" />
+  <title>Panel · Rey del Aroma</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <meta name="apple-mobile-web-app-title" content="Panel Rey" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════ TOKENS ══════════ */
+    :root{
+      --bg:#0e0d0a; --bg2:#151310; --panel:#1a1712; --panel2:#221e17;
+      --border:#2a251c; --border2:#3a3225;
+      --text:#f4f1ea; --muted:#a7a396; --dim:#7c7869;
+      --gold:#c9a84c; --gold-l:#e6c463; --gold-d:#b9973f;
+      --ok:#4ea87a; --warn:#d9a441; --err:#c94c4c;
+      --serif:'Fraunces',Georgia,serif; --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+      color-scheme:dark;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:var(--sans);color:var(--text);background:
+        radial-gradient(120% 60% at 50% 0%, #1e1c16 0%, #12120f 45%, #0c0b09 100%);
+      min-height:100vh;min-height:100svh;font-size:15px;line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit}
+    button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+    input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+    input[type=file]{display:none}
+    /* Scrollbar oscura */
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{background:#2a251c;border-radius:10px}
+    ::-webkit-scrollbar-thumb:hover{background:#3a3225}
+
+    /* ══════════ TOP BAR ══════════ */
+    .top{
+      position:sticky;top:0;z-index:50;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 22px;background:rgba(14,13,10,.92);
+      backdrop-filter:saturate(140%) blur(10px);
+      -webkit-backdrop-filter:saturate(140%) blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-crown{
+      width:38px;height:38px;border-radius:10px;
+      background:linear-gradient(160deg,#23201a,#16150f);
+      border:1px solid #35322a;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .brand-crown svg{width:24px;height:24px}
+    .brand-tx{line-height:1.15}
+    .brand-tx b{display:block;font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:.5px}
+    .brand-tx span{display:block;font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:700}
+    .top-right{display:flex;align-items:center;gap:10px}
+    .badge{padding:6px 12px;border-radius:999px;border:1px solid var(--border);font-size:11px;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase;font-weight:600}
+    .badge.ok{color:var(--gold-l);border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.08)}
+    .top-out{padding:9px 16px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;color:var(--muted);transition:.15s}
+    .top-out:hover{color:var(--text);border-color:var(--border2)}
+
+    /* ══════════ LOGIN ══════════ */
+    .login{
+      min-height:100vh;min-height:100svh;
+      display:flex;align-items:center;justify-content:center;
+      padding:32px 24px;
+    }
+    .login-card{
+      width:100%;max-width:400px;text-align:center;
+      background:linear-gradient(160deg,var(--panel),var(--bg2));
+      border:1px solid var(--border);border-radius:20px;
+      padding:44px 32px 36px;
+      box-shadow:0 30px 80px rgba(0,0,0,.5);
+    }
+    .login-crown{
+      width:78px;height:78px;margin:0 auto 18px;
+      display:flex;align-items:center;justify-content:center;
+      border-radius:18px;
+      background:linear-gradient(160deg,#23201a,#16150f);
+      border:1px solid #35322a;
+    }
+    .login-crown svg{width:46px;height:46px}
+    .login-brand{font-size:11px;letter-spacing:7px;font-weight:700;color:var(--gold);margin-bottom:4px}
+    .login-t{font-family:var(--serif);font-size:26px;font-weight:600;margin-bottom:2px}
+    .login-t span{color:var(--gold);font-style:italic}
+    .login-s{font-size:13px;color:var(--muted);margin-bottom:26px}
+    .fi{
+      width:100%;padding:14px 16px;
+      background:var(--bg);border:1px solid var(--border);border-radius:12px;
+      color:var(--text);outline:none;transition:border-color .15s;
+    }
+    .fi:focus{border-color:var(--gold)}
+    .login-btn{
+      width:100%;margin-top:14px;padding:15px 20px;
+      background:linear-gradient(160deg,var(--gold-l),var(--gold));
+      color:#1a1710;border-radius:12px;font-weight:700;letter-spacing:.4px;
+      box-shadow:0 12px 30px rgba(201,168,76,.28), inset 0 1px 0 rgba(255,255,255,.35);
+      transition:transform .12s;
+    }
+    .login-btn:active{transform:translateY(1px) scale(.99)}
+    .login-hint{margin-top:22px;font-size:12px;color:var(--dim);line-height:1.6}
+
+    /* ══════════ WRAP ══════════ */
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+    @media (max-width:640px){.wrap{padding:20px 14px 44px}}
+
+    /* ══════════ HDR + TABS ══════════ */
+    .hdr{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .h-t{font-family:var(--serif);font-size:32px;font-weight:600;line-height:1.1}
+    .h-t span{color:var(--gold);font-style:italic}
+    .h-actions{display:flex;gap:10px;flex-wrap:wrap}
+    @media (max-width:640px){.h-t{font-size:24px}}
+
+    .btn{padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;letter-spacing:.3px;transition:.15s;white-space:nowrap}
+    .btn-g{background:linear-gradient(160deg,var(--gold-l),var(--gold));color:#1a1710;box-shadow:0 8px 20px rgba(201,168,76,.22)}
+    .btn-g:hover{filter:brightness(1.05)}
+    .btn-o{background:transparent;border:1px solid var(--border2);color:var(--text)}
+    .btn-o:hover{border-color:var(--gold);color:var(--gold-l)}
+    .btn-d{background:transparent;border:1px solid rgba(201,76,76,.5);color:#e69696}
+    .btn-d:hover{background:rgba(201,76,76,.1)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .tabs{display:flex;gap:6px;padding:6px;background:var(--panel);border-radius:12px;border:1px solid var(--border);overflow-x:auto;margin-bottom:22px}
+    .tabs button{padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.15s}
+    .tabs button:hover{color:var(--text)}
+    .tabs button.on{background:var(--gold);color:#1a1710}
+
+    .info{padding:14px 18px;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:10px;font-size:13.5px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+    .info b{color:var(--gold-l);font-weight:600}
+    .info.err{background:rgba(201,76,76,.06);border-color:rgba(201,76,76,.3);color:#e6b0b0}
+    .info.err b{color:#f0c8c8}
+
+    /* ══════════ NUBE (sync card) ══════════ */
+    .sync{
+      background:linear-gradient(160deg,var(--panel),var(--bg2));
+      border:1px solid var(--border);border-radius:14px;
+      padding:20px 22px;margin-bottom:22px;
+    }
+    .sync-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+    .sync-t{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+    .sync-b{padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;background:var(--panel2);color:var(--muted);border:1px solid var(--border2)}
+    .sync-b.ok{color:var(--gold-l);border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.08)}
+    .sync-b.warn{color:var(--warn);border-color:rgba(217,164,65,.4);background:rgba(217,164,65,.08)}
+    .sync-b.err{color:#e69696;border-color:rgba(201,76,76,.4);background:rgba(201,76,76,.08)}
+    .sync-msg{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+    .sync-msg b{color:var(--gold-l)}
+    .sync-help{margin-top:8px;font-size:12.5px;color:var(--dim)}
+    .sync-help code{padding:1px 6px;background:var(--panel2);border-radius:4px;font-size:12px;color:var(--gold-l)}
+    .sync-key{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+    .sync-key .fg{flex:1;min-width:200px}
+    .fl{display:block;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .fl-soft{font-weight:400;text-transform:none;letter-spacing:0;color:var(--dim)}
+
+    /* ══════════ TABLA ══════════ */
+    .search-bar{
+      position:relative;margin-bottom:14px;
+    }
+    .search-bar .fi{padding-left:44px}
+    .search-bar svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--dim)}
+    .search-bar .x{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:var(--panel2);color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center}
+    .search-count{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+    .search-count b{color:var(--gold-l)}
+    .search-count .lk{color:var(--gold);text-decoration:underline;cursor:pointer;margin-left:8px}
+
+    .tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);background:var(--panel)}
+    .tbl{width:100%;border-collapse:collapse;min-width:720px}
+    .tbl th{padding:14px 12px;text-align:left;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);background:var(--panel2);white-space:nowrap}
+    .tbl td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:14px}
+    .tbl tr:last-child td{border-bottom:none}
+    .tbl tr.hidden{opacity:.55}
+    .thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--bg2);display:block}
+    .thumb.ph{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--dim)}
+    .pn{font-weight:600;color:var(--text);font-size:14px}
+    .ps{font-size:12px;color:var(--muted);margin-top:2px}
+    .pp{font-weight:700;color:var(--gold-l);font-family:var(--serif);font-size:15px;white-space:nowrap}
+    .pc{color:var(--muted);font-size:13px}
+    .promo-tag{background:rgba(201,168,76,.14);color:var(--gold-l);font-size:10px;letter-spacing:1px;padding:4px 8px;border-radius:4px;font-weight:700;white-space:nowrap}
+    .dash{color:var(--dim)}
+    .vis{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.6px;border:1px solid var(--border2);white-space:nowrap}
+    .vis .dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+    .vis.on{color:var(--ok);border-color:rgba(78,168,122,.35);background:rgba(78,168,122,.08)}
+    .vis.on .dot{background:var(--ok)}
+    .vis.off{color:var(--dim)}
+    .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .row-actions button{padding:6px 10px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap}
+    .row-actions .e{background:var(--panel2);color:var(--text);border:1px solid var(--border2)}
+    .row-actions .e:hover{color:var(--gold-l);border-color:var(--gold)}
+    .row-actions .d{background:transparent;color:#e69696;border:1px solid rgba(201,76,76,.35)}
+    .row-actions .d:hover{background:rgba(201,76,76,.12)}
+    .empty{text-align:center;padding:60px 24px;color:var(--dim)}
+    .empty .ico{font-size:44px;opacity:.3;margin-bottom:12px}
+
+    /* ══════════ FORM PRODUCTO ══════════ */
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .form-grid .full{grid-column:1/-1}
+    @media (max-width:720px){.form-grid{grid-template-columns:1fr}}
+    .fg{display:flex;flex-direction:column;gap:6px}
+    .fsel{width:100%;padding:13px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text);outline:none;-webkit-appearance:none;appearance:none}
+    .fsel:focus{border-color:var(--gold)}
+    .fta{width:100%;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text);outline:none;min-height:100px;resize:vertical;line-height:1.55}
+    .fta:focus{border-color:var(--gold)}
+    .fchk{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:14px}
+    .fchk input{width:18px;height:18px;accent-color:var(--gold)}
+    .aroma-pick{display:flex;flex-wrap:wrap;gap:8px}
+    .aroma-chip{padding:9px 14px;background:var(--panel);border:1px solid var(--border);border-radius:999px;font-size:13px;font-weight:500;color:var(--muted);transition:.15s}
+    .aroma-chip:hover{color:var(--text);border-color:var(--border2)}
+    .aroma-chip.on{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold-l)}
+    .aroma-hint{font-size:12.5px;color:var(--dim);margin-top:8px}
+    .aroma-hint b{color:var(--gold-l);font-weight:600}
+    .aroma-empty{font-size:13px;color:var(--dim);padding:12px 0}
+
+    /* Imagen principal */
+    .img-prev{position:relative;display:inline-block;border-radius:12px;overflow:hidden;background:var(--panel)}
+    .img-prev img{display:block;max-width:240px;max-height:240px;object-fit:cover}
+    .img-prev-rm{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center}
+    .img-up{
+      display:block;padding:32px 24px;text-align:center;
+      background:var(--bg);border:2px dashed var(--border2);border-radius:12px;
+      color:var(--muted);cursor:pointer;transition:.15s;
+    }
+    .img-up:hover{border-color:var(--gold);color:var(--gold-l)}
+    .img-up .ico{font-size:34px;margin-bottom:8px}
+    .img-up .tx{font-size:13.5px;font-weight:500}
+    .img-up .sub{font-size:12px;opacity:.7;margin-top:4px}
+
+    /* Galería */
+    .multi{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+    .multi-i{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--panel)}
+    .multi-i img{width:100%;height:100%;object-fit:cover;display:block}
+    .multi-i .rm{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+    .multi-i .cov{position:absolute;bottom:6px;left:6px;padding:4px 8px;border-radius:6px;background:rgba(0,0,0,.75);color:var(--gold-l);font-size:10px;font-weight:700;letter-spacing:.4px}
+    .multi-add{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      background:var(--bg);border:2px dashed var(--border2);border-radius:10px;
+      cursor:pointer;aspect-ratio:1;color:var(--muted);gap:4px;transition:.15s
+    }
+    .multi-add:hover{border-color:var(--gold);color:var(--gold-l)}
+    .multi-add span:first-child{font-size:28px;line-height:1}
+    .multi-add span:last-child{font-size:11px;font-weight:600;letter-spacing:.3px}
+    .multi-hint{font-size:12.5px;color:var(--dim);margin-top:8px}
+
+    /* ══════════ TAXONOMÍA ══════════ */
+    .tax{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    @media (max-width:720px){.tax{grid-template-columns:1fr}}
+    .tax-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px}
+    .tax-t{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:2px}
+    .tax-t span{color:var(--gold);font-style:italic}
+    .tax-s{font-size:12.5px;color:var(--dim);margin-bottom:18px}
+    .tax-add{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+    .tax-add .fi{flex:1;min-width:140px}
+    .tax-list{display:flex;flex-direction:column;gap:6px}
+    .tax-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+    .tax-item .n{font-size:14px;font-weight:500}
+    .tax-item .rm{padding:5px 10px;font-size:11.5px;color:#e69696;border:1px solid rgba(201,76,76,.35);border-radius:6px;font-weight:600}
+    .tax-item .rm:hover{background:rgba(201,76,76,.12)}
+    .tax-empty{padding:16px;text-align:center;color:var(--dim);font-size:13px}
+
+    /* ══════════ CUPONES ══════════ */
+    .cp-create{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end;padding:20px;background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:20px}
+    @media (max-width:720px){.cp-create{grid-template-columns:1fr}}
+    .cp-add{padding:13px 20px;background:linear-gradient(160deg,var(--gold-l),var(--gold));color:#1a1710;border-radius:12px;font-weight:700;white-space:nowrap;box-shadow:0 8px 20px rgba(201,168,76,.22)}
+    .cp-state{padding:5px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.6px;background:var(--panel2);color:var(--dim);border:1px solid var(--border2)}
+    .cp-state.on{color:var(--ok);border-color:rgba(78,168,122,.35);background:rgba(78,168,122,.08)}
+
+    /* ══════════ VENTAS ══════════ */
+    .vt-live{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;font-size:13px;color:var(--muted)}
+    .vt-live .l{display:flex;align-items:center;gap:8px}
+    .vt-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:blink 1.6s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+    .vt-refresh{padding:7px 12px;font-size:12px;border-radius:8px;background:var(--panel2);border:1px solid var(--border2);font-weight:600}
+    .vt-refresh:hover{color:var(--gold-l);border-color:var(--gold)}
+
+    .vt-filtro{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px;font-size:13px;color:var(--muted)}
+    .vt-chip{padding:8px 14px;border-radius:999px;border:1px solid var(--border2);background:var(--panel);color:var(--muted);font-size:12.5px;font-weight:600}
+    .vt-chip.on{background:rgba(201,168,76,.14);color:var(--gold-l);border-color:var(--gold)}
+    .vt-chip b{color:inherit;margin-left:4px}
+
+    .vt-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
+    @media (max-width:900px){.vt-kpis{grid-template-columns:repeat(2,1fr)}}
+    .vt-kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px}
+    .vt-kpi.hot{background:linear-gradient(160deg,rgba(201,168,76,.14),rgba(201,168,76,.03));border-color:rgba(201,168,76,.28)}
+    .vt-kpi-l{font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
+    .vt-kpi-v{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--text);line-height:1.15}
+    .vt-kpi.hot .vt-kpi-v{color:var(--gold-l)}
+    .vt-kpi-s{font-size:11.5px;color:var(--dim);margin-top:4px}
+
+    .vt-sec{font-family:var(--serif);font-size:19px;font-weight:600;margin:22px 0 14px}
+    .vt-sec span{color:var(--gold);font-style:italic}
+
+    .vt-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:18px 12px;background:var(--panel);border:1px solid var(--border);border-radius:14px}
+    .vt-bar-col{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+    .vt-bar-val{font-size:10.5px;font-weight:600;color:var(--muted);height:14px;white-space:nowrap;overflow:hidden}
+    .vt-bar-wrap{width:100%;height:130px;display:flex;align-items:flex-end}
+    .vt-bar{width:100%;min-height:2px;background:var(--gold);border-radius:6px 6px 0 0;transition:height .3s}
+    .vt-bar.today{background:linear-gradient(180deg,var(--gold-l),var(--gold-d));box-shadow:0 0 12px rgba(201,168,76,.35)}
+    .vt-bar-day{font-size:10px;text-align:center;color:var(--dim);line-height:1.3;text-transform:capitalize}
+
+    .vt-prod-head{font-size:13px;color:var(--muted);margin-bottom:12px}
+    .vt-prod-head b{color:var(--gold-l)}
+    .vt-prod-list{display:flex;flex-direction:column;gap:8px}
+    .vt-prod{display:grid;grid-template-columns:36px 48px 1fr auto;gap:14px;align-items:center;padding:12px 16px;background:var(--panel);border:1px solid var(--border);border-radius:12px}
+    .vt-prod.top{background:linear-gradient(160deg,rgba(201,168,76,.08),var(--panel))}
+    .vt-prod-rank{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--gold);text-align:center}
+    .vt-prod-img{width:48px;height:48px;border-radius:8px;object-fit:cover;background:var(--bg2)}
+    .vt-prod-img.ph{display:flex;align-items:center;justify-content:center;font-size:22px}
+    .vt-prod-n{font-weight:600;font-size:14px}
+    .vt-prod-b{font-size:11.5px;color:var(--muted);margin-top:2px;margin-bottom:6px}
+    .vt-prod-bar-wrap{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden}
+    .vt-prod-bar{height:100%;background:var(--gold);border-radius:3px}
+    .vt-prod-r{text-align:right;min-width:80px}
+    .vt-prod-q{font-family:var(--serif);font-size:22px;font-weight:600;line-height:1}
+    .vt-prod-ql{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.6px}
+    .vt-prod-rev{font-size:12px;color:var(--gold-l);font-weight:600;margin-top:4px}
+    @media (max-width:600px){
+      .vt-prod{grid-template-columns:28px 40px 1fr auto;gap:10px;padding:10px 12px}
+      .vt-prod-img{width:40px;height:40px}
+    }
+
+    .vt-day{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:6px}
+    .vt-day-d{font-weight:600;font-size:13.5px;text-transform:capitalize}
+    .vt-day-c{font-size:11.5px;color:var(--dim);margin-top:2px}
+    .vt-day-t{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--gold-l)}
+
+    .estado{display:inline-block;padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+    .estado.ok{background:rgba(78,168,122,.12);color:var(--ok);border:1px solid rgba(78,168,122,.3)}
+    .estado.pen{background:rgba(217,164,65,.1);color:var(--warn);border:1px solid rgba(217,164,65,.3)}
+    .estado.rev{background:rgba(78,140,200,.1);color:#7bb3e6;border:1px solid rgba(78,140,200,.3)}
+    .estado.no{background:rgba(201,76,76,.1);color:#e69696;border:1px solid rgba(201,76,76,.3)}
+
+    /* Pedidos: tarjetas (móvil) + tabla (desktop) */
+    .ord-cards{display:none;flex-direction:column;gap:10px}
+    .ord-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+    .ord-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .ord-card-tot{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--gold-l)}
+    .ord-card-n{font-weight:600;font-size:14px}
+    .ord-card-s{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5}
+    .ord-card-i{font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+    .ord-card-r{font-size:10.5px;color:var(--dim);margin-top:4px;letter-spacing:.4px}
+    .ord-card-wa{display:inline-block;margin-top:10px;padding:8px 12px;background:#25d366;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none}
+    .ord-tbl{display:table}
+    @media (max-width:820px){
+      .ord-cards{display:flex}
+      .ord-tbl{display:none}
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      padding:14px 22px;background:rgba(20,17,13,.96);
+      border:1px solid var(--gold);border-radius:12px;
+      color:var(--text);font-weight:500;font-size:14px;
+      box-shadow:0 20px 50px rgba(0,0,0,.5);
+      z-index:100;max-width:calc(100vw - 40px);
+      animation:toast-in .25s ease-out;
+    }
+    @keyframes toast-in{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+    .center{text-align:center}
+    .mt-14{margin-top:14px}
+    .mt-22{margin-top:22px}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   PANEL DE ADMINISTRACIÓN — Rey del Aroma
+   Archivo autocontenido. No depende del bundle de React de la tienda.
+   Se conecta directo a las APIs de Vercel:
+     GET  /api/catalog         → traer catálogo publicado
+     POST /api/catalog         → publicar catálogo (requiere ADMIN_TOKEN)
+     POST /api/upload-image    → subir foto al Blob (requiere ADMIN_TOKEN)
+     GET  /api/list-orders     → traer ventas (requiere ADMIN_TOKEN)
+   ══════════════════════════════════════════════════════════════ */
+
+/* ══════ CONFIGURACIÓN ══════ */
+const ADMIN_PASSWORD = "admin123";
+const ADMIN_SESSION_DAYS = 30;
+const MAX_GALLERY = 10;
+const PROMO_LABEL = "2 X $300.000";
+
+/* Claves locales del panel (diferentes a las de la tienda, para no chocar) */
+const LS_TOKEN   = "rda-admin-token";
+const LS_SESSION = "rda-panel-session-v1";
+
+/* Catálogo por defecto si la nube viene vacía */
+const DEFAULT_COLLECTIONS = ["Diseñador", "Árabes"];
+const DEFAULT_AROMAS = ["Amaderado","Oriental","Floral","Frutal","Dulce","Cítrico","Acuático","Aromático","Vainilla","Fresco","Ámbar","Oud","Gourmand"];
+const FAMILY_EMOJI = {
+  "Amaderado":"🪵","Oriental":"🕌","Floral":"🌸","Frutal":"🍓","Dulce":"🍯",
+  "Cítrico":"🍋","Acuático":"💧","Aromático":"🌿","Vainilla":"🍦",
+  "Fresco":"❄️","Ámbar":"✨","Oud":"🌰","Gourmand":"🍫"
+};
+
+/* ══════ ESTADO GLOBAL ══════ */
+const state = {
+  authed: false,
+  token: "",                    // ADMIN_TOKEN de Vercel (para publicar)
+  products: [],
+  coupons: [],
+  collections: [...DEFAULT_COLLECTIONS],
+  aromas: [...DEFAULT_AROMAS],
+
+  cloudState: "loading",        // loading | ready | empty | off | error
+  cloudMsg: "",
+  cloudAt: null,
+  publishing: false,
+  publishedPrint: "",           // huella del último catálogo publicado
+  autoPublishTimer: null,
+
+  view: "list",                 // list | form | taxonomy | coupons | ventas
+  editingId: null,
+  form: emptyForm(),
+  search: "",
+
+  orders: [],
+  ordersLoading: false,
+  ordersError: "",
+  ordersUpdatedAt: null,
+  ordersInterval: null,
+  ventasFiltro: "pagados",      // pagados | todos
+
+  couponForm: { code:"", type:"percent", value:"" },
+  newCollection: "",
+  newAroma: "",
+};
+
+function emptyForm(){
+  return {
+    name:"", brand:"", subtitle:"", size:"", price:"",
+    category:"Hombre", collection:"Árabes", promo:false, favorite:false,
+    tags:[], description:"", image:"", images:[]
+  };
+}
+
+/* ══════ HELPERS ══════ */
+const $ = (id) => document.getElementById(id);
+const el = (tag, attrs = {}, ...children) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k === "html") n.innerHTML = v;
+    else if (k.startsWith("on") && typeof v === "function") n.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (v !== null && v !== undefined && v !== false) n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of children) {
+    if (c == null || c === false) continue;
+    n.appendChild(typeof c === "string" || typeof c === "number" ? document.createTextNode(c) : c);
+  }
+  return n;
+};
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
+const cleanImages = (arr) => [...new Set((Array.isArray(arr) ? arr : []).filter((s) => typeof s === "string" && s.trim()))];
+const isDataUrl = (s) => typeof s === "string" && s.startsWith("data:image");
+const isPortableImg = (s) => typeof s === "string" && (s.startsWith("data:image") || /^https?:\/\//i.test(s));
+
+/* Huella para detectar cambios reales del catálogo */
+function catalogPrint() {
+  try { return JSON.stringify({ p: state.products, c: state.coupons, co: state.collections, a: state.aromas }); }
+  catch { return String(Math.random()); }
+}
+
+/* Solo se envían al Blob los datos publicables (sin fotos rotas de build) */
+function toCloudProducts(list) {
+  return list.map((p) => ({
+    ...p,
+    image: p.img && !isPortableImg(p.image) ? "" : (p.image || ""),
+    images: cleanImages(p.images).filter(isPortableImg),
+  }));
+}
+
+/* ══════ TOAST ══════ */
+let toastTimer = null;
+function toast(msg) {
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
+  clearTimeout(toastTimer);
+  const t = el("div", { class: "toast" }, msg);
+  document.body.appendChild(t);
+  toastTimer = setTimeout(() => t.remove(), 2800);
+}
+
+/* ══════ SESIÓN ══════ */
+function pwPrint(s) { let h = 5381; const t = String(s); for (let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return h.toString(36); }
+function saveSession() { try { localStorage.setItem(LS_SESSION, JSON.stringify({ k: pwPrint(ADMIN_PASSWORD), at: Date.now() })); } catch {} }
+function clearSession() { try { localStorage.removeItem(LS_SESSION); } catch {} }
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(LS_SESSION);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (!s || s.k !== pwPrint(ADMIN_PASSWORD)) { clearSession(); return false; }
+    if (!s.at || Date.now() - s.at > ADMIN_SESSION_DAYS * 86400000) { clearSession(); return false; }
+    saveSession();
+    return true;
+  } catch { return false; }
+}
+
+/* ══════ COMPRESIÓN DE IMÁGENES ══════ */
+function compressImage(file, maxDim = 1000, quality = 0.78) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        } catch (err) { reject(err); }
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ══════ API DEL CATÁLOGO ══════ */
+async function pullCatalog() {
+  state.cloudState = "loading";
+  renderCloudCard();
+  try {
+    const res = await fetch("/api/catalog", { cache: "no-store" });
+    const data = await res.json();
+    if (data && data.ok && data.catalog && Array.isArray(data.catalog.products) && data.catalog.products.length) {
+      state.products = data.catalog.products;
+      state.coupons = Array.isArray(data.catalog.coupons) ? data.catalog.coupons : [];
+      state.collections = Array.isArray(data.catalog.collections) && data.catalog.collections.length ? data.catalog.collections : [...DEFAULT_COLLECTIONS];
+      state.aromas = Array.isArray(data.catalog.aromas) && data.catalog.aromas.length ? data.catalog.aromas : [...DEFAULT_AROMAS];
+      state.publishedPrint = catalogPrint();
+      state.cloudAt = data.catalog.updatedAt || null;
+      state.cloudMsg = "";
+      state.cloudState = "ready";
+    } else if (data && data.reason === "EMPTY") {
+      state.cloudMsg = "";
+      state.cloudState = "empty";
+    } else {
+      state.cloudMsg = (data && data.error) || "El catálogo en la nube no está configurado.";
+      state.cloudState = "off";
+    }
+  } catch (e) {
+    state.cloudMsg = "No hubo conexión con el catálogo en la nube.";
+    state.cloudState = "error";
+  }
+  renderCloudCard();
+  renderMain();
+}
+
+async function uploadImage(dataUrl) {
+  const r = await fetch("/api/upload-image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-admin-token": state.token },
+    body: JSON.stringify({ dataUrl }),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || !d.ok || !d.url) throw new Error(d.error || "No se pudo subir una foto.");
+  return d.url;
+}
+
+async function publishCatalog({ silent = false } = {}) {
+  if (state.publishing) return false;
+  if (!state.products.length) { if (!silent) toast("No hay productos que publicar"); return false; }
+  if (!state.token) {
+    state.cloudMsg = "Falta la clave de publicación (ADMIN_TOKEN).";
+    state.cloudState = "off";
+    renderCloudCard();
+    if (!silent) toast("Primero guarda tu clave de publicación");
+    return false;
+  }
+  state.publishing = true;
+  renderCloudCard();
+
+  try {
+    // 1) Subir a la nube las fotos en base64
+    const subidas = new Map();
+    const subir = async (foto) => {
+      if (!isDataUrl(foto)) return foto || "";
+      if (subidas.has(foto)) return subidas.get(foto);
+      let ultimo = null;
+      for (let i = 1; i <= 3; i++) {
+        try {
+          const url = await uploadImage(foto);
+          subidas.set(foto, url);
+          return url;
+        } catch (e) {
+          ultimo = e;
+          if (/clave|token|pesa|válida|vacía|Blob|ADMIN_TOKEN/i.test(e.message || "")) break;
+          if (i < 3) await new Promise((r) => setTimeout(r, 700 * i));
+        }
+      }
+      throw ultimo || new Error("No se pudo subir una foto.");
+    };
+
+    const pend = state.products.reduce(
+      (n, p) => n + (isDataUrl(p.image) ? 1 : 0) + (Array.isArray(p.images) ? p.images.filter(isDataUrl).length : 0), 0
+    );
+    if (pend && !silent) toast(`Subiendo ${pend} ${pend === 1 ? "foto" : "fotos"} a la nube…`);
+
+    const conUrls = [];
+    for (const p of state.products) {
+      const image = await subir(p.image);
+      const images = await Promise.all(cleanImages(p.images).map(subir));
+      conUrls.push({ ...p, image, images: cleanImages(images) });
+    }
+
+    // 2) Publicar el catálogo
+    const payload = {
+      products: toCloudProducts(conUrls),
+      coupons: state.coupons,
+      collections: state.collections,
+      aromas: state.aromas,
+    };
+    const res = await fetch("/api/catalog", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-token": state.token },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || "No se pudo publicar el catálogo.");
+
+    // 3) Sincronizar estado local con lo publicado
+    state.products = payload.products.map((p) => ({
+      ...p,
+      images: cleanImages(p.images),
+    }));
+    state.publishedPrint = catalogPrint();
+    state.cloudAt = data.updatedAt || new Date().toISOString();
+    state.cloudMsg = "";
+    state.cloudState = "ready";
+    if (!silent) toast("✅ Publicado — ya se ve en todos los celulares");
+    return true;
+  } catch (err) {
+    state.cloudMsg = err.message || "No se pudo publicar el catálogo.";
+    state.cloudState = "error";
+    toast(err.message || "No se pudo publicar el catálogo");
+    return false;
+  } finally {
+    state.publishing = false;
+    renderCloudCard();
+  }
+}
+
+/* Publicación automática al cambiar algo (con debounce) */
+function scheduleAutoPublish() {
+  if (!state.authed) return;
+  if (state.cloudState !== "ready" && state.cloudState !== "empty") return;
+  if (catalogPrint() === state.publishedPrint) return;
+  clearTimeout(state.autoPublishTimer);
+  state.autoPublishTimer = setTimeout(async () => {
+    const ok = await publishCatalog({ silent: true });
+    if (!ok) toast("⚠️ Tus cambios NO se publicaron. Revisa la tarjeta de la nube.");
+  }, 1200);
+}
+
+/* ══════ API DE VENTAS ══════ */
+async function fetchOrders(opts = {}) {
+  if (!state.token.trim()) {
+    state.ordersError = "Escribe tu clave de administrador para ver las ventas.";
+    renderVentas();
+    return;
+  }
+  if (opts.reconstruir || !state.orders.length) {
+    state.ordersLoading = true;
+    renderVentas();
+  }
+  try {
+    const extra = opts.reconstruir ? "?reconstruir=1" : "";
+    const res = await fetch(`/api/list-orders${extra}`, { headers: { "x-admin-token": state.token } });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+      state.orders = [];
+      state.ordersError = "Clave incorrecta. Es la misma que pusiste en ADMIN_TOKEN dentro de Vercel.";
+    } else if (!res.ok || data.ok === false) {
+      state.orders = [];
+      state.ordersError = data.error || "No se pudieron cargar las ventas.";
+    } else {
+      state.orders = Array.isArray(data.orders) ? data.orders : [];
+      state.ordersError = "";
+      state.ordersUpdatedAt = new Date();
+      if (opts.reconstruir) toast(`Resumen reconstruido: ${state.orders.length} pedidos`);
+    }
+  } catch {
+    state.ordersError = "Sin conexión con el servidor de ventas.";
+  } finally {
+    state.ordersLoading = false;
+    renderVentas();
+  }
+}
+
+/* ══════ VISTA: LOGIN ══════ */
+function renderLogin() {
+  const root = $("app");
+  root.innerHTML = `
+    <div class="login">
+      <div class="login-card">
+        <div class="login-crown">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 46 L12 20 L24 34 L32 14 L40 34 L52 20 L56 46 Z" fill="#c9a84c" stroke="#e6c463" stroke-width="1.5" stroke-linejoin="round"/>
+            <rect x="8" y="46" width="48" height="7" rx="2" fill="#b9973f"/>
+            <circle cx="32" cy="12" r="3.4" fill="#e6c463"/>
+            <circle cx="12" cy="18" r="2.6" fill="#e6c463"/>
+            <circle cx="52" cy="18" r="2.6" fill="#e6c463"/>
+          </svg>
+        </div>
+        <div class="login-brand">REY DEL AROMA</div>
+        <div class="login-t">Panel <span>Admin</span></div>
+        <div class="login-s">Ingresa la contraseña para continuar</div>
+        <input id="pw" class="fi" type="password" placeholder="Contraseña" autofocus />
+        <button id="loginBtn" class="login-btn">Ingresar →</button>
+        <div class="login-hint">Enlace privado del panel · Solo tú lo conoces</div>
+      </div>
+    </div>
+  `;
+  const pw = $("pw"), btn = $("loginBtn");
+  const doLogin = () => {
+    if (pw.value === ADMIN_PASSWORD) {
+      saveSession();
+      state.authed = true;
+      state.token = (localStorage.getItem(LS_TOKEN) || "").trim();
+      bootAuthed();
+    } else {
+      toast("Contraseña incorrecta");
+    }
+  };
+  btn.addEventListener("click", doLogin);
+  pw.addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
+}
+
+/* ══════ SHELL AUTENTICADO ══════ */
+function renderShell() {
+  const root = $("app");
+  root.innerHTML = `
+    <div class="top">
+      <div class="brand">
+        <div class="brand-crown">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 46 L12 20 L24 34 L32 14 L40 34 L52 20 L56 46 Z" fill="#c9a84c" stroke="#e6c463" stroke-width="1.5" stroke-linejoin="round"/>
+            <rect x="8" y="46" width="48" height="7" rx="2" fill="#b9973f"/>
+          </svg>
+        </div>
+        <div class="brand-tx"><b>Rey del Aroma</b><span>PANEL</span></div>
+      </div>
+      <div class="top-right">
+        <span class="badge ok" id="cloudBadge">Cargando…</span>
+        <button id="logoutBtn" class="top-out">Salir</button>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="tabs" id="tabs">
+        <button data-view="list">📦 Productos</button>
+        <button data-view="ventas">📊 Ventas</button>
+        <button data-view="taxonomy">🗂️ Colecciones y aromas</button>
+        <button data-view="coupons">🎟️ Cupones</button>
+      </div>
+      <div id="cloudCardWrap"></div>
+      <div id="main"></div>
+    </div>
+  `;
+  $("logoutBtn").addEventListener("click", () => {
+    if (!confirm("¿Cerrar sesión del panel?")) return;
+    clearSession();
+    state.authed = false;
+    stopOrdersPolling();
+    renderLogin();
+  });
+  $("tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-view]");
+    if (!b) return;
+    state.view = b.dataset.view;
+    state.search = "";
+    stopOrdersPolling();
+    if (state.view === "ventas") startOrdersPolling();
+    renderTabs();
+    renderMain();
+  });
+  renderTabs();
+  renderCloudCard();
+  renderMain();
+}
+
+function renderTabs() {
+  const tabs = $("tabs");
+  if (!tabs) return;
+  tabs.querySelectorAll("button").forEach((b) => {
+    b.classList.toggle("on", b.dataset.view === state.view || (state.view === "form" && b.dataset.view === "list"));
+  });
+}
+
+/* ══════ TARJETA DE LA NUBE (arriba de cada vista) ══════ */
+function renderCloudCard() {
+  const wrap = $("cloudCardWrap");
+  const badge = $("cloudBadge");
+  if (!wrap) return;
+
+  const cfg = {
+    loading:{ cls:"sync-b",      txt:"Conectando…" },
+    ready:  { cls:"sync-b ok",   txt:"Publicado" },
+    empty:  { cls:"sync-b warn", txt:"Sin publicar" },
+    off:    { cls:"sync-b err",  txt:"Sin configurar" },
+    error:  { cls:"sync-b err",  txt:"Error" },
+  }[state.cloudState] || { cls:"sync-b", txt:"—" };
+  const badgeText = state.publishing ? "Publicando…" : cfg.txt;
+
+  if (badge) {
+    badge.textContent = badgeText;
+    badge.className = "badge " + (state.cloudState === "ready" ? "ok" : "");
+  }
+
+  // Solo pintamos la tarjeta grande en las pestañas que la necesitan
+  const showCard = state.view === "list" || state.view === "coupons" || state.view === "form";
+  if (!showCard) { wrap.innerHTML = ""; return; }
+
+  const msg =
+    state.cloudState === "loading" ? "Consultando el catálogo publicado…" :
+    state.cloudState === "ready" ? `Tus precios, productos y cupones se ven en <b>todos los celulares y computadores</b>. Cada cambio se publica solo.${state.cloudAt ? ` Última publicación: <b>${new Date(state.cloudAt).toLocaleString("es-CO")}</b>.` : ""}` :
+    state.cloudState === "empty" ? `La nube ya está conectada. <b>El primer cambio (o el botón "Publicar cambios") publica el catálogo automáticamente</b>.` :
+    `<b>⚠️ Tus cambios NO se están viendo en el celular.</b> ${esc(state.cloudMsg || "")}
+      <div class="sync-help">
+        En Vercel: <b>Storage</b> → Create Database → <code>Blob</code> y
+        <b>Settings → Environment Variables</b> → agrega <code>ADMIN_TOKEN</code>.
+        Luego <b>Redeploy</b> y escribe esa misma clave aquí abajo.
+      </div>`;
+
+  wrap.innerHTML = `
+    <div class="sync">
+      <div class="sync-head">
+        <div class="sync-t">☁️ Catálogo en la nube <span class="${cfg.cls}">${esc(badgeText)}</span></div>
+        <button class="btn btn-g" id="pubBtn" ${state.publishing ? "disabled" : ""}>${state.publishing ? "Publicando…" : "Publicar cambios"}</button>
+      </div>
+      <div class="sync-msg">${msg}</div>
+      <div class="sync-key">
+        <div class="fg">
+          <label class="fl">Clave de publicación <span class="fl-soft">(tu ADMIN_TOKEN de Vercel)</span></label>
+          <input id="tokenInput" class="fi" type="password" placeholder="Pega aquí tu ADMIN_TOKEN" value="${esc(state.token)}" />
+        </div>
+        <button class="btn btn-o" id="saveTokenBtn" style="height:47px">Guardar clave</button>
+      </div>
+    </div>
+  `;
+  $("pubBtn")?.addEventListener("click", () => publishCatalog());
+  $("saveTokenBtn")?.addEventListener("click", () => {
+    const v = ($("tokenInput").value || "").trim();
+    state.token = v;
+    try { localStorage.setItem(LS_TOKEN, v); } catch {}
+    toast("Clave guardada");
+    if (v && state.cloudState === "empty") publishCatalog();
+  });
+  $("tokenInput")?.addEventListener("keydown", (e) => { if (e.key === "Enter") $("saveTokenBtn").click(); });
+}
+
+/* ══════ VISTA PRINCIPAL (router de vistas) ══════ */
+function renderMain() {
+  if (!$("main")) return;
+  if (state.view === "list") return renderList();
+  if (state.view === "form") return renderForm();
+  if (state.view === "taxonomy") return renderTaxonomy();
+  if (state.view === "coupons") return renderCoupons();
+  if (state.view === "ventas") return renderVentas();
+}
+
+/* ══════ VISTA: LISTA DE PRODUCTOS ══════ */
+function renderList() {
+  const main = $("main");
+  const q = state.search.trim().toLowerCase();
+  const terms = q.split(/\s+/).filter(Boolean);
+  const list = q
+    ? state.products.filter((p) => {
+        const hay = [p.name, p.brand, p.subtitle, p.size, p.collection, p.category, ...(Array.isArray(p.tags)?p.tags:[]), String(p.price||""), cop(p.price), p.promo?"promo":"", p.hidden?"oculto":"visible"]
+          .filter(Boolean).join(" ").toLowerCase();
+        return terms.every((t) => hay.includes(t));
+      })
+    : state.products;
+  const hiddenCount = state.products.filter((p) => p.hidden).length;
+
+  main.innerHTML = `
+    <div class="hdr">
+      <div class="h-t">Panel de <span>Administración</span></div>
+      <div class="h-actions">
+        <button class="btn btn-g" id="addBtn">+ Agregar producto</button>
+      </div>
+    </div>
+    <div class="info"><b>${state.products.length}</b> productos en catálogo${hiddenCount ? ` · <b>${hiddenCount}</b> ${hiddenCount === 1 ? "oculto" : "ocultos"}` : ""} · Cuando cambias un precio se publica solo en la nube y se ve al instante en el celular de tus clientes.</div>
+
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="searchInput" class="fi" type="text" placeholder="Buscar producto: nombre, marca, colección, aroma o precio…" value="${esc(state.search)}" />
+      ${state.search ? `<button class="x" id="clearSearch">✕</button>` : ""}
+    </div>
+    ${q ? `<div class="search-count"><b>${list.length}</b> ${list.length === 1 ? "producto encontrado" : "productos encontrados"} para «${esc(state.search.trim())}» <a class="lk" id="lkAll">ver todos</a></div>` : ""}
+
+    ${list.length ? `
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th></th><th>Producto</th><th>Precio</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            ${list.map((p) => `
+              <tr class="${p.hidden ? "hidden" : ""}">
+                <td>${p.image ? `<img class="thumb" src="${esc(p.image)}" alt="" />` : `<div class="thumb ph">🧴</div>`}</td>
+                <td>
+                  <div class="pn">${p.favorite ? "👑 " : ""}${esc(p.name || "")}</div>
+                  <div class="ps">${esc(p.brand || "")}${p.subtitle ? ` · ${esc(p.subtitle)}` : ""}</div>
+                </td>
+                <td class="pp">${cop(p.price)}</td>
+                <td class="pc">${esc(p.category || "")}</td>
+                <td class="pc">${esc(p.collection || "")}</td>
+                <td>${p.promo ? `<span class="promo-tag">2×300K</span>` : `<span class="dash">—</span>`}</td>
+                <td>
+                  <button class="vis ${p.hidden ? "off" : "on"}" data-toggle="${p.id}" title="${p.hidden ? "Oculto — clic para mostrar" : "Visible — clic para ocultar"}">
+                    <span class="dot"></span>${p.hidden ? "Oculto" : "Visible"}
+                  </button>
+                </td>
+                <td>
+                  <div class="row-actions">
+                    <button class="e" data-edit="${p.id}">Editar</button>
+                    <button class="d" data-delete="${p.id}">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    ` : q ? `
+      <div class="empty">
+        <div class="ico">🔍</div>
+        <p>No hay productos que coincidan con «${esc(state.search.trim())}».</p>
+        <button class="btn btn-o mt-14" id="clearSearch2">Limpiar búsqueda</button>
+      </div>
+    ` : `
+      <div class="empty">
+        <div class="ico">📦</div>
+        <p>No hay productos publicados. Agrega el primero para empezar tu catálogo.</p>
+      </div>
+    `}
+  `;
+
+  $("addBtn").addEventListener("click", () => { state.form = emptyForm(); state.editingId = null; state.view = "form"; renderTabs(); renderCloudCard(); renderMain(); });
+  const si = $("searchInput");
+  si?.addEventListener("input", (e) => { state.search = e.target.value; renderList(); si.focus(); const pos = si.value.length; si.setSelectionRange(pos, pos); });
+  $("clearSearch")?.addEventListener("click", () => { state.search = ""; renderList(); });
+  $("clearSearch2")?.addEventListener("click", () => { state.search = ""; renderList(); });
+  $("lkAll")?.addEventListener("click", () => { state.search = ""; renderList(); });
+
+  main.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => {
+    const p = state.products.find((x) => String(x.id) === String(b.dataset.edit));
+    if (!p) return;
+    state.editingId = p.id;
+    state.form = {
+      name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "",
+      price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes",
+      promo: !!p.promo, favorite: !!p.favorite,
+      tags: Array.isArray(p.tags) && p.tags.length ? [...p.tags] : (p.tag ? [p.tag] : []),
+      description: p.description || "", image: p.image || "", img: p.img || "", images: cleanImages(p.images)
+    };
+    state.view = "form"; renderTabs(); renderCloudCard(); renderMain();
+  }));
+  main.querySelectorAll("[data-delete]").forEach((b) => b.addEventListener("click", () => {
+    if (!confirm("¿Eliminar este producto?")) return;
+    state.products = state.products.filter((x) => String(x.id) !== String(b.dataset.delete));
+    toast("Producto eliminado"); scheduleAutoPublish(); renderList();
+  }));
+  main.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
+    const p = state.products.find((x) => String(x.id) === String(b.dataset.toggle));
+    if (!p) return;
+    const wasHidden = !!p.hidden;
+    state.products = state.products.map((x) => (x.id === p.id ? { ...x, hidden: !x.hidden } : x));
+    toast(wasHidden ? "Producto visible en la tienda" : "Producto oculto para el cliente");
+    scheduleAutoPublish(); renderList();
+  }));
+}
+
+/* ══════ VISTA: FORMULARIO DE PRODUCTO ══════ */
+function renderForm() {
+  const main = $("main");
+  const f = state.form;
+  const isEdit = !!state.editingId;
+
+  main.innerHTML = `
+    <div class="hdr">
+      <div class="h-t">${isEdit ? "Editar" : "Agregar"} <span>Producto</span></div>
+      <div class="h-actions">
+        <button class="btn btn-o" id="backBtn">← Volver</button>
+        <button class="btn btn-g" id="saveBtn">Guardar</button>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="f-name" placeholder="ej. Sauvage" value="${esc(f.name)}" /></div>
+      <div class="fg"><label class="fl">Marca</label><input class="fi" id="f-brand" placeholder="ej. Dior" value="${esc(f.brand)}" /></div>
+      <div class="fg"><label class="fl">Precio (COP) *</label><input class="fi" id="f-price" type="number" placeholder="190000" value="${esc(f.price)}" /></div>
+      <div class="fg"><label class="fl">Subtítulo</label><input class="fi" id="f-subtitle" placeholder="ej. Eau de Parfum" value="${esc(f.subtitle)}" /></div>
+      <div class="fg"><label class="fl">Presentación</label><input class="fi" id="f-size" placeholder="ej. 100 ml" value="${esc(f.size)}" /></div>
+      <div class="fg">
+        <label class="fl">Categoría</label>
+        <select class="fsel" id="f-category">
+          ${["Hombre","Mujer","Unisex"].map((c) => `<option ${f.category === c ? "selected" : ""}>${c}</option>`).join("")}
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Colección</label>
+        <select class="fsel" id="f-collection">
+          ${state.collections.map((c) => `<option ${f.collection === c ? "selected" : ""}>${esc(c)}</option>`).join("")}
+        </select>
+      </div>
+      <div class="fg full">
+        <label class="fl">Tipos de aroma <span class="fl-soft">(puedes elegir varios)</span></label>
+        <div class="aroma-pick">
+          ${state.aromas.length ? state.aromas.map((a) => `
+            <button type="button" class="aroma-chip ${f.tags.includes(a) ? "on" : ""}" data-aroma="${esc(a)}">${FAMILY_EMOJI[a] || "✨"} ${esc(a)}</button>
+          `).join("") : `<span class="aroma-empty">Aún no hay tipos de aroma. Créalos en "Colecciones y aromas".</span>`}
+        </div>
+        ${f.tags.length ? `<div class="aroma-hint">Seleccionados: <b>${esc(f.tags.join(" · "))}</b>. El primero se usa como aroma principal en la tarjeta.</div>` : ""}
+      </div>
+      <div class="fg"><label class="fl">Promoción</label><label class="fchk"><input type="checkbox" id="f-promo" ${f.promo ? "checked" : ""} /> Incluir en 2 × $300.000</label></div>
+      <div class="fg"><label class="fl">Etiqueta destacada</label><label class="fchk"><input type="checkbox" id="f-favorite" ${f.favorite ? "checked" : ""} /> 👑 Marcar como Favorito del Rey</label></div>
+      <div class="fg full">
+        <label class="fl">Imagen principal (portada)</label>
+        <div id="mainImgWrap">
+          ${f.image ? `
+            <div class="img-prev">
+              <img src="${esc(f.image)}" alt="Vista previa" />
+              <button class="img-prev-rm" id="rmMain">✕</button>
+            </div>
+          ` : `
+            <label class="img-up">
+              <input type="file" accept="image/*" id="upMain" />
+              <div class="ico">📷</div>
+              <div class="tx">Haz clic o arrastra una imagen</div>
+              <div class="sub">JPG, PNG, WebP · se optimiza sola</div>
+            </label>
+          `}
+        </div>
+      </div>
+      <div class="fg full">
+        <label class="fl">Más fotos del producto (galería)</label>
+        <div class="multi" id="multiWrap">
+          ${(f.images || []).map((src, i) => `
+            <div class="multi-i" data-idx="${i}">
+              <img src="${esc(src)}" alt="Foto ${i+1}" />
+              <button class="rm" data-rm-gal="${i}">✕</button>
+              <button class="cov" data-cover="${i}">★ Portada</button>
+            </div>
+          `).join("")}
+          <label class="multi-add">
+            <input type="file" accept="image/*" multiple id="upGal" />
+            <span>＋</span><span>Agregar fotos</span>
+          </label>
+        </div>
+        <div class="multi-hint">Se muestran como miniaturas en la página del producto, junto a la portada. Puedes subir varias a la vez. Máx. ${MAX_GALLERY} fotos.</div>
+      </div>
+      <div class="fg full"><label class="fl">Descripción</label><textarea class="fta" id="f-description" placeholder="Descripción de la fragancia (opcional)">${esc(f.description)}</textarea></div>
+    </div>
+    <div class="mt-22" style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-o" id="cancelBtn">Cancelar</button>
+      <button class="btn btn-g" id="saveBtn2">Guardar producto</button>
+    </div>
+  `;
+
+  const readField = (id) => $(id)?.value ?? "";
+  const readFormLive = () => {
+    f.name = readField("f-name");
+    f.brand = readField("f-brand");
+    f.price = readField("f-price");
+    f.subtitle = readField("f-subtitle");
+    f.size = readField("f-size");
+    f.category = readField("f-category") || "Hombre";
+    f.collection = readField("f-collection") || (state.collections[0] || "Árabes");
+    f.promo = $("f-promo")?.checked || false;
+    f.favorite = $("f-favorite")?.checked || false;
+    f.description = readField("f-description");
+  };
+
+  main.querySelectorAll("input,select,textarea").forEach((i) => i.addEventListener("input", readFormLive));
+
+  main.querySelectorAll("[data-aroma]").forEach((b) => b.addEventListener("click", (e) => {
+    e.preventDefault();
+    const a = b.dataset.aroma;
+    f.tags = f.tags.includes(a) ? f.tags.filter((t) => t !== a) : [...f.tags, a];
+    readFormLive();
+    renderForm();
+  }));
+
+  $("upMain")?.addEventListener("change", async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    if (!file.type.startsWith("image/")) return toast("Solo se permiten imágenes");
+    if (file.size > 12 * 1024 * 1024) return toast("La imagen no debe superar 12MB");
+    try {
+      const url = await compressImage(file, 1000, 0.78);
+      readFormLive(); f.image = url; f.img = ""; renderForm();
+    } catch { toast("No se pudo procesar la imagen"); }
+  });
+  $("rmMain")?.addEventListener("click", () => { readFormLive(); f.image = ""; f.img = ""; renderForm(); });
+
+  $("upGal")?.addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files || []); e.target.value = "";
+    if (!files.length) return;
+    const cupo = Math.max(0, MAX_GALLERY - cleanImages(f.images).length);
+    if (!cupo) return toast(`La galería admite hasta ${MAX_GALLERY} fotos. Quita alguna para agregar otra.`);
+    const validas = files.filter((x) => x.type.startsWith("image/") && x.size <= 12 * 1024 * 1024);
+    const omit = files.length - validas.length;
+    if (omit > 0) toast(omit === 1 ? "Se omitió 1 archivo" : `Se omitieron ${omit} archivos`);
+    if (!validas.length) return;
+    const aProc = validas.slice(0, cupo);
+    if (validas.length > cupo) toast(`Se agregan ${cupo}: la galería admite hasta ${MAX_GALLERY} fotos.`);
+    toast(aProc.length === 1 ? "Procesando la foto…" : `Procesando ${aProc.length} fotos…`);
+    const res = await Promise.all(aProc.map((file) => compressImage(file, 1000, 0.78).catch(() => null)));
+    const nuevas = res.filter(Boolean);
+    if (nuevas.length) {
+      readFormLive();
+      f.images = cleanImages([...(f.images || []), ...nuevas]);
+      toast(nuevas.length === 1 ? "1 foto agregada" : `${nuevas.length} fotos agregadas`);
+      renderForm();
+    }
+  });
+  main.querySelectorAll("[data-rm-gal]").forEach((b) => b.addEventListener("click", () => {
+    const idx = +b.dataset.rmGal; readFormLive();
+    f.images = (f.images || []).filter((_, i) => i !== idx);
+    renderForm();
+  }));
+  main.querySelectorAll("[data-cover]").forEach((b) => b.addEventListener("click", () => {
+    const idx = +b.dataset.cover;
+    const imgs = Array.isArray(f.images) ? [...f.images] : [];
+    const elegida = imgs[idx]; if (!elegida) return;
+    const resto = imgs.filter((_, i) => i !== idx);
+    const anterior = f.img ? "" : f.image;
+    readFormLive();
+    f.image = elegida; f.img = ""; f.images = cleanImages([anterior, ...resto]);
+    renderForm();
+  }));
+
+  const goBack = () => { state.view = "list"; renderTabs(); renderCloudCard(); renderMain(); };
+  $("backBtn").addEventListener("click", goBack);
+  $("cancelBtn").addEventListener("click", goBack);
+  $("saveBtn").addEventListener("click", saveProduct);
+  $("saveBtn2").addEventListener("click", saveProduct);
+}
+
+function saveProduct() {
+  const f = state.form;
+  const readField = (id) => $(id)?.value ?? "";
+  // Sincronizar antes de guardar
+  f.name = readField("f-name");
+  f.brand = readField("f-brand");
+  f.price = readField("f-price");
+  f.subtitle = readField("f-subtitle");
+  f.size = readField("f-size");
+  f.category = readField("f-category") || "Hombre";
+  f.collection = readField("f-collection") || (state.collections[0] || "Árabes");
+  f.promo = $("f-promo")?.checked || false;
+  f.favorite = $("f-favorite")?.checked || false;
+  f.description = readField("f-description");
+
+  if (!f.name.trim() || !f.price) return toast("Nombre y precio son obligatorios");
+  const galleryImgs = cleanImages(f.images);
+  const aromaTags = Array.isArray(f.tags) ? f.tags.filter(Boolean) : [];
+  const cover = f.image || galleryImgs[0] || "";
+  const data = {
+    name: f.name.trim(),
+    brand: f.brand.trim() || "Rey del Aroma",
+    subtitle: f.subtitle.trim(),
+    size: f.size.trim(),
+    price: parseInt(String(f.price).replace(/[^\d]/g, "")) || 0,
+    category: f.category,
+    collection: f.collection,
+    promo: f.promo ? PROMO_LABEL : "",
+    favorite: !!f.favorite,
+    tag: aromaTags[0] || "",
+    tags: aromaTags,
+    description: f.description.trim(),
+    image: cover,
+    images: galleryImgs,
+    img: cover === f.image ? (f.img || "") : "",
+  };
+  if (state.editingId) {
+    state.products = state.products.map((p) => (p.id === state.editingId ? { ...p, ...data, id: state.editingId } : p));
+    toast("Producto actualizado");
+  } else {
+    state.products = [{ ...data, id: Date.now() }, ...state.products];
+    toast("Producto agregado");
+  }
+  state.view = "list";
+  scheduleAutoPublish();
+  renderTabs(); renderCloudCard(); renderMain();
+}
+
+/* ══════ VISTA: TAXONOMÍA ══════ */
+function renderTaxonomy() {
+  const main = $("main");
+  main.innerHTML = `
+    <div class="hdr">
+      <div class="h-t">Colecciones y <span>Aromas</span></div>
+    </div>
+    <div class="info">Crea tus propias colecciones y tipos de aroma. Aparecerán automáticamente en el formulario al agregar o editar un producto. Los cambios se publican solos en la nube.</div>
+    <div class="tax">
+      <div class="tax-card">
+        <div class="tax-t">Colecciones</div>
+        <div class="tax-s">Ej. Diseñador, Árabes, Nicho…</div>
+        <div class="tax-add">
+          <input class="fi" id="newColl" placeholder="Nueva colección" value="${esc(state.newCollection)}" />
+          <button class="btn btn-g" id="addColl">+ Crear</button>
+        </div>
+        <div class="tax-list">
+          ${state.collections.length ? state.collections.map((c) => `
+            <div class="tax-item"><span class="n">${esc(c)}</span><button class="rm" data-delc="${esc(c)}">Eliminar</button></div>
+          `).join("") : `<div class="tax-empty">Aún no hay colecciones.</div>`}
+        </div>
+      </div>
+      <div class="tax-card">
+        <div class="tax-t">Tipos de <span>aroma</span></div>
+        <div class="tax-s">Ej. Amaderado, Floral, Cítrico…</div>
+        <div class="tax-add">
+          <input class="fi" id="newAr" placeholder="Nuevo tipo de aroma" value="${esc(state.newAroma)}" />
+          <button class="btn btn-g" id="addAr">+ Crear</button>
+        </div>
+        <div class="tax-list">
+          ${state.aromas.length ? state.aromas.map((a) => `
+            <div class="tax-item"><span class="n">${FAMILY_EMOJI[a]||"✨"} ${esc(a)}</span><button class="rm" data-dela="${esc(a)}">Eliminar</button></div>
+          `).join("") : `<div class="tax-empty">Aún no hay tipos de aroma.</div>`}
+        </div>
+      </div>
+    </div>
+  `;
+  const nc = $("newColl"), na = $("newAr");
+  nc.addEventListener("input", (e) => { state.newCollection = e.target.value; });
+  na.addEventListener("input", (e) => { state.newAroma = e.target.value; });
+  nc.addEventListener("keydown", (e) => { if (e.key === "Enter") $("addColl").click(); });
+  na.addEventListener("keydown", (e) => { if (e.key === "Enter") $("addAr").click(); });
+
+  $("addColl").addEventListener("click", () => {
+    const v = state.newCollection.trim();
+    if (!v) return toast("Escribe el nombre de la colección");
+    if (state.collections.some((c) => c.toLowerCase() === v.toLowerCase())) return toast("Esa colección ya existe");
+    state.collections = [...state.collections, v]; state.newCollection = "";
+    toast("Colección creada"); scheduleAutoPublish(); renderTaxonomy();
+  });
+  $("addAr").addEventListener("click", () => {
+    const v = state.newAroma.trim();
+    if (!v) return toast("Escribe el tipo de aroma");
+    if (state.aromas.some((a) => a.toLowerCase() === v.toLowerCase())) return toast("Ese tipo de aroma ya existe");
+    state.aromas = [...state.aromas, v]; state.newAroma = "";
+    toast("Tipo de aroma creado"); scheduleAutoPublish(); renderTaxonomy();
+  });
+  main.querySelectorAll("[data-delc]").forEach((b) => b.addEventListener("click", () => {
+    if (state.collections.length <= 1) return toast("Debe quedar al menos una colección");
+    if (!confirm(`¿Eliminar la colección "${b.dataset.delc}"? Los productos que la usan no se borran.`)) return;
+    state.collections = state.collections.filter((c) => c !== b.dataset.delc);
+    toast("Colección eliminada"); scheduleAutoPublish(); renderTaxonomy();
+  }));
+  main.querySelectorAll("[data-dela]").forEach((b) => b.addEventListener("click", () => {
+    if (!confirm(`¿Eliminar el tipo de aroma "${b.dataset.dela}"? Los productos que lo usan no se borran.`)) return;
+    state.aromas = state.aromas.filter((a) => a !== b.dataset.dela);
+    toast("Tipo de aroma eliminado"); scheduleAutoPublish(); renderTaxonomy();
+  }));
+}
+
+/* ══════ VISTA: CUPONES ══════ */
+function renderCoupons() {
+  const main = $("main");
+  const cf = state.couponForm;
+  const couponLabel = (c) => (c.type === "percent" ? `${c.value}% de descuento` : `${cop(c.value)} de descuento`);
+
+  main.innerHTML = `
+    <div class="hdr">
+      <div class="h-t">Gestión de <span>Cupones</span></div>
+    </div>
+    <div class="info">Crea cupones de descuento y pásale el código a tu cliente (WhatsApp, Instagram…). Al pagar, el cliente <b>escribe el código</b> en el checkout y el descuento se le aplica al total. Solo funcionan los cupones en estado <b>Activo</b>.</div>
+
+    <div class="cp-create">
+      <div class="fg"><label class="fl">Código del cupón *</label><input class="fi" id="cc" placeholder="EJ. BIENVENIDO10" value="${esc(cf.code)}" /></div>
+      <div class="fg">
+        <label class="fl">Tipo de descuento</label>
+        <select class="fsel" id="ct"><option value="percent" ${cf.type==="percent"?"selected":""}>Porcentaje (%)</option><option value="fixed" ${cf.type==="fixed"?"selected":""}>Monto fijo (COP)</option></select>
+      </div>
+      <div class="fg"><label class="fl">${cf.type === "percent" ? "Porcentaje (1–100)" : "Monto en pesos"}</label><input class="fi" id="cv" type="number" placeholder="${cf.type === "percent" ? "10" : "20000"}" value="${esc(cf.value)}" /></div>
+      <button class="cp-add" id="cAdd">+ Crear cupón</button>
+    </div>
+
+    ${state.coupons.length ? `
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Código</th><th>Descuento</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            ${state.coupons.map((c) => `
+              <tr>
+                <td><div class="pn">🎟️ ${esc(c.code)}</div></td>
+                <td class="pp">${couponLabel(c)}</td>
+                <td><span class="cp-state ${c.active ? "on" : ""}">${c.active ? "Activo" : "Inactivo"}</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button class="e" data-tog="${c.id}">${c.active ? "Desactivar" : "Activar"}</button>
+                    <button class="d" data-del="${c.id}">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    ` : `<div class="empty"><div class="ico">🎟️</div><p>Aún no has creado cupones. Crea el primero arriba.</p></div>`}
+  `;
+
+  const cc = $("cc"), ct = $("ct"), cv = $("cv");
+  cc.addEventListener("input", (e) => { cf.code = e.target.value.toUpperCase(); cc.value = cf.code; cc.setSelectionRange(cf.code.length, cf.code.length); });
+  ct.addEventListener("change", (e) => { cf.type = e.target.value; renderCoupons(); });
+  cv.addEventListener("input", (e) => { cf.value = e.target.value; });
+
+  $("cAdd").addEventListener("click", () => {
+    const code = cf.code.trim().toUpperCase();
+    const value = parseInt(String(cf.value).replace(/[^\d]/g, "")) || 0;
+    if (!code) return toast("Escribe un código de cupón");
+    if (value <= 0) return toast("El valor del cupón debe ser mayor a 0");
+    if (cf.type === "percent" && value > 100) return toast("El porcentaje no puede ser mayor a 100");
+    if (state.coupons.some((c) => c.code.toUpperCase() === code)) return toast("Ya existe un cupón con ese código");
+    state.coupons = [{ id: Date.now(), code, type: cf.type, value, active: true }, ...state.coupons];
+    state.couponForm = { code: "", type: "percent", value: "" };
+    toast("Cupón creado"); scheduleAutoPublish(); renderCoupons();
+  });
+  main.querySelectorAll("[data-tog]").forEach((b) => b.addEventListener("click", () => {
+    state.coupons = state.coupons.map((c) => (String(c.id) === b.dataset.tog ? { ...c, active: !c.active } : c));
+    scheduleAutoPublish(); renderCoupons();
+  }));
+  main.querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => {
+    if (!confirm("¿Eliminar este cupón?")) return;
+    state.coupons = state.coupons.filter((c) => String(c.id) !== b.dataset.del);
+    toast("Cupón eliminado"); scheduleAutoPublish(); renderCoupons();
+  }));
+}
+
+/* ══════ VISTA: VENTAS ══════ */
+function startOrdersPolling() {
+  stopOrdersPolling();
+  if (!state.token.trim()) return;
+  fetchOrders();
+  state.ordersInterval = setInterval(() => fetchOrders(), 20000);
+}
+function stopOrdersPolling() {
+  if (state.ordersInterval) { clearInterval(state.ordersInterval); state.ordersInterval = null; }
+}
+
+function renderVentas() {
+  const main = $("main");
+  if (!main) return;
+
+  const fmtDay = (iso) => new Date(iso).toLocaleDateString("es-CO", { year: "numeric", month: "2-digit", day: "2-digit" });
+  const fmtDayLong = (iso) => new Date(iso).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
+  const fmtWhen = (iso) => new Date(iso).toLocaleString("es-CO", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const todayK = fmtDay(new Date().toISOString());
+  const estadoDe = (o) => o.estado || "pendiente";
+  const ESTADOS = {
+    pagado:    { txt: "Pagado",       cls: "ok"  },
+    revision:  { txt: "En revisión",  cls: "rev" },
+    pendiente: { txt: "Pendiente",    cls: "pen" },
+    rechazado: { txt: "Rechazado",    cls: "no"  },
+  };
+  const pagados = state.orders.filter((o) => estadoDe(o) === "pagado");
+  const conteos = state.orders.reduce((m, o) => { const e = estadoDe(o); m[e] = (m[e] || 0) + 1; return m; }, {});
+  const base = state.ventasFiltro === "todos" ? state.orders : pagados;
+
+  const byDay = {};
+  base.forEach((o) => {
+    const k = fmtDay(o.date);
+    if (!byDay[k]) byDay[k] = { count: 0, total: 0, last: o.date };
+    byDay[k].count++;
+    byDay[k].total += Number(o.total) || 0;
+    if (o.date > byDay[k].last) byDay[k].last = o.date;
+  });
+  const todayTotal = byDay[todayK]?.total || 0;
+  const todayCount = byDay[todayK]?.count || 0;
+  const allTotal = base.reduce((s, o) => s + (Number(o.total) || 0), 0);
+  const allCount = base.length;
+  const avg = allCount ? Math.round(allTotal / allCount) : 0;
+
+  const soldMap = {};
+  base.forEach((o) => (o.items || []).forEach((it) => {
+    const nm = (it.name || "").trim();
+    const key = `${nm.toLowerCase()}|${(it.brand || "").trim().toLowerCase()}`;
+    if (!soldMap[key]) soldMap[key] = { name: nm || "Producto", brand: it.brand || "", qty: 0, revenue: 0 };
+    const qty = Number(it.qty) || 0;
+    soldMap[key].qty += qty;
+    soldMap[key].revenue += (Number(it.price) || 0) * qty;
+  }));
+  const prodByName = {};
+  state.products.forEach((p) => { prodByName[(p.name || "").trim().toLowerCase()] = p; });
+  const soldList = Object.values(soldMap)
+    .map((s) => ({ ...s, img: prodByName[s.name.trim().toLowerCase()]?.image || "" }))
+    .sort((a, b) => b.qty - a.qty || b.revenue - a.revenue);
+  const unitsSold = soldList.reduce((n, s) => n + s.qty, 0);
+  const productRevenue = soldList.reduce((n, s) => n + s.revenue, 0);
+  const maxSold = Math.max(1, ...soldList.map((s) => s.qty));
+
+  const last7 = [...Array(7)].map((_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6 - i));
+    const k = fmtDay(d.toISOString());
+    return {
+      k,
+      dow: d.toLocaleDateString("es-CO", { weekday: "short" }).replace(".", ""),
+      dm: d.toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit" }),
+      total: byDay[k]?.total || 0,
+      count: byDay[k]?.count || 0,
+      isToday: k === todayK,
+    };
+  });
+  const maxBar = Math.max(1, ...last7.map((d) => d.total));
+  const daysSorted = Object.entries(byDay).sort((a, b) => new Date(b[1].last) - new Date(a[1].last));
+  const ordersDesc = [...base].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const hasToken = !!state.token.trim();
+
+  main.innerHTML = `
+    <div class="hdr">
+      <div class="h-t">Ventas en <span>tiempo real</span></div>
+    </div>
+
+    <div class="sync">
+      <div class="fg">
+        <label class="fl">Clave de administrador <span class="fl-soft">(la misma ADMIN_TOKEN de Vercel)</span></label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+          <input class="fi" id="vToken" type="password" placeholder="Pega aquí tu ADMIN_TOKEN" value="${esc(state.token)}" style="flex:1;min-width:200px" />
+          <button class="btn btn-g" id="vConnect">Conectar</button>
+        </div>
+      </div>
+    </div>
+
+    ${state.ordersError ? `<div class="info err">${esc(state.ordersError)}</div>` : ""}
+
+    ${hasToken && !state.ordersError ? `
+      <div class="vt-live">
+        <span class="l"><span class="vt-dot"></span> En vivo · se actualiza solo cada 20 s${state.ordersUpdatedAt ? ` · última: ${state.ordersUpdatedAt.toLocaleTimeString("es-CO")}` : ""}</span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="vt-refresh" id="vRefresh">${state.ordersLoading ? "Actualizando…" : "↻ Actualizar"}</button>
+          <button class="vt-refresh" id="vReconstruir" title="Vuelve a armar el resumen desde los pedidos individuales">🛟 Reconstruir</button>
+        </span>
+      </div>
+
+      <div class="vt-filtro">
+        <button class="vt-chip ${state.ventasFiltro==="pagados"?"on":""}" data-vf="pagados">✅ Solo pagados <b>${pagados.length}</b></button>
+        <button class="vt-chip ${state.ventasFiltro==="todos"?"on":""}" data-vf="todos">📋 Todos los intentos <b>${state.orders.length}</b></button>
+        <span style="font-size:12px;color:var(--dim)">
+          ${state.ventasFiltro === "pagados" ? "Los totales cuentan solo las compras que la pasarela confirmó como pagadas." : "Estás contando también pedidos sin pagar, en revisión y rechazados."}
+          ${(conteos.pendiente || conteos.revision || conteos.rechazado) ? ` · ${conteos.pendiente || 0} pendientes · ${conteos.revision || 0} en revisión · ${conteos.rechazado || 0} rechazados` : ""}
+        </span>
+      </div>
+
+      <div class="vt-kpis">
+        <div class="vt-kpi hot">
+          <div class="vt-kpi-l">Ventas de hoy</div>
+          <div class="vt-kpi-v">${cop(todayTotal)}</div>
+          <div class="vt-kpi-s">${todayCount} ${todayCount === 1 ? "pedido" : "pedidos"} hoy</div>
+        </div>
+        <div class="vt-kpi">
+          <div class="vt-kpi-l">Total histórico</div>
+          <div class="vt-kpi-v">${cop(allTotal)}</div>
+          <div class="vt-kpi-s">${allCount} ${allCount === 1 ? "pedido" : "pedidos"} en total</div>
+        </div>
+        <div class="vt-kpi">
+          <div class="vt-kpi-l">Ticket promedio</div>
+          <div class="vt-kpi-v">${cop(avg)}</div>
+          <div class="vt-kpi-s">por pedido</div>
+        </div>
+        <div class="vt-kpi">
+          <div class="vt-kpi-l">Unidades vendidas</div>
+          <div class="vt-kpi-v">${unitsSold}</div>
+          <div class="vt-kpi-s">perfumes en total</div>
+        </div>
+      </div>
+
+      <div class="vt-sec">Últimos <span>7 días</span></div>
+      <div class="vt-bars">
+        ${last7.map((d) => `
+          <div class="vt-bar-col">
+            <div class="vt-bar-val">${d.total > 0 ? cop(d.total) : ""}</div>
+            <div class="vt-bar-wrap">
+              <div class="vt-bar ${d.isToday ? "today" : ""}" style="height:${Math.round((d.total / maxBar) * 100)}%" title="${d.count} pedidos · ${cop(d.total)}"></div>
+            </div>
+            <div class="vt-bar-day">${esc(d.dow)}<br />${esc(d.dm)}</div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="vt-sec">Productos <span>más vendidos</span></div>
+      <div class="vt-prod-head">${soldList.length} ${soldList.length === 1 ? "producto" : "productos"} con ventas · <b>${unitsSold}</b> unidades · <b>${cop(productRevenue)}</b></div>
+      ${soldList.length ? `
+        <div class="vt-prod-list">
+          ${soldList.map((s, i) => `
+            <div class="vt-prod ${i < 3 ? "top" : ""}">
+              <div class="vt-prod-rank">${i + 1}</div>
+              ${s.img ? `<img class="vt-prod-img" src="${esc(s.img)}" alt="" />` : `<div class="vt-prod-img ph">🧴</div>`}
+              <div>
+                <div class="vt-prod-n">${esc(s.name)}</div>
+                <div class="vt-prod-b">${esc(s.brand || "Rey del Aroma")}</div>
+                <div class="vt-prod-bar-wrap"><div class="vt-prod-bar" style="width:${Math.round((s.qty / maxSold) * 100)}%"></div></div>
+              </div>
+              <div class="vt-prod-r">
+                <div class="vt-prod-q">${s.qty}</div>
+                <div class="vt-prod-ql">${s.qty === 1 ? "unidad" : "uds. vendidas"}</div>
+                <div class="vt-prod-rev">${cop(s.revenue)}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      ` : `<div class="empty"><div class="ico">📦</div><p>Aún no hay ventas por producto.</p></div>`}
+
+      <div class="vt-sec">Ventas por <span>día</span></div>
+      ${daysSorted.length ? daysSorted.map(([k, v]) => `
+        <div class="vt-day">
+          <div>
+            <div class="vt-day-d">${fmtDayLong(v.last)}${k === todayK ? " · hoy" : ""}</div>
+            <div class="vt-day-c">${v.count} ${v.count === 1 ? "pedido" : "pedidos"}</div>
+          </div>
+          <div class="vt-day-t">${cop(v.total)}</div>
+        </div>
+      `).join("") : `<div class="empty"><div class="ico">🧾</div><p>Aún no hay ventas registradas.</p></div>`}
+
+      <div class="vt-sec">Pedidos <span>recientes</span></div>
+      ${ordersDesc.length ? `
+        <div class="ord-cards">
+          ${ordersDesc.map((o, idx) => {
+            const c = o.customer || {};
+            const est = ESTADOS[estadoDe(o)] || ESTADOS.pendiente;
+            const phone = c.phone ? String(c.phone).replace(/\D/g, "").slice(-10) : "";
+            return `
+              <div class="ord-card">
+                <div class="ord-card-top">
+                  <span class="estado ${est.cls}">${est.txt}</span>
+                  <span class="ord-card-tot">${cop(o.total)}</span>
+                </div>
+                <div class="ord-card-n">${esc(c.name || "Cliente sin nombre")}</div>
+                <div class="ord-card-s">
+                  ${fmtWhen(o.date)} · ${esc(o.metodoNombre || o.method || "—")}<br />
+                  ID: ${esc(c.cedula || "—")} · ${esc(c.phone || "—")}
+                  ${c.city ? `<br />${esc(c.city)}${c.address ? ` — ${esc(c.address)}` : ""}` : ""}
+                </div>
+                <div class="ord-card-i">${(o.items || []).map((it) => `${it.qty}× ${esc(it.name || "")}`).join(", ") || "—"}</div>
+                <div class="ord-card-r">${esc(o.reference || "")}</div>
+                ${phone ? `<a class="ord-card-wa" href="https://wa.me/57${phone}?text=${encodeURIComponent(`Hola ${c.name || ""} 👑, te escribimos de Rey del Aroma por tu pedido ${o.reference}.`)}" target="_blank" rel="noreferrer">💬 Escribirle por WhatsApp</a>` : ""}
+              </div>
+            `;
+          }).join("")}
+        </div>
+        <div class="tbl-wrap ord-tbl">
+          <table class="tbl">
+            <thead><tr><th>Fecha</th><th>Pedido</th><th>Cliente</th><th>Productos</th><th>Pago</th><th>Estado</th><th>Total</th></tr></thead>
+            <tbody>
+              ${ordersDesc.map((o, idx) => {
+                const c = o.customer || {};
+                const est = ESTADOS[estadoDe(o)] || ESTADOS.pendiente;
+                return `
+                  <tr>
+                    <td style="font-size:12px;color:var(--muted)">${fmtWhen(o.date)}</td>
+                    <td>
+                      <div style="font-size:11.5px;color:var(--muted)">ID: ${esc(c.cedula || "—")}</div>
+                      <div style="font-size:10.5px;color:var(--dim);margin-top:2px;font-family:monospace">${esc(o.reference || "")}</div>
+                    </td>
+                    <td>
+                      <div class="pn">${esc(c.name || "—")}</div>
+                      <div class="ps">${esc(c.phone || "")}${c.city ? ` · ${esc(c.city)}` : ""}${c.email ? ` · ${esc(c.email)}` : ""}${c.address ? `<br/>${esc(c.address)}` : ""}</div>
+                    </td>
+                    <td style="font-size:12px;max-width:200px">${(o.items || []).map((it) => `${it.qty}× ${esc(it.name || "")}`).join(", ") || "—"}</td>
+                    <td style="font-size:12px">${esc(o.metodoNombre || o.method || "—")}</td>
+                    <td><span class="estado ${est.cls}">${est.txt}</span></td>
+                    <td class="pp">${cop(o.total)}</td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : `<div class="empty"><div class="ico">🛍️</div><p>${state.ventasFiltro === "pagados" && state.orders.length > 0 ? "Todavía no hay compras PAGADAS. Hay pedidos empezados sin terminar: míralos en «Todos los intentos»." : "Cuando un cliente complete una compra, aparecerá aquí al instante."}</p></div>`}
+    ` : ""}
+
+    ${!hasToken && !state.ordersError ? `<div class="info">Escribe tu <b>clave de administrador</b> arriba y pulsa "Conectar" para ver las ventas. Es el mismo valor que pusiste como <b>ADMIN_TOKEN</b> en Vercel.</div>` : ""}
+  `;
+
+  const vt = $("vToken");
+  vt?.addEventListener("keydown", (e) => { if (e.key === "Enter") $("vConnect").click(); });
+  $("vConnect")?.addEventListener("click", () => {
+    const v = ($("vToken").value || "").trim();
+    state.token = v;
+    try { localStorage.setItem(LS_TOKEN, v); } catch {}
+    startOrdersPolling();
+  });
+  $("vRefresh")?.addEventListener("click", () => fetchOrders());
+  $("vReconstruir")?.addEventListener("click", () => fetchOrders({ reconstruir: true }));
+  main.querySelectorAll("[data-vf]").forEach((b) => b.addEventListener("click", () => {
+    state.ventasFiltro = b.dataset.vf; renderVentas();
+  }));
+}
+
+/* ══════ BOOTSTRAP ══════ */
+function bootAuthed() {
+  renderShell();
+  pullCatalog();
+  if (state.view === "ventas") startOrdersPolling();
+}
+
+function init() {
+  // Sesión persistente: si el navegador ya autenticó dentro de los últimos 30 días, entra directo.
+  if (loadSession()) {
+    state.authed = true;
+    state.token = (localStorage.getItem(LS_TOKEN) || "").trim();
+    bootAuthed();
+  } else {
+    renderLogin();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
