@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Analytics } from "@vercel/analytics/react"; // ← Métricas de visitas de Vercel (panel Analytics del proyecto)
 import { PRODUCTS, imageForFile, FAMILIES, TAG_BY_SLUG, COLLECTIONS } from "./data/products";
 import banner1 from "./assets/banners/banner-1.jpg";
 import banner2 from "./assets/banners/banner-2.jpg";
@@ -21,6 +20,14 @@ import selloOriginal from "./assets/sello-original.png";
 const WHATSAPP = "573189917571";          // ← Tu número de WhatsApp (con 57)
 const ADMIN_PASSWORD = "admin123";         // ← Cambia tu contraseña de admin
 const ADMIN_PANEL_KEY = "acceso-rey";      // ← Palabra secreta del enlace privado del panel: reydelaroma.com/?panel=acceso-rey (cámbiala)
+
+/* ── MÉTRICAS DE VISITAS (Google Analytics) ──
+   Pega aquí tu ID de medición de Google Analytics. Se ve así: G-A1B2C3D4E5
+   Lo encuentras en analytics.google.com → Administrar (⚙️ abajo a la izquierda)
+   → Flujos de datos → tu sitio → "ID de medición".
+   Mientras siga en "G-XXXXXXXXXX", las métricas quedan APAGADAS (no se carga
+   nada ni se rastrea a nadie), así que no pasa nada si aún no lo tienes. */
+const GA_MEASUREMENT_ID = "G-MCY31S5QR5";
 /* ⚠️ IMPORTANTE — DÓNDE VIVE EL CATÁLOGO
    Estas claves de localStorage son solo un RESPALDO local (para que la tienda
    abra al instante y siga funcionando sin internet). La VERDAD del catálogo
@@ -40,16 +47,59 @@ const ADMIN_SESSION_DAYS = 30;               // ← Días que dura la sesión de
 const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 const cop = (n) => "$" + Number(n || 0).toLocaleString("es-CO");
 
-/* MÉTRICAS (Vercel Analytics): descartamos la visita cuando la dirección lleva
-   la clave del panel privado (?panel=…). Así el enlace secreto del panel no
-   aparece nunca en el tablero de métricas. El resto de páginas se cuentan
-   normal: inicio, cada perfume, categorías, búsquedas y el checkout. */
-const ocultarPanelEnMetricas = (evento) => {
+/* ════════════════════════════════════════════════════════════════
+   MÉTRICAS DE VISITAS — Google Analytics 4 (gratis)
+
+   Cuenta cuántas personas entran, qué perfumes miran, desde qué país y con
+   qué dispositivo. Los datos se ven en analytics.google.com y ahí puedes dar
+   acceso de solo lectura a quien quieras (a tu cliente, por ejemplo).
+
+   · Se activa SOLO cuando pegas un ID real arriba (GA_MEASUREMENT_ID). Sin ID
+     no se carga ningún script ni se rastrea a nadie.
+   · Esta tienda es una sola página que cambia de vista sin recargar, así que
+     avisamos a Google a mano en cada cambio de página (si no, solo contaría la
+     primera). De eso se encarga trackPageview().
+   · La dirección secreta del panel (?panel=…) NO se envía nunca: así no aparece
+     en los informes que verá tu cliente.
+   ════════════════════════════════════════════════════════════════ */
+const gaEnabled = () => typeof GA_MEASUREMENT_ID === "string" && /^G-[A-Z0-9]{6,}$/i.test(GA_MEASUREMENT_ID) && GA_MEASUREMENT_ID !== "G-XXXXXXXXXX";
+
+/* Carga el script de Google una sola vez. Se llama al abrir la tienda. */
+let gaLoaded = false;
+function loadGoogleAnalytics() {
+  if (gaLoaded || !gaEnabled()) return;
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  gaLoaded = true;
   try {
-    if (evento && typeof evento.url === "string" && evento.url.includes("panel=")) return null;
+    window.dataLayer = window.dataLayer || [];
+    // gtag apila los eventos hasta que el script de Google termina de cargar.
+    window.gtag = function gtag() { window.dataLayer.push(arguments); };
+    window.gtag("js", new Date());
+    // send_page_view: false → los pageviews los mandamos nosotros en cada
+    // cambio de página (esto es una SPA), para no contar la primera dos veces.
+    window.gtag("config", GA_MEASUREMENT_ID, { send_page_view: false });
+
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
+    document.head.appendChild(s);
   } catch { /* ignore */ }
-  return evento;
-};
+}
+
+/* Avisa a Google que se abrió una página. `path` es la dirección (ej. /producto/…).
+   Descarta la dirección privada del panel para que no salga en los informes. */
+function trackPageview(path) {
+  if (!gaEnabled() || typeof window === "undefined" || typeof window.gtag !== "function") return;
+  try {
+    const p = String(path || "/");
+    if (p.includes("panel=")) return; // el enlace secreto del panel no se cuenta
+    window.gtag("event", "page_view", {
+      page_path: p,
+      page_location: (window.location && window.location.origin ? window.location.origin : "") + p,
+      page_title: (typeof document !== "undefined" && document.title) || "Rey del Aroma",
+    });
+  } catch { /* ignore */ }
+}
 
 /* ════════════════════════════════════════════════════════════════
    ENVÍOS — edita estos valores a tu gusto
@@ -2086,6 +2136,10 @@ export default function ReyDelAroma() {
   const shopProducts = useMemo(() => products.filter((p) => !p.hidden), [products]);
   /* Producto abierto. Si el enlace es /producto/…-12, lo buscamos por ese número. */
   const routeProductId = useRef(initialRoute.view === "product" ? String(initialRoute.id || "") : "");
+  /* La página que se está viendo ahora mismo. La usan el botón "atrás" y las
+     métricas de visitas; se declara aquí arriba para que ya exista cuando los
+     primeros efectos la lean. */
+  const routeRef = useRef(initialRoute);
   const [selectedProduct, setSelectedProduct] = useState(() =>
     initialRoute.view === "product"
       ? (products.find((p) => String(p.id) === String(initialRoute.id)) || null)
@@ -2310,6 +2364,26 @@ export default function ReyDelAroma() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* Métricas de visitas: cargamos Google Analytics y registramos la PRIMERA
+     página con la que se abrió la tienda. Los cambios de página posteriores los
+     cuenta el efecto de abajo (esta tienda no recarga al cambiar de vista). */
+  useEffect(() => {
+    loadGoogleAnalytics();
+    trackPageview(pathOf(routeRef.current) || (typeof window !== "undefined" ? window.location.pathname : "/"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* Cada vez que el cliente cambia de página dentro de la tienda (abre un
+     perfume, entra a una categoría, busca, va al carrito…) le avisamos a Google
+     con la nueva dirección. La primera carga ya la contó el efecto de arriba,
+     así que aquí saltamos el primer render para no contarla dos veces. */
+  const gaFirstSkip = useRef(true);
+  useEffect(() => {
+    if (gaFirstSkip.current) { gaFirstSkip.current = false; return; }
+    trackPageview(pathOf(routeRef.current) || (typeof window !== "undefined" ? window.location.pathname : "/"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, selectedProduct, catFilter, search, fAroma, fSex, fCat]);
+
   /* Si el cliente deja la pestaña y vuelve, refrescamos el catálogo: así ve tus
      precios nuevos sin tener que recargar. (Al admin no se lo tocamos: sus
      cambios locales mandan hasta que se publiquen.) */
@@ -2492,8 +2566,6 @@ export default function ReyDelAroma() {
      · applyRoute → pinta la página que pide una dirección
      · go         → cambia de página Y actualiza la barra de direcciones
      ────────────────────────────────────────────────────────────── */
-  const routeRef = useRef(initialRoute);
-
   const applyRoute = (r) => {
     const route = r || { view: "store" };
     routeRef.current = route;
@@ -5333,11 +5405,6 @@ export default function ReyDelAroma() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
-
-      {/* Métricas de visitas (Vercel → pestaña Analytics del proyecto).
-          Las visitas al panel privado NO se envían: así la dirección secreta
-          (?panel=…) nunca queda escrita en el tablero de métricas. */}
-      <Analytics beforeSend={ocultarPanelEnMetricas} />
     </div>
   );
 }
