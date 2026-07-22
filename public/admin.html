@@ -175,7 +175,7 @@
     .tbl th{padding:14px 12px;text-align:left;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);background:var(--panel2);white-space:nowrap}
     .tbl td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:14px}
     .tbl tr:last-child td{border-bottom:none}
-    .tbl tr.hidden{opacity:.55}
+    .tbl tr.row-off{opacity:.55}
     .thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--bg2);display:block}
     .thumb.ph{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--dim)}
     .pn{font-weight:600;color:var(--text);font-size:14px}
@@ -366,7 +366,6 @@
     .center{text-align:center}
     .mt-14{margin-top:14px}
     .mt-22{margin-top:22px}
-    .hidden{display:none!important}
   </style>
 </head>
 <body>
@@ -929,7 +928,7 @@ function renderList() {
           </thead>
           <tbody>
             ${list.map((p) => `
-              <tr class="${p.hidden ? "hidden" : ""}">
+              <tr class="${p.hidden ? "row-off" : ""}">
                 <td>${p.image ? `<img class="thumb" src="${esc(p.image)}" alt="" />` : `<div class="thumb ph">🧴</div>`}</td>
                 <td>
                   <div class="pn">${p.favorite ? "👑 " : ""}${esc(p.name || "")}</div>
@@ -954,12 +953,6 @@ function renderList() {
             `).join("")}
           </tbody>
         </table>
-      </div>
-    ` : q ? `
-      <div class="empty">
-        <div class="ico">🔍</div>
-        <p>No hay productos que coincidan con «${esc(state.search.trim())}».</p>
-        <button class="btn btn-o mt-14" id="clearSearch2">Limpiar búsqueda</button>
       </div>
     ` : q ? `
       <div class="empty">
