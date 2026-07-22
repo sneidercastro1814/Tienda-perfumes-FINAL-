@@ -19,7 +19,22 @@ import selloOriginal from "./assets/sello-original.png";
    ════════════════════════════════════════════════════════════════ */
 const WHATSAPP = "573189917571";          // ← Tu número de WhatsApp (con 57)
 const ADMIN_PASSWORD = "admin123";         // ← Cambia tu contraseña de admin
-const ADMIN_PANEL_KEY = "acceso-rey";      // ← Palabra secreta del enlace privado del panel: reydelaroma.com/?panel=acceso-rey (cámbiala)
+/* ── ENLACE PRIVADO DEL PANEL ──
+   El administrador entra por una dirección aparte que solo él conoce. Ahora es
+   una RUTA LIMPIA (se ve como un enlace normal, sin ?panel=):
+
+       https://reydelaroma.com/panel-rey-7x2k
+
+   👉 CAMBIA la palabra de abajo por la que quiera Daniel. Reglas para que no
+      choque con la tienda: minúsculas, sin espacios (usa guiones), y que NO sea
+      una de estas palabras ya usadas por la web:
+        ver-todo, hombre, mujer, unisex, promo, disenador, arabes, destacados,
+        producto, buscar, filtros, pagar, checkout
+      Conviene que lleve algo difícil de adivinar (p. ej. unas letras/números al
+      final), porque esta dirección es la primera barrera antes de la contraseña.
+   El enlace viejo (reydelaroma.com/?panel=…) también sigue funcionando como
+   respaldo, por si Daniel lo tenía guardado. */
+const ADMIN_PANEL_KEY = "panel-rey-7x2k";
 
 /* ── MÉTRICAS DE VISITAS (Google Analytics) ──
    Pega aquí tu ID de medición de Google Analytics. Se ve así: G-A1B2C3D4E5
@@ -1985,13 +2000,22 @@ function readAddiReturn() {
   }
 }
 
-/* ¿La URL trae la palabra secreta del panel?  (?panel=<clave>)
-   Este es el "enlace aparte" del administrador. La página ya NO muestra ninguna
-   tuerca, así que los visitantes normales nunca ven el panel; solo quien tenga
-   este enlace (y luego la contraseña) puede entrar. */
+/* ¿La dirección actual es el enlace privado del panel?
+   · Nuevo: ruta limpia  reydelaroma.com/<clave>   (se ve como un enlace normal)
+   · Respaldo: enlace viejo  reydelaroma.com/?panel=<clave>
+   La página ya NO muestra ninguna tuerca ni botón de admin, así que los
+   visitantes normales nunca ven el panel; solo quien tenga este enlace (y luego
+   la contraseña) puede entrar. */
 function readAdminParam() {
   try {
-    return new URLSearchParams(window.location.search).get("panel") === ADMIN_PANEL_KEY;
+    const clave = ADMIN_PANEL_KEY;
+    // Ruta limpia: /<clave>  (quitando las barras de los extremos)
+    let ruta = (window.location.pathname || "").replace(/^\/+|\/+$/g, "");
+    try { ruta = decodeURIComponent(ruta); } catch { /* ignore */ }
+    if (ruta && ruta === clave) return true;
+    // Respaldo: ?panel=<clave>  (enlaces guardados de antes)
+    if (new URLSearchParams(window.location.search).get("panel") === clave) return true;
+    return false;
   } catch { return false; }
 }
 
@@ -2010,8 +2034,9 @@ function readAdminParam() {
      /filtros?aroma=…&sexo=…    → Resultados del panel de filtros
      /pagar                     → Finalizar compra
 
-   El panel de administración sigue entrando SOLO por su enlace privado
-   (?panel=<clave>) y no aparece en ninguna dirección pública.
+   El panel de administración entra SOLO por su enlace privado
+   (una ruta limpia como reydelaroma.com/<clave>, ver ADMIN_PANEL_KEY arriba) y
+   no aparece en ninguna dirección pública.
 ────────────────────────────────────────────────────────────── */
 
 /* Convierte cualquier texto en algo apto para una URL: "Dior Sauvage" → "dior-sauvage" */
@@ -2366,9 +2391,12 @@ export default function ReyDelAroma() {
 
   /* Métricas de visitas: cargamos Google Analytics y registramos la PRIMERA
      página con la que se abrió la tienda. Los cambios de página posteriores los
-     cuenta el efecto de abajo (esta tienda no recarga al cambiar de vista). */
+     cuenta el efecto de abajo (esta tienda no recarga al cambiar de vista).
+     Si se entró por el enlace del panel, NO contamos esa visita: son tuyas, no
+     de un cliente, y no deben ensuciar las estadísticas. */
   useEffect(() => {
     loadGoogleAnalytics();
+    if (routeRef.current && routeRef.current.view === "admin") return;
     trackPageview(pathOf(routeRef.current) || (typeof window !== "undefined" ? window.location.pathname : "/"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -2380,6 +2408,7 @@ export default function ReyDelAroma() {
   const gaFirstSkip = useRef(true);
   useEffect(() => {
     if (gaFirstSkip.current) { gaFirstSkip.current = false; return; }
+    if (routeRef.current && routeRef.current.view === "admin") return; // el panel no cuenta como visita
     trackPageview(pathOf(routeRef.current) || (typeof window !== "undefined" ? window.location.pathname : "/"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, selectedProduct, catFilter, search, fAroma, fSex, fCat]);
