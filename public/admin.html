@@ -195,6 +195,25 @@
     .row-actions .e:hover{color:var(--gold-l);border-color:var(--gold)}
     .row-actions .d{background:transparent;color:#e69696;border:1px solid rgba(201,76,76,.35)}
     .row-actions .d:hover{background:rgba(201,76,76,.12)}
+
+    /* Celda de stock editable inline con badges por estado */
+    .stock-cell{display:flex;flex-direction:column;gap:2px;min-width:78px}
+    .stock-inp{
+      width:70px;padding:6px 8px;
+      background:var(--bg);border:1px solid var(--border);border-radius:6px;
+      color:var(--text);font-size:14px;font-weight:600;text-align:center;outline:none;
+      -moz-appearance:textfield;
+    }
+    .stock-inp::-webkit-outer-spin-button,.stock-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    .stock-inp:focus{border-color:var(--gold)}
+    .stock-lbl{font-size:10px;letter-spacing:.4px;color:var(--dim);font-weight:600;text-transform:uppercase}
+    .stock-cell.zero .stock-inp{border-color:rgba(201,76,76,.5);color:#e69696;background:rgba(201,76,76,.06)}
+    .stock-cell.zero .stock-lbl{color:#e69696}
+    .stock-cell.low .stock-inp{border-color:rgba(217,164,65,.5);color:var(--warn);background:rgba(217,164,65,.06)}
+    .stock-cell.low .stock-lbl{color:var(--warn)}
+    .stock-cell.ok .stock-inp{border-color:rgba(78,168,122,.4);color:#8fd8b0}
+    .stock-cell.ok .stock-lbl{color:var(--ok)}
+    .stock-cell.unset .stock-inp{color:var(--dim)}
     .empty{text-align:center;padding:60px 24px;color:var(--dim)}
     .empty .ico{font-size:44px;opacity:.3;margin-bottom:12px}
 
@@ -437,7 +456,7 @@ const state = {
 
 function emptyForm(){
   return {
-    name:"", brand:"", subtitle:"", size:"", price:"",
+    name:"", brand:"", subtitle:"", size:"", price:"", stock:"",
     category:"Hombre", collection:"Árabes", promo:false, favorite:false,
     tags:[], description:"", image:"", images:[]
   };
@@ -895,8 +914,10 @@ function renderList() {
   // Filtro por visibilidad (chips debajo del info)
   if (state.visFilter === "visibles") list = list.filter((p) => !p.hidden);
   else if (state.visFilter === "ocultos") list = list.filter((p) => p.hidden);
+  else if (state.visFilter === "agotados") list = list.filter((p) => p.stock !== null && p.stock !== undefined && Number(p.stock) === 0);
   const hiddenCount = state.products.filter((p) => p.hidden).length;
   const visibleCount = state.products.length - hiddenCount;
+  const agotadosCount = state.products.filter((p) => Number(p.stock) === 0 && p.stock !== null && p.stock !== undefined).length;
 
   main.innerHTML = `
     <div class="hdr">
@@ -911,6 +932,7 @@ function renderList() {
       <button class="vt-chip ${state.visFilter==="todos"?"on":""}" data-vf="todos">📋 Todos <b>${state.products.length}</b></button>
       <button class="vt-chip ${state.visFilter==="visibles"?"on":""}" data-vf="visibles">👁️ Visibles <b>${visibleCount}</b></button>
       <button class="vt-chip ${state.visFilter==="ocultos"?"on":""}" data-vf="ocultos">🙈 Ocultos <b>${hiddenCount}</b></button>
+      ${agotadosCount ? `<button class="vt-chip ${state.visFilter==="agotados"?"on":""}" data-vf="agotados" style="border-color:rgba(201,76,76,.5);color:#e69696">⛔ Agotados <b>${agotadosCount}</b></button>` : ""}
     </div>
 
     <div class="search-bar">
@@ -924,10 +946,13 @@ function renderList() {
       <div class="tbl-wrap">
         <table class="tbl">
           <thead>
-            <tr><th></th><th>Producto</th><th>Precio</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Estado</th><th>Acciones</th></tr>
+            <tr><th></th><th>Producto</th><th>Precio</th><th>Stock</th><th>Categoría</th><th>Colección</th><th>Promo</th><th>Estado</th><th>Acciones</th></tr>
           </thead>
           <tbody>
-            ${list.map((p) => `
+            ${list.map((p) => {
+              const st = (p.stock === undefined || p.stock === null) ? null : Number(p.stock);
+              const stCls = st === null ? "unset" : st === 0 ? "zero" : st <= 5 ? "low" : "ok";
+              return `
               <tr class="${p.hidden ? "row-off" : ""}">
                 <td>${p.image ? `<img class="thumb" src="${esc(p.image)}" alt="" />` : `<div class="thumb ph">🧴</div>`}</td>
                 <td>
@@ -935,6 +960,12 @@ function renderList() {
                   <div class="ps">${esc(p.brand || "")}${p.subtitle ? ` · ${esc(p.subtitle)}` : ""}</div>
                 </td>
                 <td class="pp">${cop(p.price)}</td>
+                <td>
+                  <div class="stock-cell ${stCls}">
+                    <input class="stock-inp" type="number" min="0" data-stock="${p.id}" value="${st === null ? "" : st}" placeholder="—" />
+                    <span class="stock-lbl">${st === null ? "sin definir" : st === 0 ? "agotado" : st === 1 ? "1 unidad" : st + " uds."}</span>
+                  </div>
+                </td>
                 <td class="pc">${esc(p.category || "")}</td>
                 <td class="pc">${esc(p.collection || "")}</td>
                 <td>${p.promo ? `<span class="promo-tag">2×300K</span>` : `<span class="dash">—</span>`}</td>
@@ -950,7 +981,7 @@ function renderList() {
                   </div>
                 </td>
               </tr>
-            `).join("")}
+            `;}).join("")}
           </tbody>
         </table>
       </div>
@@ -964,6 +995,12 @@ function renderList() {
       <div class="empty">
         <div class="ico">🙈</div>
         <p>No tienes productos ocultos. Todos tus productos están visibles para el cliente.</p>
+        <button class="btn btn-o mt-14" id="showAllBtn">Ver todos los productos</button>
+      </div>
+    ` : state.visFilter === "agotados" ? `
+      <div class="empty">
+        <div class="ico">✅</div>
+        <p>No tienes productos agotados. Todo tu inventario tiene stock.</p>
         <button class="btn btn-o mt-14" id="showAllBtn">Ver todos los productos</button>
       </div>
     ` : state.visFilter === "visibles" ? `
@@ -999,7 +1036,8 @@ function renderList() {
     state.editingId = p.id;
     state.form = {
       name: p.name || "", brand: p.brand || "", subtitle: p.subtitle || "", size: p.size || "",
-      price: String(p.price || ""), category: p.category || "Hombre", collection: p.collection || "Árabes",
+      price: String(p.price || ""), stock: p.stock === undefined || p.stock === null ? "" : String(p.stock),
+      category: p.category || "Hombre", collection: p.collection || "Árabes",
       promo: !!p.promo, favorite: !!p.favorite,
       tags: Array.isArray(p.tags) && p.tags.length ? [...p.tags] : (p.tag ? [p.tag] : []),
       description: p.description || "", image: p.image || "", img: p.img || "", images: cleanImages(p.images)
@@ -1019,6 +1057,26 @@ function renderList() {
     toast(wasHidden ? "Producto visible en la tienda" : "Producto oculto para el cliente");
     scheduleAutoPublish(); renderList();
   }));
+
+  // Edición inline del stock: al escribir, guarda al instante y programa la publicación con debounce.
+  // No re-renderiza para no perder el foco del input mientras el admin sigue escribiendo.
+  main.querySelectorAll("[data-stock]").forEach((inp) => {
+    inp.addEventListener("input", (e) => {
+      const id = e.target.dataset.stock;
+      const val = e.target.value.trim();
+      const stockVal = val === "" ? null : (parseInt(val.replace(/[^\d]/g, "")) || 0);
+      state.products = state.products.map((x) => (String(x.id) === String(id) ? { ...x, stock: stockVal } : x));
+      // Actualizar el estilo visual de la celda sin re-render (evita perder el foco)
+      const cell = e.target.closest(".stock-cell");
+      if (cell) {
+        cell.classList.remove("unset","zero","low","ok");
+        cell.classList.add(stockVal === null ? "unset" : stockVal === 0 ? "zero" : stockVal <= 5 ? "low" : "ok");
+        const lbl = cell.querySelector(".stock-lbl");
+        if (lbl) lbl.textContent = stockVal === null ? "sin definir" : stockVal === 0 ? "agotado" : stockVal === 1 ? "1 unidad" : stockVal + " uds.";
+      }
+      scheduleAutoPublish();
+    });
+  });
 }
 
 /* ══════ VISTA: FORMULARIO DE PRODUCTO ══════ */
@@ -1041,6 +1099,7 @@ function renderForm() {
       <div class="fg"><label class="fl">Precio (COP) *</label><input class="fi" id="f-price" type="number" placeholder="190000" value="${esc(f.price)}" /></div>
       <div class="fg"><label class="fl">Subtítulo</label><input class="fi" id="f-subtitle" placeholder="ej. Eau de Parfum" value="${esc(f.subtitle)}" /></div>
       <div class="fg"><label class="fl">Presentación</label><input class="fi" id="f-size" placeholder="ej. 100 ml" value="${esc(f.size)}" /></div>
+      <div class="fg"><label class="fl">Stock <span class="fl-soft">(unidades disponibles)</span></label><input class="fi" id="f-stock" type="number" min="0" placeholder="ej. 10" value="${esc(f.stock)}" /></div>
       <div class="fg">
         <label class="fl">Categoría</label>
         <select class="fsel" id="f-category">
@@ -1114,6 +1173,7 @@ function renderForm() {
     f.price = readField("f-price");
     f.subtitle = readField("f-subtitle");
     f.size = readField("f-size");
+    f.stock = readField("f-stock");
     f.category = readField("f-category") || "Hombre";
     f.collection = readField("f-collection") || (state.collections[0] || "Árabes");
     f.promo = $("f-promo")?.checked || false;
@@ -1195,6 +1255,7 @@ function saveProduct() {
   f.price = readField("f-price");
   f.subtitle = readField("f-subtitle");
   f.size = readField("f-size");
+  f.stock = readField("f-stock");
   f.category = readField("f-category") || "Hombre";
   f.collection = readField("f-collection") || (state.collections[0] || "Árabes");
   f.promo = $("f-promo")?.checked || false;
@@ -1211,6 +1272,7 @@ function saveProduct() {
     subtitle: f.subtitle.trim(),
     size: f.size.trim(),
     price: parseInt(String(f.price).replace(/[^\d]/g, "")) || 0,
+    stock: f.stock === "" ? null : (parseInt(String(f.stock).replace(/[^\d]/g, "")) || 0),
     category: f.category,
     collection: f.collection,
     promo: f.promo ? PROMO_LABEL : "",
