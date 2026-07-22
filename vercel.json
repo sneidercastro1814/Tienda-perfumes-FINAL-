@@ -2,6 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/panel-rey-7x2k", "destination": "/admin.html" },
+    { "source": "/((?!api/|admin\\.html).*)", "destination": "/index.html" }
   ]
 }
