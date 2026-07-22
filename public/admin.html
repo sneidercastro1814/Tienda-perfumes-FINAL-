@@ -422,6 +422,7 @@ const state = {
   editingId: null,
   form: emptyForm(),
   search: "",
+  visFilter: "todos",           // todos | visibles | ocultos
 
   orders: [],
   ordersLoading: false,
@@ -885,14 +886,18 @@ function renderList() {
   const main = $("main");
   const q = state.search.trim().toLowerCase();
   const terms = q.split(/\s+/).filter(Boolean);
-  const list = q
+  let list = q
     ? state.products.filter((p) => {
         const hay = [p.name, p.brand, p.subtitle, p.size, p.collection, p.category, ...(Array.isArray(p.tags)?p.tags:[]), String(p.price||""), cop(p.price), p.promo?"promo":"", p.hidden?"oculto":"visible"]
           .filter(Boolean).join(" ").toLowerCase();
         return terms.every((t) => hay.includes(t));
       })
     : state.products;
+  // Filtro por visibilidad (chips debajo del info)
+  if (state.visFilter === "visibles") list = list.filter((p) => !p.hidden);
+  else if (state.visFilter === "ocultos") list = list.filter((p) => p.hidden);
   const hiddenCount = state.products.filter((p) => p.hidden).length;
+  const visibleCount = state.products.length - hiddenCount;
 
   main.innerHTML = `
     <div class="hdr">
@@ -902,6 +907,12 @@ function renderList() {
       </div>
     </div>
     <div class="info"><b>${state.products.length}</b> productos en catálogo${hiddenCount ? ` · <b>${hiddenCount}</b> ${hiddenCount === 1 ? "oculto" : "ocultos"}` : ""} · Cuando cambias un precio se publica solo en la nube y se ve al instante en el celular de tus clientes.</div>
+
+    <div class="vt-filtro" style="margin-bottom:16px">
+      <button class="vt-chip ${state.visFilter==="todos"?"on":""}" data-vf="todos">📋 Todos <b>${state.products.length}</b></button>
+      <button class="vt-chip ${state.visFilter==="visibles"?"on":""}" data-vf="visibles">👁️ Visibles <b>${visibleCount}</b></button>
+      <button class="vt-chip ${state.visFilter==="ocultos"?"on":""}" data-vf="ocultos">🙈 Ocultos <b>${hiddenCount}</b></button>
+    </div>
 
     <div class="search-bar">
       <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -950,6 +961,24 @@ function renderList() {
         <p>No hay productos que coincidan con «${esc(state.search.trim())}».</p>
         <button class="btn btn-o mt-14" id="clearSearch2">Limpiar búsqueda</button>
       </div>
+    ` : q ? `
+      <div class="empty">
+        <div class="ico">🔍</div>
+        <p>No hay productos que coincidan con «${esc(state.search.trim())}».</p>
+        <button class="btn btn-o mt-14" id="clearSearch2">Limpiar búsqueda</button>
+      </div>
+    ` : state.visFilter === "ocultos" ? `
+      <div class="empty">
+        <div class="ico">🙈</div>
+        <p>No tienes productos ocultos. Todos tus productos están visibles para el cliente.</p>
+        <button class="btn btn-o mt-14" id="showAllBtn">Ver todos los productos</button>
+      </div>
+    ` : state.visFilter === "visibles" ? `
+      <div class="empty">
+        <div class="ico">👁️</div>
+        <p>No hay productos visibles. Todos están ocultos.</p>
+        <button class="btn btn-o mt-14" id="showAllBtn">Ver todos los productos</button>
+      </div>
     ` : `
       <div class="empty">
         <div class="ico">📦</div>
@@ -964,6 +993,12 @@ function renderList() {
   $("clearSearch")?.addEventListener("click", () => { state.search = ""; renderList(); });
   $("clearSearch2")?.addEventListener("click", () => { state.search = ""; renderList(); });
   $("lkAll")?.addEventListener("click", () => { state.search = ""; renderList(); });
+  $("showAllBtn")?.addEventListener("click", () => { state.visFilter = "todos"; renderList(); });
+
+  // Chips de filtro por visibilidad
+  main.querySelectorAll("[data-vf]").forEach((b) => b.addEventListener("click", () => {
+    state.visFilter = b.dataset.vf; renderList();
+  }));
 
   main.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => {
     const p = state.products.find((x) => String(x.id) === String(b.dataset.edit));
