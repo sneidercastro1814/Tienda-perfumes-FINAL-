@@ -2009,9 +2009,10 @@ function readAddiReturn() {
 function readAdminParam() {
   try {
     const clave = ADMIN_PANEL_KEY;
-    // Ruta limpia: /<clave>  (quitando las barras de los extremos)
+    // Ruta limpia: /<clave>  (quitando barras de los extremos y un posible .html)
     let ruta = (window.location.pathname || "").replace(/^\/+|\/+$/g, "");
     try { ruta = decodeURIComponent(ruta); } catch { /* ignore */ }
+    ruta = ruta.replace(/\.html?$/i, ""); // /<clave>.html también vale (acceso directo del iPhone)
     if (ruta && ruta === clave) return true;
     // Respaldo: ?panel=<clave>  (enlaces guardados de antes)
     if (new URLSearchParams(window.location.search).get("panel") === clave) return true;
